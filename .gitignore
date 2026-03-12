@@ -23,6 +23,6 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-/generated/prisma
+#local database
+prisma/dev.db
 
-/generated/prisma
