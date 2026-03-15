@@ -1,43 +1,125 @@
-# Astro Starter Kit: Minimal
+# proyecto_DAW
 
-```sh
-npm create astro@latest -- --template minimal
-```
+> 🦷 Proyecto DAW: Sistema de gestión de laboratorio dental con Astro + TypeScript + SQLite + Prisma + Better-Auth
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+---
 
-## 🚀 Project Structure
+## 🚀 Tecnologías utilizadas
 
-Inside of your Astro project, you'll see the following folders and files:
+| Tecnología | Propósito |
+|-----------|-----------|
+| [Astro](https://astro.build/) | Framework principal |
+| TypeScript | Tipado estricto y seguridad |
+| [Prisma](https://www.prisma.io/) | ORM para SQLite |
+| SQLite | Base de datos ligera |
+| [Better-Auth](https://better-auth.com/) | Gestión de usuarios y autenticación |
+| Node.js 22+ | Runtime del proyecto |
+
+---
+
+## 🗂 Estructura del proyecto
 
 ```text
 /
-├── public/
+├── prisma/                 # Esquema de base de datos y migraciones
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── pages/              # Páginas de Astro
+│   │   ├── index.astro
+│   │   └── prueba-db.astro
+│   ├── lib/                # Utilidades, Prisma y Better-Auth
+│   │   ├── prisma.ts
+│   │   └── auth.ts
+│   └── components/         # Componentes UI (Astro/React)
+├── generated/              # Prisma Client generado
+├── package.json
+├── tsconfig.json
+├── .env                    # Variables de entorno
+└── README.md
+````
+
+---
+
+## 🛠️ Configuración local
+
+1. Clonar el repositorio:
+
+```bash
+git clone https://github.com/Carandainf/proyecto_DAW.git
+cd proyecto_DAW
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+2. Instalar dependencias:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```bash
+npm install
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+3. Configurar variables de entorno (`.env`):
 
-## 🧞 Commands
+```env
+DATABASE_URL="file:./prisma/dev.db"
+BETTER_AUTH_SECRET="<tu_secreto_256_caracteres>"
+BETTER_AUTH_URL="http://localhost:4321"
+```
 
-All commands are run from the root of the project, from a terminal:
+4. Generar Prisma Client:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```bash
+npx prisma generate
+```
 
-## 👀 Want to learn more?
+5. Ejecutar servidor de desarrollo:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+npm run dev
+```
+
+Visita [http://localhost:4321](http://localhost:4321) para ver la aplicación.
+
+---
+
+## 🔑 Autenticación
+
+* Usuarios gestionados con **Better-Auth**.
+* Roles: `admin` y `user`.
+* Login por **email + contraseña**.
+* Sesiones persistentes en SQLite.
+
+---
+
+## ⚡ Comandos útiles
+
+| Comando                  | Descripción                           |
+| ------------------------ | ------------------------------------- |
+| `npm run dev`            | Ejecuta el servidor local             |
+| `npm run build`          | Genera build de producción            |
+| `npm run preview`        | Previsualiza el build generado        |
+| `npx prisma studio`      | Explora la base de datos              |
+| `npx tsx prisma/seed.ts` | Inserta datos iniciales (roles, etc.) |
+
+---
+
+## 📌 Notas
+
+* Se ha integrado **Prisma Client** con **Better-Auth** usando adaptador SQLite.
+* La base de datos inicial contiene los roles: `admin` y `user`.
+* Se recomienda **no subir archivos sensibles** (`.env`, `dev.db`) gracias a `.gitignore`.
+
+---
+
+## 📂 Próximos pasos
+
+1. Implementar **inicio de sesión y registro** con Better-Auth.
+2. Añadir **permisos por rol** en la aplicación.
+3. Completar **interfaz de gestión de usuarios y archivos**.
+4. Documentar **Security Model** (pendiente).
+
+---
+
+## 📎 Referencias
+
+* [Astro Docs](https://docs.astro.build)
+* [Prisma Docs](https://www.prisma.io/docs/)
+* [Better-Auth Docs](https://better-auth.com/)
+
+```
