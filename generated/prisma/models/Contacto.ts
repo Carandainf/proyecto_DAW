@@ -1195,6 +1195,11 @@ export type ContactoFindManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Skip the first `n` Contactos.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Contactos.
+   */
   distinct?: Prisma.ContactoScalarFieldEnum | Prisma.ContactoScalarFieldEnum[]
 }
 

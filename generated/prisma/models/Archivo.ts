@@ -1160,6 +1160,11 @@ export type ArchivoFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Archivos.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Archivos.
+   */
   distinct?: Prisma.ArchivoScalarFieldEnum | Prisma.ArchivoScalarFieldEnum[]
 }
 
