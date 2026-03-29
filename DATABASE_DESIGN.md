@@ -1,138 +1,103 @@
+# 🗄️ DATABASE_DESIGN.md
 
-# 🗄️ Diseño de Base de Datos
-
-Este documento describe la estructura de la base de datos utilizada en el proyecto **Laboratorio Dental**, incluyendo el modelo de datos, relaciones entre tablas y decisiones de diseño.
+Diseño actual de la base de datos del proyecto DAW.
 
 ---
 
 # 📦 Tecnología utilizada
 
-| Tecnología | Motivo |
-|------------|-------|
-| **SQLite** | Base de datos ligera y portable |
-| **Prisma ORM** | Tipado automático y consultas seguras |
-| **better-sqlite3** | Driver rápido y compatible con Node |
-| **Prisma Studio** | Visualización y depuración de datos |
+| Tecnología     | Motivo                          |
+| -------------- | ------------------------------- |
+| SQLite         | Base de datos ligera y portable |
+| Prisma 7.5.x   | ORM con tipado automático       |
+| better-sqlite3 | Driver SQLite para Node         |
+| Better Auth    | Gestión de usuarios y sesiones  |
+| Prisma Studio  | Exploración visual de datos     |
 
-Archivo físico de base de datos:
+Archivo físico:
 
+```text
+prisma/dev.db
 ```
 
-prisma/dev.db
+Requisito:
 
+```text
+Node.js >= 20.19
 ```
 
 ---
 
 # 🧱 Modelo general
 
-La base de datos se divide en tres bloques principales:
+La base de datos se divide en tres bloques:
 
-```
-
+```text
 Autenticación
-Usuarios y Roles
+Usuarios y roles
 Lógica de negocio
-
 ```
 
-Representación simplificada:
+Relación simplificada:
 
-```
-
-User ─── Role
-│
-├── Session
-├── Account
-│
-├── Archivo
-├── Mensaje
-└── Contacto
-
+```text
+Role 1 ─── N User
+              │
+              ├── Session
+              ├── Account
+              ├── Archivo
+              ├── Mensaje
+              └── Contacto
 ```
 
 ---
 
-# 👥 Tabla: Roles
-
-Tabla que define los distintos tipos de usuarios del sistema.
+# 👥 Tabla: Role
 
 Tabla física:
 
+```text
+roles
 ```
 
-roles
-
-````
-
-## Campos
-
-| Campo | Tipo | Descripción |
-|------|------|-------------|
-| id_rol | Int | Identificador del rol |
-| nombre_rol | String | Nombre del rol |
-| descripcion | String | Descripción del rol |
-
-## Modelo Prisma
+Modelo:
 
 ```prisma
 model Role {
-  id          Int       @id @default(autoincrement()) @map("id_rol")
-  nombre      String    @unique @map("nombre_rol")
+  id          Int      @id @default(autoincrement()) @map("id_rol")
+  nombre      String   @unique @map("nombre_rol")
   descripcion String?
   usuarios    User[]
 
   @@map("roles")
 }
-````
-
-## Roles iniciales
-
 ```
+
+Roles iniciales:
+
+```text
 admin
 user
 ```
 
 ---
 
-# 👤 Tabla: Usuarios
-
-Tabla principal del sistema.
-
-Contiene tanto:
-
-* información de autenticación
-* información de negocio
+# 👤 Tabla: User
 
 Tabla física:
 
-```
+```text
 usuarios
 ```
 
-## Campos principales
+Responsabilidades:
 
-| Campo         | Tipo     | Descripción           |
-| ------------- | -------- | --------------------- |
-| id            | String   | Identificador único   |
-| nombre        | String   | Nombre del usuario    |
-| email         | String   | Email único           |
-| emailVerified | Boolean  | Verificación de email |
-| createdAt     | DateTime | Fecha de creación     |
-| updatedAt     | DateTime | Última actualización  |
+* Datos de autenticación
+* Datos de negocio
+* Relación con roles
+* Relación con sesiones y cuentas
 
-## Gestión de roles
-
-El sistema utiliza dos mecanismos:
-
-| Campo  | Función                          |
-| ------ | -------------------------------- |
-| role   | Rol rápido usado por Better Auth |
-| roleId | Relación con tabla `roles`       |
-
-Esto permite mayor flexibilidad para permisos futuros.
-
-## Modelo Prisma
+Modelo:
 
 ```prisma
 model User {
@@ -143,11 +108,12 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
+
+  role          String?   @default("user")
+
   roleId        Int?      @map("id_rol")
   roleRel       Role?     @relation(fields: [roleId], references: [id])
 
-  role          String?   @default("user")
   banned        Boolean?  @default(false)
   banReason     String?
   banExpires    DateTime?
@@ -164,34 +130,24 @@ model User {
 }
 ```
 
+El usuario tiene dos mecanismos de rol:
+
+```text
+role    -> rápido, usado por Better Auth
+roleId  -> relación real con la tabla Role
+```
+
 ---
 
-# 🔐 Tablas del sistema de autenticación
-
-Estas tablas son necesarias para **Better Auth**.
-
----
-
-# 📋 Tabla: Session
-
-Gestiona las sesiones activas de los usuarios.
+# 🔐 Tabla: Session
 
 Tabla física:
 
-```
+```text
 sesiones
 ```
 
-## Campos
-
-| Campo     | Tipo     | Descripción      |
-| --------- | -------- | ---------------- |
-| id        | String   | ID de sesión     |
-| token     | String   | Token de sesión  |
-| expiresAt | DateTime | Expiración       |
-| userId    | String   | Usuario asociado |
-
-Modelo Prisma:
+Modelo:
 
 ```prisma
 model Session {
@@ -209,25 +165,27 @@ model Session {
 }
 ```
 
+Esta tabla almacena las sesiones persistentes generadas por Better Auth.
+
+`expiresAt` depende de:
+
+```ts
+session: {
+  expiresIn: 60 * 60 * 24 * 7
+}
+```
+
 ---
 
 # 🔑 Tabla: Account
 
-Gestiona cuentas de autenticación externas.
-
-Ejemplos:
-
-* OAuth
-* login social
-* credenciales internas
-
 Tabla física:
 
-```
+```text
 cuentas
 ```
 
-Modelo Prisma:
+Modelo:
 
 ```prisma
 model Account {
@@ -250,22 +208,19 @@ model Account {
 }
 ```
 
+Actualmente el proyecto usa principalmente autenticación por email + contraseña.
+
 ---
 
 # ✔ Tabla: Verification
 
-Tabla utilizada para procesos de verificación:
-
-* verificación de email
-* recuperación de contraseña
-
 Tabla física:
 
-```
+```text
 verificaciones
 ```
 
-Modelo Prisma:
+Modelo:
 
 ```prisma
 model Verification {
@@ -280,36 +235,29 @@ model Verification {
 }
 ```
 
+Se utilizará para:
+
+* Recuperación de contraseña
+* Verificación de email
+
 ---
 
-# 📁 Tabla: Archivos
-
-Gestiona los archivos enviados por los clientes del laboratorio dental.
+# 📁 Tabla: Archivo
 
 Tabla física:
 
-```
+```text
 archivos
 ```
 
-## Campos
-
-| Campo          | Tipo     | Descripción         |
-| -------------- | -------- | ------------------- |
-| id_archivo     | Int      | Identificador       |
-| id_usuario     | String   | Usuario propietario |
-| nombre_archivo | String   | Nombre del archivo  |
-| estado         | String   | Estado del trabajo  |
-| fecha_subida   | DateTime | Fecha de subida     |
-
-Modelo Prisma:
+Modelo:
 
 ```prisma
 model Archivo {
   id_archivo     Int      @id @default(autoincrement())
   id_usuario     String
   nombre_archivo String
-  estado         String   @default("pendiente") 
+  estado         String   @default("pendiente")
   fecha_subida   DateTime @default(now())
   usuario        User     @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 
@@ -319,17 +267,15 @@ model Archivo {
 
 ---
 
-# 💬 Tabla: Mensajes
-
-Permite comunicación entre usuarios.
+# 💬 Tabla: Mensaje
 
 Tabla física:
 
-```
+```text
 mensajes
 ```
 
-Modelo Prisma:
+Modelo:
 
 ```prisma
 model Mensaje {
@@ -338,8 +284,9 @@ model Mensaje {
   id_receptor String
   contenido   String
   fecha_envio DateTime @default(now())
-  emisor      User     @relation("Enviados", fields: [id_emisor], references: [id], onDelete: Cascade)
-  receptor    User     @relation("Recibidos", fields: [id_receptor], references: [id], onDelete: Cascade)
+
+  emisor      User @relation("Enviados", fields: [id_emisor], references: [id], onDelete: Cascade)
+  receptor    User @relation("Recibidos", fields: [id_receptor], references: [id], onDelete: Cascade)
 
   @@map("mensajes")
 }
@@ -347,17 +294,15 @@ model Mensaje {
 
 ---
 
-# 📬 Tabla: Contactos
-
-Formulario de contacto del sitio.
+# 📬 Tabla: Contacto
 
 Tabla física:
 
-```
+```text
 contactos
 ```
 
-Modelo Prisma:
+Modelo:
 
 ```prisma
 model Contacto {
@@ -366,6 +311,7 @@ model Contacto {
   email       String
   mensaje     String
   fecha_envio DateTime @default(now())
+
   id_admin    String?
   admin       User?    @relation(fields: [id_admin], references: [id], onDelete: SetNull)
 
@@ -377,36 +323,34 @@ model Contacto {
 
 # 🔗 Relaciones principales
 
-Relaciones clave del modelo:
-
-```
-Role 1 ─── N User
-User 1 ─── N Archivo
-User 1 ─── N Mensaje (emisor)
-User 1 ─── N Mensaje (receptor)
-User 1 ─── N Session
-User 1 ─── N Account
-User 1 ─── N Contacto
+```text
+Role     1 ─── N User
+User     1 ─── N Archivo
+User     1 ─── N Mensaje (emisor)
+User     1 ─── N Mensaje (receptor)
+User     1 ─── N Session
+User     1 ─── N Account
+User     1 ─── N Contacto
 ```
 
 ---
 
 # 📊 Ventajas del diseño
 
-✔ Separación entre autenticación y lógica de negocio
-✔ Sistema de roles extensible
-✔ Base preparada para crecimiento
-✔ Relaciones claras entre entidades
-✔ Integración directa con Prisma
+* Separación entre autenticación y lógica de negocio.
+* Compatible con Better Auth.
+* Sistema de roles extensible.
+* Preparado para permisos futuros.
+* Preparado para CRUD y panel de administración.
 
 ---
 
-# 🚀 Posibles mejoras futuras
+# 🚀 Próximo paso
 
-* Tabla **Pedidos de laboratorio**
-* Sistema de **estados de producción**
-* Sistema de **notificaciones**
-* Subida de **archivos STL o escaneos dentales**
-
+```text
+Implementar /test-auth para probar:
+- Register
+- Login
+- Session
+- Logout
 ```
-

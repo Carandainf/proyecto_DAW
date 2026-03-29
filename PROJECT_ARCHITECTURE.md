@@ -1,55 +1,34 @@
+# 🏗️ PROJECT_ARCHITECTURE.md
 
-# 🏗️ Arquitectura del Proyecto DAW
-
-Este documento describe la arquitectura técnica del proyecto, incluyendo tecnologías utilizadas, estructura de carpetas y cómo interactúan los distintos componentes.
+Arquitectura técnica actual del proyecto DAW.
 
 ---
 
 ## 📦 Tecnologías utilizadas
 
-| Tecnología | Uso |
-|------------|-----|
-| \*\*Astro 5.x\*\* | Framework principal del frontend |
-| \*\*TypeScript\*\* | Tipado fuerte y desarrollo más seguro |
-| \*\*Prisma ORM\*\* | Acceso a base de datos |
-| \*\*SQLite\*\* | Base de datos local |
-| \*\*Better Auth\*\* | Sistema de autenticación |
-| \*\*better-sqlite3\*\* | Driver SQLite para Node |
-| \*\*Node.js\*\* | Entorno de ejecución |
-| \*\*Prisma Studio\*\* | Explorador visual de la base de datos |
+| Tecnología       | Uso                                   |
+| ---------------- | ------------------------------------- |
+| Astro 5.x        | Framework principal                   |
+| TypeScript       | Tipado fuerte                         |
+| Tailwind CSS     | Estilos                               |
+| Prisma 7.5.x     | ORM                                   |
+| SQLite           | Base de datos                         |
+| Better Auth      | Sistema de autenticación              |
+| better-sqlite3   | Driver SQLite                         |
+| Node.js >= 20.19 | Runtime requerido                     |
+| Prisma Studio    | Explorador visual de la base de datos |
 
 ---
 
 ## 🧱 Arquitectura general
 
-El proyecto sigue una arquitectura simple basada en tres capas principales:
+El proyecto sigue una arquitectura por capas:
 
-```
-
-Frontend (Astro)
+```text
+UI (Astro + Tailwind)
 │
 ▼
-API / Auth Layer
-│
-▼
-Base de datos (SQLite + Prisma)
-
-```
-
-### Flujo de datos
-
-```
-
-Usuario
-│
-▼
-Página Astro
-│
-▼
-Auth Client (Better Auth)
-│
-▼
-API /api/auth/\*
+API endpoints de Astro
 │
 ▼
 Better Auth
@@ -59,299 +38,311 @@ Prisma ORM
 │
 ▼
 SQLite
-
 ```
 
 ---
 
-## 📂 Estructura del proyecto
+## 🔄 Flujo de autenticación
 
-Estructura simplificada:
-
+```text
+Usuario
+│
+▼
+/test-auth
+│
+▼
+fetch()
+│
+▼
+/api/auth-test/*
+│
+▼
+Better Auth
+│
+▼
+Prisma
+│
+▼
+SQLite
 ```
 
-proyecto\_DAW
+Además existe el endpoint interno principal de Better Auth:
+
+```text
+/api/auth/*
+```
+
+Gestionado por:
+
+```text
+src/pages/api/auth/[...all]/route.ts
+```
+
+---
+
+## 📂 Estructura actual del proyecto
+
+```text
+proyecto_DAW/
 │
-├─ prisma/
-│   ├─ schema.prisma
-│   ├─ migrations/
-│   └─ seed.ts
+├── prisma/
+│   ├── schema.prisma
+│   ├── seed.ts
+│   └── dev.db
 │
-├─ generated/
-│   └─ prisma/
+├── generated/
+│   └── prisma/
 │
-├─ src/
+├── src/
+│   ├── pages/
+│   │   ├── index.astro
+│   │   ├── prueba-db.astro
+│   │   ├── test-auth.astro
+│   │   └── api/
+│   │       ├── auth/
+│   │       │   └── [...all]/route.ts
+│   │       └── auth-test/
+│   │           ├── register.ts
+│   │           ├── login.ts
+│   │           ├── session.ts
+│   │           └── logout.ts
 │   │
-│   ├─ pages/
-│   │   ├─ index.astro
-│   │   ├─ prueba-db.astro
-│   │   │
-│   │   └─ api/
-│   │       └─ auth/
-│   │           └─ \[...all]/
-│   │               └─ route.ts
+│   ├── layouts/
+│   │   └── Layout.astro
 │   │
-│   ├─ lib/
-│   │   ├─ prisma.ts
-│   │   ├─ auth.ts
-│   │   └─ auth-client.ts
+│   ├── lib/
+│   │   ├── prisma.ts
+│   │   └── auth.ts
 │   │
-│   └─ components/
+│   └── styles/
+│       └── global.css
 │
-├─ .env
-├─ package.json
-└─ tsconfig.json
-
+├── .env
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
 ---
 
-## 🗄️ Base de Datos
+## 🗄️ Base de datos
 
-Se utiliza \*\*SQLite\*\* como base de datos principal.
-
-Ventajas:
-
-- No requiere servidor
-- Archivo portable
-- Ideal para desarrollo y proyectos académicos
-
-Archivo de base de datos:
-
-```
-
-prisma/dev.db
-
-```
-
----
-
-@# 🔗 Prisma ORM
-
-Prisma se encarga de:
-
-- mapear las tablas a modelos TypeScript
-- generar consultas tipadas
-- facilitar migraciones
-
-Cliente generado en:
-
-```
-
-generated/prisma
-
-```
-
----
-
-### 🔌 Cliente Prisma global
+Se utiliza SQLite.
 
 Archivo:
 
+```text
+prisma/dev.db
 ```
 
-src/lib/prisma.ts
+Tablas principales:
 
+```text
+Role
+User
+Session
+Account
+Verification
+Archivo
+Mensaje
+Contacto
+```
+
+Better Auth utiliza principalmente:
+
+```text
+User
+Session
+Account
+Verification
+```
+
+---
+
+## 🔗 Prisma ORM
+
+Prisma se encarga de:
+
+* Generar tipos TypeScript.
+* Conectar Astro con SQLite.
+* Facilitar migraciones y consultas.
+
+Cliente generado:
+
+```text
+generated/prisma/
+```
+
+Comando principal:
+
+```bash
+npx prisma generate
+```
+
+---
+
+## 🔌 Cliente Prisma global
+
+Archivo:
+
+```text
+src/lib/prisma.ts
 ```
 
 Responsabilidad:
 
-- Crear una única conexión a la base de datos
-- Evitar múltiples conexiones
-- Servir como punto central de acceso a la DB
+* Crear una única instancia de Prisma.
+* Evitar múltiples conexiones durante hot reload.
+* Centralizar el acceso a la base de datos.
 
 ---
 
-## 🔐 Sistema de Autenticación
+## 🔐 Better Auth
 
-Se utiliza \*\*Better Auth\*\* para gestionar:
+Archivo principal:
 
-- registro de usuarios
-- login
-- sesiones
-- tokens
-
-Configuración principal:
-
-```
-
+```text
 src/lib/auth.ts
-
 ```
 
-Características:
+Configuración actual:
 
-- login con \*\*email y contraseña\*\*
-- sesiones persistentes
-- soporte de roles
+* Prisma Adapter
+* Login por email + contraseña
+* Sesiones persistentes
+* `expiresIn` para duración de sesión
+
+Ejemplo:
+
+```text
+session: {
+  expiresIn: 60 * 60 * 24 * 7
+}
+```
+
+Variables necesarias:
+
+```env
+BETTER_AUTH_SECRET="..."
+BETTER_AUTH_URL="http://localhost:4321"
+```
 
 ---
 
-## 👥 Sistema de Roles
-
-El sistema de roles combina:
-
-### Roles propios del proyecto
-
-Tabla:
-
-```
-
-roles
-
-```
-
-Campos principales:
-
-```
-
-id\_rol
-nombre\_rol
-descripcion
-
-```
+## 👥 Sistema de roles
 
 Roles iniciales:
 
-```
-
+```text
 admin
 user
-
 ```
 
-### Campo de rol en usuario
+Modelo híbrido:
 
-En la tabla `User` existen dos mecanismos:
+1. Campo rápido `role` en `User`
+2. Relación `roleId` → `Role`
 
-1️⃣ `role` → rol rápido usado por Better Auth  
-2️⃣ `roleId` → relación con la tabla `Role`
+Esto permite:
 
-Esto permite mayor flexibilidad en la gestión de permisos.
+* Acceso rápido para Better Auth
+* Gestión avanzada de permisos desde Prisma
 
 ---
 
-## 🌐 API de Autenticación
+## 🌐 Endpoints de autenticación
 
-Endpoint principal:
+### Endpoint interno de Better Auth
 
+```text
+/api/auth/*
 ```
 
-/api/auth/\*
+Rutas soportadas:
 
-```
-
-Archivo:
-
-```
-
-src/pages/api/auth/\[...all]/route.ts
-
-```
-
-Este endpoint funciona como \*\*ruta catch-all\*\* y gestiona automáticamente todas las rutas de autenticación.
-
-Ejemplos de rutas manejadas:
-
-```
-
+```text
 POST /api/auth/signUp
 POST /api/auth/signIn
 GET  /api/auth/session
 POST /api/auth/signOut
-
 ```
 
----
+### Endpoints de prueba del proyecto
 
-## 🖥️ Cliente de Autenticación
-
-Archivo:
-
+```text
+/api/auth-test/register
+/api/auth-test/login
+/api/auth-test/session
+/api/auth-test/logout
 ```
 
-src/lib/auth-client.ts
-
-```
-
-Responsabilidad:
-
-Permitir que el frontend interactúe con el sistema de autenticación.
-
-Funciones disponibles:
-
-```
-
-signUp()
-signIn()
-signOut()
-useSession()
-
-```
-
----
-
-## 🌱 Inicialización de datos
-
-Script de seed:
-
-```
-
-prisma/seed.ts
-
-```
-
-Responsabilidad:
-
-Crear datos iniciales en la base de datos, como los roles del sistema:
-
-```
-
-admin
-user
-
-```
+Estos endpoints actuarán como capa intermedia entre la UI y Better Auth.
 
 ---
 
 ## 🧪 Páginas de prueba
 
-Página de prueba de base de datos:
+### Base de datos
 
-```
-
+```text
 src/pages/prueba-db.astro
-
 ```
 
-Función:
+Objetivo:
 
-- verificar conexión con la base de datos
-- listar roles existentes
-- comprobar funcionamiento de Prisma
+* Verificar conexión con Prisma.
+* Mostrar roles existentes.
+
+### Panel de autenticación
+
+```text
+src/pages/test-auth.astro
+```
+
+Objetivo:
+
+* Register
+* Login
+* Session
+* Logout
+
+Decisiones técnicas:
+
+* Formularios HTML nativos de Astro.
+* No usar React.
+* Uso de `fetch()`.
+* Uso de URL absoluta.
+* Uso de:
+
+```ts
+credentials: "include"
+```
+
+para mantener la cookie de sesión.
 
 ---
 
-## 🚀 Estado actual del proyecto
+## 🚀 Estado actual
 
-✔ Astro configurado  
-✔ Prisma funcionando  
-✔ Base de datos SQLite creada  
-✔ Roles iniciales generados  
-✔ Better Auth configurado  
-✔ Endpoint de autenticación activo  
-✔ Cliente de autenticación preparado  
+```text
+✔ Astro funcionando
+✔ Tailwind funcionando
+✔ Prisma 7.5.x funcionando
+✔ SQLite funcionando
+✔ Better Auth funcionando
+✔ Seed ejecutado
+✔ Roles creados
+✔ /prueba-db funcionando
+⏳ /test-auth pendiente
+```
 
 ---
 
 ## 🔮 Próximos pasos
 
-1️⃣ Crear página de registro de usuarios  
-2️⃣ Crear página de login  
-3️⃣ Gestionar sesiones en el frontend  
-4️⃣ Implementar panel de administración  
-5️⃣ Integrar sistema de subida de archivos del laboratorio dental
-```
-
----
-
+1. Crear `/test-auth`.
+2. Verificar registro y login.
+3. Verificar persistencia de sesión.
+4. Añadir protección de rutas.
+5. Implementar autorización por roles.
+6. Empezar CRUD principal del laboratorio dental.

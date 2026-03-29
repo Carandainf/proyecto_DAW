@@ -1,19 +1,20 @@
 # proyecto_DAW
 
-> 🦷 Proyecto DAW: Sistema de gestión de laboratorio dental con Astro + TypeScript + SQLite + Prisma + Better-Auth
+> 🦷 Proyecto DAW: Sistema de gestión de laboratorio dental con Astro + TypeScript + Tailwind CSS + SQLite + Prisma + Better Auth
 
 ---
 
 ## 🚀 Tecnologías utilizadas
 
-| Tecnología | Propósito |
-|-----------|-----------|
-| [Astro](https://astro.build/) | Framework principal |
-| TypeScript | Tipado estricto y seguridad |
-| [Prisma](https://www.prisma.io/) | ORM para SQLite |
-| SQLite | Base de datos ligera |
-| [Better-Auth](https://better-auth.com/) | Gestión de usuarios y autenticación |
-| Node.js 22+ | Runtime del proyecto |
+| Tecnología                               | Propósito                           |
+| ---------------------------------------- | ----------------------------------- |
+| [Astro](https://astro.build/)            | Framework principal                 |
+| TypeScript                               | Tipado estricto y seguridad         |
+| [Tailwind CSS](https://tailwindcss.com/) | Estilos de la aplicación            |
+| [Prisma 7.x](https://www.prisma.io/)     | ORM para SQLite                     |
+| SQLite                                   | Base de datos ligera                |
+| [Better Auth](https://better-auth.com/)  | Gestión de usuarios y autenticación |
+| Node.js >= 20.19                         | Runtime requerido por Prisma 7.x    |
 
 ---
 
@@ -21,21 +22,27 @@
 
 ```text
 /
-├── prisma/                 # Esquema de base de datos y migraciones
+├── prisma/
+│   ├── schema.prisma
+│   └── seed.ts
 ├── src/
-│   ├── pages/              # Páginas de Astro
+│   ├── pages/
 │   │   ├── index.astro
-│   │   └── prueba-db.astro
-│   ├── lib/                # Utilidades, Prisma y Better-Auth
+│   │   ├── prueba-db.astro
+│   │   └── test-auth.astro
+│   ├── layouts/
+│   │   └── Layout.astro
+│   ├── lib/
 │   │   ├── prisma.ts
 │   │   └── auth.ts
-│   └── components/         # Componentes UI (Astro/React)
-├── generated/              # Prisma Client generado
+│   └── styles/
+│       └── global.css
+├── generated/
+├── .env
 ├── package.json
 ├── tsconfig.json
-├── .env                    # Variables de entorno
 └── README.md
-````
+```
 
 ---
 
@@ -58,68 +65,106 @@ npm install
 
 ```env
 DATABASE_URL="file:./prisma/dev.db"
-BETTER_AUTH_SECRET="<tu_secreto_256_caracteres>"
+BETTER_AUTH_SECRET="<secret aleatorio>"
 BETTER_AUTH_URL="http://localhost:4321"
 ```
 
-4. Generar Prisma Client:
+4. Requisitos:
+
+* Node.js >= 20.19
+* Prisma Client generado correctamente
+
+5. Generar Prisma Client:
 
 ```bash
 npx prisma generate
 ```
 
-5. Ejecutar servidor de desarrollo:
+6. Ejecutar seed inicial:
+
+```bash
+npx tsx prisma/seed.ts
+```
+
+7. Ejecutar servidor de desarrollo:
 
 ```bash
 npm run dev
 ```
 
-Visita [http://localhost:4321](http://localhost:4321) para ver la aplicación.
+Visita [http://localhost:4321] para ver la aplicación.
 
 ---
 
 ## 🔑 Autenticación
 
-* Usuarios gestionados con **Better-Auth**.
-* Roles: `admin` y `user`.
-* Login por **email + contraseña**.
-* Sesiones persistentes en SQLite.
+* Better Auth configurado con Prisma Adapter.
+* Registro e inicio de sesión mediante email + contraseña.
+* Sesiones persistentes almacenadas en SQLite.
+* Better Auth usa `expiresIn` para la duración de sesión.
+* Roles iniciales creados mediante seed: `admin` y `user`.
 
 ---
 
 ## ⚡ Comandos útiles
 
-| Comando                  | Descripción                           |
-| ------------------------ | ------------------------------------- |
-| `npm run dev`            | Ejecuta el servidor local             |
-| `npm run build`          | Genera build de producción            |
-| `npm run preview`        | Previsualiza el build generado        |
-| `npx prisma studio`      | Explora la base de datos              |
-| `npx tsx prisma/seed.ts` | Inserta datos iniciales (roles, etc.) |
+| Comando                  | Descripción                    |
+| ------------------------ | ------------------------------ |
+| `npm run dev`            | Ejecuta el servidor local      |
+| `npm run build`          | Genera build de producción     |
+| `npm run preview`        | Previsualiza el build generado |
+| `npx prisma generate`    | Genera Prisma Client           |
+| `npx prisma studio`      | Explora la base de datos       |
+| `npx tsx prisma/seed.ts` | Inserta datos iniciales        |
+
+---
+
+## 📌 Estado actual
+
+* Conexión a SQLite funcionando.
+* Prisma Client generado correctamente.
+* Seed ejecutado con roles iniciales.
+* Better Auth configurado y conectado a Prisma.
+* Página `/prueba-db` funcionando.
+* Tailwind CSS configurado.
+* Proyecto funcionando correctamente en varios equipos mediante GitHub.
 
 ---
 
 ## 📌 Notas
 
-* Se ha integrado **Prisma Client** con **Better-Auth** usando adaptador SQLite.
-* La base de datos inicial contiene los roles: `admin` y `user`.
-* Se recomienda **no subir archivos sensibles** (`.env`, `dev.db`) gracias a `.gitignore`.
+* Prisma 7.x requiere Node.js >= 20.19.
+* Better Auth está configurado y conectado correctamente con Prisma.
+* La conexión a base de datos SQLite ya está verificada.
+* Existe una página de prueba (`/prueba-db`) para comprobar acceso a la base de datos.
+* La siguiente página en desarrollo es `/test-auth` para probar:
+
+  * Register
+  * Login
+  * Session
+  * Logout
+* No subir `.env` ni `prisma/dev.db` al repositorio.
 
 ---
 
 ## 📂 Próximos pasos
 
-1. Implementar **inicio de sesión y registro** con Better-Auth.
-2. Añadir **permisos por rol** en la aplicación.
-3. Completar **interfaz de gestión de usuarios y archivos**.
-4. Documentar **Security Model** (pendiente).
+1. Crear `/test-auth` con formularios de:
+
+   * Register
+   * Login
+   * Session
+   * Logout
+2. Añadir protección de rutas según sesión.
+3. Implementar autorización basada en roles.
+4. Comenzar CRUD principal del laboratorio dental.
 
 ---
 
 ## 📎 Referencias
 
-* [Astro Docs](https://docs.astro.build)
-* [Prisma Docs](https://www.prisma.io/docs/)
-* [Better-Auth Docs](https://better-auth.com/)
+* [https://docs.astro.build](https://docs.astro.build)
+* [https://www.prisma.io/docs/](https://www.prisma.io/docs/)
+* [https://better-auth.com/](https://better-auth.com/)
+* [https://tailwindcss.com/](https://tailwindcss.com/)
 
-```

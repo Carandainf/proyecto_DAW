@@ -1,4 +1,140 @@
 ---
+
+---
+
+<html lang="es">
+    <body class="p-8 space-y-6">
+        <h1 class="text-2xl font-bold">Auth Test Panel</h1>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" class="space-y-2 border p-4 rounded-md">
+            <input
+                name="name"
+                placeholder="Name"
+                class="border p-2 w-full rounded"
+                required
+            />
+            <input
+                name="email"
+                type="email"
+                placeholder="Email"
+                class="border p-2 w-full rounded"
+                required
+            />
+            <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                class="border p-2 w-full rounded"
+                required
+            />
+            <button
+                type="submit"
+                class="bg-blue-500 text-white px-4 py-2 rounded"
+                >Register</button
+            >
+        </form>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" class="space-y-2 border p-4 rounded-md">
+            <input
+                name="email"
+                type="email"
+                placeholder="Email"
+                class="border p-2 w-full rounded"
+                required
+            />
+            <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                class="border p-2 w-full rounded"
+                required
+            />
+            <button
+                type="submit"
+                class="bg-green-500 text-white px-4 py-2 rounded">Login</button
+            >
+        </form>
+
+        <!-- ACTION BUTTONS -->
+        <div class="space-x-2">
+            <button
+                id="sessionBtn"
+                class="bg-gray-500 text-white px-4 py-2 rounded"
+                >Get Session</button
+            >
+            <button
+                id="logoutBtn"
+                class="bg-red-500 text-white px-4 py-2 rounded">Logout</button
+            >
+        </div>
+
+        <pre id="output" class="bg-black text-white p-4 mt-4 rounded"></pre>
+
+        <!-- Código cliente TS/JS -->
+        <script type="module">
+            const output = document.getElementById("output");
+            const registerForm = document.getElementById("registerForm");
+            const loginForm = document.getElementById("loginForm");
+            const sessionBtn = document.getElementById("sessionBtn");
+            const logoutBtn = document.getElementById("logoutBtn");
+
+            async function handleFetch(url, options = {}) {
+                const res = await fetch(url, {
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    ...options,
+                });
+                const data = await res.json();
+                if (output) output.textContent = JSON.stringify(data, null, 2);
+            }
+
+            registerForm?.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (!registerForm) return;
+
+                const form = new FormData(registerForm);
+                const bodyJson = JSON.stringify(
+                    Object.fromEntries(form.entries()),
+                );
+
+                console.log("Registro - body a enviar:", bodyJson); // <-- Aquí ves qué se construye
+
+                await handleFetch("/api/auth-test/register", {
+                    method: "POST",
+                    body: bodyJson,
+                });
+            });
+
+            loginForm?.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (!loginForm) return;
+                const form = new FormData(loginForm);
+
+                const loginData = {
+                    email: form.get("email"),
+                    password: form.get("password"),
+                };
+
+                await handleFetch("/api/auth-test/login", {
+                    method: "POST",
+                    body: JSON.stringify(loginData),
+                });
+            });
+
+            sessionBtn?.addEventListener("click", async () => {
+                await handleFetch("/api/auth-test/session");
+            });
+
+            logoutBtn?.addEventListener("click", async () => {
+                await handleFetch("/api/auth-test/logout", { method: "POST" });
+            });
+        </script>
+    </body>
+</html>
+
+<!-- ---
 // para que funcione en local
 const BASE_URL = "http://localhost:4321";
 
@@ -43,4 +179,4 @@ try {
 <pre>{JSON.stringify(loginResult, null, 2)}</pre>
 
 <h2>Session</h2>
-<pre>{JSON.stringify(sessionResult, null, 2)}</pre>
+<pre>{JSON.stringify(sessionResult, null, 2)}</pre> -->

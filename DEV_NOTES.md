@@ -1,54 +1,71 @@
-# 📚 Notas Técnicas del Proyecto DAW
-Guía detallada de configuración y pasos seguidos durante el desarrollo.
+# 📚 DEV_NOTES.md
 
-Este documento recoge todos los pasos técnicos realizados, incluyendo comandos, decisiones y estructura de archivos.
+Guía técnica detallada del proyecto DAW.
 
 ---
 
-# 🧱 1. Configuración inicial de la base de datos con Prisma
+# 1. Base de datos con Prisma + SQLite
 
-Se decidió usar SQLite para simplificar el desarrollo y cumplir los requisitos del proyecto, además de poder probarlo en local
+Se decidió usar SQLite para simplificar el desarrollo local y cumplir los requisitos del proyecto.
 
-### Instalación de dependencias
-
-```bash
-npm install prisma @types/node @types/better-sqlite3 --save-dev
-npm install @prisma/client @prisma/adapter-better-sqlite3 dotenv
-````
-
-### Inicialización de Prisma
+## Instalación inicial
 
 ```bash
-npx prisma init --datasource-provider sqlite --output ../generated/prisma
+npm install prisma @prisma/client
+npm install -D @types/node tsx
 ```
 
-Esto crea:
+## Inicialización de Prisma
 
+```bash
+npx prisma init --datasource-provider sqlite
 ```
+
+Archivos creados:
+
+```text
 prisma/
- ├─ schema.prisma
- ├─ migrations/
+├── schema.prisma
 .env
-prisma.config.ts
-generated/prisma/
 ```
 
-### Configuración del `.env`
+## Variables de entorno
 
-```
-DATABASE\_URL="file:./prisma/dev.db"
+Archivo `.env`:
+
+```env
+DATABASE_URL="file:./prisma/dev.db"
+BETTER_AUTH_SECRET="<secret aleatorio>"
+BETTER_AUTH_URL="http://localhost:4321"
 ```
 
 ---
 
-# 🧬 2. Esquema de Base de Datos
+# 2. Prisma 7.x y requisito de Node.js
 
-Se creó un esquema personalizado combinando:
+Prisma 7.x requiere:
 
-* Necesidades del proyecto
-* Campos requeridos por **Better Auth**
+```text
+Node.js >= 20.19
+```
 
-Tablas principales:
+Versión actual usada en el proyecto:
+
+```text
+Prisma 7.5.x
+```
+
+Después de cualquier cambio en `schema.prisma`:
+
+```bash
+npx prisma generate
+```
+
+---
+
+# 3. Esquema actual de base de datos
+
+Tablas principales del proyecto:
 
 * `Role`
 * `User`
@@ -59,111 +76,71 @@ Tablas principales:
 * `Mensaje`
 * `Contacto`
 
-El esquema usa mapeos (`@map`) para mantener nombres de tablas en español.
+Better Auth utiliza especialmente:
 
-Ejemplo:
+* `User`
+* `Session`
+* `Account`
+* `Verification`
 
-```prisma
-model Role {
-  id          Int       @id @default(autoincrement()) @map("id\_rol")
-  nombre      String    @unique @map("nombre\_rol")
-  descripcion String?
-  usuarios    User\[]
+Roles iniciales definidos:
 
-  @@map("roles")
-}
-```
+* `admin`
+* `user`
 
 ---
 
-# ⚙️ 3. Generación del cliente Prisma
-
-Después de definir el esquema:
-
-```bash
-npx prisma generate
-```
-
-Esto crea el cliente tipado en:
-
-```
-generated/prisma/
-```
-
----
-
-# 🔌 4. Cliente Prisma global
-
-Para evitar **múltiples conexiones a la base de datos**, se creó un cliente global.
+# 4. Cliente Prisma global
 
 Archivo:
 
-```
+```text
 src/lib/prisma.ts
 ```
 
-Código:
+Código actual:
 
 ```ts
 import "dotenv/config";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "../../generated/prisma/client";
 
-const connectionString = process.env.DATABASE\_URL!;
-const adapter = new PrismaBetterSqlite3({ url: connectionString });
+const globalForPrisma = globalThis as {
+  prisma?: PrismaClient;
+};
 
-const prisma = new PrismaClient({ adapter });
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaBetterSqlite3({
+  url: connectionString,
+});
 
-export { prisma };
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter,
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
 ```
+
+Se usa un singleton para evitar múltiples conexiones durante hot reload.
 
 ---
 
-# 🌱 5. Script de inicialización de datos (Seed)
+# 5. Seed inicial
 
 Archivo:
 
-```
+```text
 prisma/seed.ts
 ```
 
-Objetivo: crear roles iniciales.
+Objetivo:
 
-```ts
-import "dotenv/config";
-import { prisma } from "../src/lib/prisma";
-
-async function main() {
-
-  await prisma.role.upsert({
-    where: { nombre: "admin" },
-    update: {},
-    create: {
-      nombre: "admin",
-      descripcion: "Control total del laboratorio dental"
-    }
-  });
-
-  await prisma.role.upsert({
-    where: { nombre: "user" },
-    update: {},
-    create: {
-      nombre: "user",
-      descripcion: "Cliente que sube trabajos"
-    }
-  });
-
-  console.log("✅ Roles creados");
-}
-
-main()
-  .then(() => prisma.$disconnect())
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-```
+* Crear rol `admin`
+* Crear rol `user`
 
 Ejecución:
 
@@ -171,63 +148,42 @@ Ejecución:
 npx tsx prisma/seed.ts
 ```
 
+Resultado esperado:
+
+```text
+✅ Roles creados
+```
+
 ---
 
-# 🔎 6. Prueba de acceso a base de datos en Astro
+# 6. Prueba de conexión a la base de datos
 
 Archivo:
 
-```
+```text
 src/pages/prueba-db.astro
 ```
 
-Código:
+Objetivo:
 
-```astro
----
-import { prisma } from "@/lib/prisma";
-import type { Role } from "../../generated/prisma/client";
-
-let roles: Role\[] = \[];
-let errorMensaje: string | null = null;
-
-try {
-    roles = await prisma.role.findMany();
-} catch (e: any) {
-    errorMensaje = e.message;
-}
----
-
-<h1>Prueba de Base de Datos</h1>
-
-<ul>
-{
-roles.map((role) => (
-<li>
-<strong>{role.nombre}</strong>: {role.descripcion}
-</li>
-))
-}
-</ul>
-
-{errorMensaje<p>Error: {errorMensaje}</p>}
-```
-
-Servidor:
-
-```
-npm run dev
-```
+* Verificar que Astro puede leer desde Prisma.
+* Confirmar que los roles seed existen.
 
 URL:
 
-```
+```text
 http://localhost:4321/prueba-db
+```
+
+Estado:
+
+```text
+✔ Funcionando
 ```
 
 ---
 
-# 🔐 7. Instalación de Better Auth
+# 7. Better Auth
 
 Instalación:
 
@@ -235,150 +191,133 @@ Instalación:
 npm install better-auth
 ```
 
----
+Archivo principal:
 
-# 🔑 8. Variables de entorno para autenticación
-
-Archivo `.env`
-
-```
-DATABASE\_URL="file:./prisma/dev.db"
-
-BETTER\_AUTH\_SECRET=<secreto-256-caracteres>
-BETTER\_AUTH\_URL=http://localhost:4321
-```
-
-### Generar secret de 256 caracteres
-
-En Windows con Node.js:
-
-```bash
-node -e "console.log(require('crypto').randomBytes(192).toString('base64'))"
-```
-
----
-
-# 🧠 9. Instancia de Better Auth
-
-Archivo:
-
-```
+```text
 src/lib/auth.ts
 ```
 
-Código:
+Código base:
 
 ```ts
 import "dotenv/config";
 import { betterAuth } from "better-auth";
-import { prisma } from "@/lib/prisma";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
-        provider: "sqlite"
-    }),
+  database: prismaAdapter(prisma, {
+    provider: "sqlite",
+  }),
 
-    emailAndPassword: {
-        enabled: true
-    },
+  emailAndPassword: {
+    enabled: true,
+  },
 
-    roles:\["admin", "user"],
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+  },
 
-    session: {
-        expiresIn: 60 \* 60 \* 24 \* 7
-    },
-
-    secret: process.env.BETTER\_AUTH\_SECRET!,
-    baseUrl: process.env.BETTER\_AUTH\_URL ?? "http://localhost:4321",
+  secret: process.env.BETTER_AUTH_SECRET!,
+  baseURL: process.env.BETTER_AUTH_URL!,
 });
 ```
 
 Nota importante:
 
-Se cambió `maxAge` → `expiresIn` porque la API actual de Better Auth ya no usa `maxAge`.
+```text
+Better Auth actual usa `expiresIn`, no `maxAge`.
+```
 
 ---
 
-# 🌐 10. Endpoint de autenticación
+# 8. Arquitectura actual
 
-Archivo:
+Flujo del proyecto:
 
+```text
+UI (Astro)
+↓
+API endpoints de Astro
+↓
+Better Auth
+↓
+Prisma
+↓
+SQLite
 ```
-src/pages/api/auth/\[...all]/route.ts
+
+---
+
+# 9. Tailwind CSS
+
+Tailwind ya está instalado y funcionando.
+
+Archivos relevantes:
+
+```text
+src/styles/global.css
+src/layouts/Layout.astro
 ```
 
-Código:
+VS Code configurado con soporte para Tailwind en archivos `.astro`.
+
+---
+
+# 10. Próxima implementación: `/test-auth`
+
+Página prevista:
+
+```text
+src/pages/test-auth.astro
+```
+
+Endpoints previstos:
+
+```text
+src/pages/api/auth-test/register.ts
+src/pages/api/auth-test/login.ts
+src/pages/api/auth-test/session.ts
+src/pages/api/auth-test/logout.ts
+```
+
+Funcionalidades del panel:
+
+* Register
+* Login
+* Session
+* Logout
+
+Decisiones tomadas:
+
+* Usar formularios HTML de Astro.
+* No usar eventos React.
+* Usar `fetch()`.
+* Usar URL absoluta:
+
+```text
+http://localhost:4321/api/auth-test/...
+```
+
+* Incluir siempre:
 
 ```ts
-import { auth } from "@/lib/auth";
-import { toNextJsHandler } from "better-auth/next-js";
-
-export const { GET, POST } = toNextJsHandler(auth);
+credentials: "include"
 ```
 
-Este endpoint gestiona automáticamente:
-
-```
-/api/auth/signUp
-/api/auth/signIn
-/api/auth/session
-/api/auth/signOut
-```
+para que las cookies de sesión funcionen correctamente.
 
 ---
 
-# 🖥️ 11. Cliente de autenticación para frontend
+# 11. Estado actual
 
-Archivo:
-
+```text
+✔ SQLite funcionando
+✔ Prisma 7.5.x funcionando
+✔ Better Auth funcionando
+✔ Tailwind funcionando
+✔ Seed ejecutado
+✔ Proyecto funcionando en varios equipos
+✔ /prueba-db funcionando
+⏳ /test-auth pendiente
 ```
-src/lib/auth-client.ts
-```
-
-Código:
-
-```ts
-import { createAuthClient } from "better-auth/react";
-
-export const authClient = createAuthClient({
-  baseURL: process.env.BETTER\_AUTH\_URL ?? "http://localhost:4321",
-});
-
-export const { signUp, signIn, signOut, useSession } = authClient;
-```
-
-Permite usar desde el frontend:
-
-```
-signUp()
-signIn()
-signOut()
-useSession()
-```
-
----
-
-# 📌 Estado actual
-
-✔ Prisma configurado
-✔ Base de datos SQLite operativa
-✔ Roles iniciales creados
-✔ Cliente Prisma global
-✔ Página de prueba de DB funcionando
-✔ Better Auth instalado
-✔ Endpoint `/api/auth` creado
-✔ Cliente frontend preparado
-
----
-
-# 🚀 Próximos pasos
-
-1. Crear `test-auth.astro`
-2. Probar registro de usuario
-3. Probar login
-4. Verificar sesiones en la base de datos
-5. Integrar roles personalizados con el sistema de permisos
-
-```
-
