@@ -1277,6 +1277,11 @@ export type MensajeFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Mensajes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Mensajes.
+   */
   distinct?: Prisma.MensajeScalarFieldEnum | Prisma.MensajeScalarFieldEnum[]
 }
 
