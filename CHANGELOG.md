@@ -6,6 +6,39 @@ El formato está inspirado en Keep a Changelog y versionado semántico.
 
 ---
 
+# [0.6.0] - 2026-04-05
+
+## Añadido
+* **Dashboard de Cliente (Bento Grid)**:
+  * Diseño avanzado tipo "Bento" con rejilla responsive (`grid-cols-1 md:grid-cols-3`).
+  * Integración de **Tailwind CSS 4** con variables de color personalizadas para el sector dental (`dent-card`, `dent-border`, `dent-accent`).
+  * Implementación de fuentes locales ("Inter") para cumplimiento de privacidad y rendimiento.
+* **Sistema de Gestión de Archivos STL**:
+  * Creación de Endpoint API `src/pages/api/upload.ts` para procesamiento de archivos `multipart/form-data`.
+  * Lógica de guardado físico en `/public/uploads` con renombrado único mediante *timestamps* para evitar colisiones de archivos.
+  * Vinculación automática de archivos con el `id` de usuario de la sesión activa de Better Auth.
+* **Experiencia de Usuario (UX) Pro**:
+  * **Zona Dropzone**: Implementada funcionalidad *Drag & Drop* nativa mediante JavaScript para captura de archivos.
+  * **Feedback Visual**: Efectos de escala (`scale-101`) y cambio de color cian al arrastrar archivos sobre la zona de carga.
+  * **Estado de Éxito**: Pantalla de confirmación animada integrada en el Bento Grid tras una subida correcta, eliminando el uso de `alert()` nativos.
+
+## Cambiado
+* **Esquema de Base de Datos (Prisma)**:
+  * Evolución del modelo `Archivo` para soportar flujo de trabajo real:
+    * Añadido `url_path` para localización de archivos en el servidor.
+    * Añadido `descripcion` (String opcional) para observaciones técnicas del dentista.
+    * Añadido `prioridad` (String) para gestión de urgencias (Normal/Urgente).
+* **Configuración de Prisma v7**:
+  * Migración de la lógica de *seeding* al nuevo estándar `prisma.config.ts`.
+  * Configuración de la propiedad `migrations.seed` para ejecutar el script mediante `tsx`.
+
+## Corregido
+* **Desfase de Tipado (Prisma/TypeScript)**: Solucionado error `ts(2353)` mediante la regeneración forzada del cliente con `npx prisma generate`.
+* **Persistencia de Formulario**: Implementado `form.reset()` tras subida exitosa para limpiar estados del navegador (observaciones y prioridad).
+* **Interrupción de Navegador en Dropzone**: Corregido el comportamiento por defecto donde el navegador intentaba abrir el archivo `.stl` en lugar de procesar la subida.
+
+---
+
 # [0.5.0] - 2026-04-03
 
 ## Añadido
@@ -210,104 +243,34 @@ const loginData = {
 * Configuración inicial de GitHub.
 * README inicial del proyecto.
 
+## Añadido --Tailwind CSS y preparación del panel de autenticación
 
-## 📅 [2026-02-27] - Configuración inicial del proyecto
-
-**Estado:** 🟢 Completado
-
-### Hitos logrados
-
-* Proyecto Astro creado con TypeScript en modo estricto.
-* Dependencias instaladas mediante `npm`.
-* Repositorio Git inicializado y conectado con GitHub.
-* VS Code configurado con:
-
-  * Astro
-  * Tailwind CSS IntelliSense
-  * Prisma
-  * ESLint
-  * Prettier
-  * Error Lens
-  * GitLens
-* Configuración inicial de `settings.json`:
-
-  * `formatOnSave`
-  * auto-fix de ESLint
-  * soporte Tailwind en `.astro`
-
----
-
-## 📅 [2026-03-10] - Configuración de Prisma + SQLite
-
-**Estado:** 🟢 Completado
-
-### Hitos logrados
-
-* Prisma configurado con SQLite.
-* `schema.prisma` creado y funcionando.
-* Prisma Client generado correctamente.
-* Cliente global en `src/lib/prisma.ts` para evitar múltiples conexiones.
-* Base de datos SQLite operativa mediante:
-
-```env
-DATABASE_URL="file:./prisma/dev.db"
-```
-
-* Seed ejecutado correctamente.
-* Roles iniciales creados:
-
-  * `admin`
-  * `user`
-* Página `prueba-db.astro` creada para verificar lectura desde la base de datos.
-* Tipado generado para todos los modelos de Prisma.
-
-### Resultado
-
-* Conexión a base de datos verificada.
-* Lectura de datos funcionando correctamente.
-
----
-
-## 📅 [2026-03-18] - Integración de Better Auth
-
-**Estado:** 🟢 Completado
-
-### Hitos logrados
-
-* Better Auth instalado y configurado.
-* Archivo `src/lib/auth.ts` creado.
-* Better Auth conectado a Prisma mediante Prisma Adapter.
-* Variables de entorno añadidas:
-
-```env
-BETTER_AUTH_SECRET="<secret aleatorio>"
-BETTER_AUTH_URL="http://localhost:4321"
-```
-
-* Login mediante email + contraseña habilitado.
-* Gestión de sesiones habilitada.
-* Configuración corregida para usar `expiresIn` en lugar de `maxAge`.
-* Proyecto actualizado a Prisma 7.5.x.
-* Requisito de Node.js actualizado a:
+* Tailwind CSS instalado y funcionando.
+* Archivo `src/styles/global.css` configurado.
+* Layout base `src/layouts/Layout.astro` creado.
+* Estructura de páginas actualizada:
 
 ```text
->= 20.19
+src/pages/
+├── index.astro
+├── prueba-db.astro
+└── test-auth.astro
 ```
 
-* `npx prisma generate` ejecutado correctamente tras la actualización.
-* Compatibilidad verificada en dos equipos distintos mediante GitHub.
+* Definido el panel `/test-auth`.
+* Decisión tomada de usar:
 
-### Resultado
-
-* Flujo actual operativo:
+  * formularios HTML en Astro
+  * `fetch()` con URLs absolutas
+  * `credentials: "include"`
+* Endpoints previstos:
 
 ```text
-UI (Astro) → API (Astro endpoints) → Better Auth → Prisma → SQLite
+/api/auth-test/register
+/api/auth-test/login
+/api/auth-test/session
+/api/auth-test/logout
 ```
-
----
-
-## 📅 [2026-03-29] - Tailwind CSS y preparación del panel de autenticación
 
 **Estado:** 🟢 En progreso
 
@@ -359,3 +322,101 @@ src/pages/
 * Roles iniciales creados.
 * Proyecto sincronizado entre varios equipos.
 * Próximo objetivo: completar `/test-auth`.
+
+---
+
+## 📅 [2026-03-18] - Integración de Better Auth
+
+**Estado:** 🟢 Completado
+
+### Hitos logrados
+
+* Better Auth instalado y configurado.
+* Archivo `src/lib/auth.ts` creado.
+* Better Auth conectado a Prisma mediante Prisma Adapter.
+* Variables de entorno añadidas:
+
+```env
+BETTER_AUTH_SECRET="<secret aleatorio>"
+BETTER_AUTH_URL="http://localhost:4321"
+```
+
+* Login mediante email + contraseña habilitado.
+* Gestión de sesiones habilitada.
+* Configuración corregida para usar `expiresIn` en lugar de `maxAge`.
+* Proyecto actualizado a Prisma 7.5.x.
+* Requisito de Node.js actualizado a:
+
+```text
+>= 20.19
+```
+
+* `npx prisma generate` ejecutado correctamente tras la actualización.
+* Compatibilidad verificada en dos equipos distintos mediante GitHub.
+
+### Resultado
+
+* Flujo actual operativo:
+
+```text
+UI (Astro) → API (Astro endpoints) → Better Auth → Prisma → SQLite
+```
+
+---
+
+## 📅 [2026-03-10] - Configuración de Prisma + SQLite
+
+**Estado:** 🟢 Completado
+
+### Hitos logrados
+
+* Prisma configurado con SQLite.
+* `schema.prisma` creado y funcionando.
+* Prisma Client generado correctamente.
+* Cliente global en `src/lib/prisma.ts` para evitar múltiples conexiones.
+* Base de datos SQLite operativa mediante:
+
+```env
+DATABASE_URL="file:./prisma/dev.db"
+```
+
+* Seed ejecutado correctamente.
+* Roles iniciales creados:
+
+  * `admin`
+  * `user`
+* Página `prueba-db.astro` creada para verificar lectura desde la base de datos.
+* Tipado generado para todos los modelos de Prisma.
+
+### Resultado
+
+* Conexión a base de datos verificada.
+* Lectura de datos funcionando correctamente.
+
+---
+
+## 📅 [2026-02-27] - Configuración inicial del proyecto
+
+**Estado:** 🟢 Completado
+
+### Hitos logrados
+
+* Proyecto Astro creado con TypeScript en modo estricto.
+* Dependencias instaladas mediante `npm`.
+* Repositorio Git inicializado y conectado con GitHub.
+* VS Code configurado con:
+
+  * Astro
+  * Tailwind CSS IntelliSense
+  * Prisma
+  * ESLint
+  * Prettier
+  * Error Lens
+  * GitLens
+* Configuración inicial de `settings.json`:
+
+  * `formatOnSave`
+  * auto-fix de ESLint
+  * soporte Tailwind en `.astro`
+
+

@@ -108,6 +108,8 @@ model Archivo {
   nombre_archivo  String
   url_path        String    @default("")
   estado          String    @default("pendiente")
+  prioridad       String    @default("normal")
+  descripcion     String?
   fecha_subida    DateTime  @default(now())
   fecha_recepcion DateTime?
   usuario         User      @relation(fields: [id_usuario], references: [id], onDelete: Cascade)

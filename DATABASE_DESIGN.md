@@ -1,23 +1,23 @@
 # 🗄️ DATABASE_DESIGN.md
 
-Diseño actual de la base de datos del proyecto DAW.
+Diseño integral de la base de datos del proyecto DAW (Laboratorio Dental).
 
 ---
 
 # 📦 Tecnología utilizada
 
-| Tecnología     | Motivo                              |
-| -------------- | ----------------------------------- |
-| SQLite         | Base de datos relacional portable   |
-| Prisma 7.6.0   | ORM con tipado estricto (v7.6.0)    |
-| Better Auth    | Gestión de usuarios, roles y tokens |
-| Prisma Studio  | GUI para administración de datos    |
+| Tecnología       | Motivo                               |
+| ---------------- | ------------------------------------ |
+| SQLite           | Base de datos relacional portable    |
+| Prisma 7.6.0     | ORM con tipado estricto (v7.6.0)     |
+| Better Auth 1.5  | Gestión de usuarios, roles y tokens  |
+| Prisma Studio    | GUI para administración de datos     |
 
 ---
 
 # 🧱 Modelo de Datos (Esquema)
 
-El sistema utiliza un esquema híbrido donde conviven las tablas requeridas por **Better Auth** y las tablas personalizadas del **Laboratorio Dental**.
+El sistema utiliza un esquema híbrido donde conviven las tablas requeridas por **Better Auth** y las tablas personalizadas del **Laboratorio**.
 
 ### Bloque: Autenticación (Managed by Better Auth)
 * **usuarios**: Almacena credenciales, perfiles y el ROL activo (`role`).
@@ -26,54 +26,64 @@ El sistema utiliza un esquema híbrido donde conviven las tablas requeridas por 
 * **verificaciones**: Tokens de seguridad para email/pass.
 
 ### Bloque: Negocio (Custom Logic)
+* **archivos**: Gestión técnica de trabajos dentales (STL), metadatos y estados de fabricación.
 * **roles**: Definición maestra de permisos (`admin`, `user`).
-* **archivos**: Gestión de trabajos dentales subidos por clientes.
-* **mensajes**: Comunicación interna entre admin y clientes.
-* **contactos**: Registro de formularios de contacto.
+* **mensajes**: (Pendiente) Comunicación interna vinculada a cada orden.
+* **contactos**: Registro de formularios de contacto externos.
 
 ---
 
 # 👤 Tabla: User (usuarios)
 
-Es la tabla central. Se ha extendido para soportar el sistema de roles de Better Auth.
+Extensión del modelo de Better Auth para soportar el sistema de permisos del laboratorio.
 
 ```prisma
 model User {
-  id            String    @id
-  name          String    @map("nombre")
-  email         String    @unique
-  role          String?   @default("user") // Campo clave para Better Auth 1.5
+  id        String    @id
+  name      String    @map("nombre")
+  email     String    @unique
+  role      String?   @default("user") // Inyectado en sesión por Better Auth 1.5
   
-  // Relación opcional con tabla maestra de roles
-  roleId        Int?      @map("id_rol")
-  roleRel       Role?     @relation(fields: [roleId], references: [id])
+  // Relación con tabla maestra de roles (Opcional/Legacy)
+  roleId    Int?      @map("id_rol")
+  roleRel   Role?     @relation(fields: [roleId], references: [id])
   
-  // ... resto de campos (archivos, sesiones, etc.)
+  // Relación con producción
+  archivos  Archivo[]
 }
 
-Nota técnica: Actualmente, la lógica de acceso en Astro se basa en el campo role de tipo String, que es inyectado en la sesión por Better Auth.
+model Archivo {
+  id_archivo      Int       @id @default(autoincrement())
+  id_usuario      String    // FK vinculada a User.id
+  nombre_archivo  String    // Nombre original del fichero
+  url_path        String    // Ubicación en /public/uploads/
+  estado          String    @default("pendiente") // pendiente, recibido, terminado
+  prioridad       String    @default("normal")    // normal, urgente
+  descripcion     String?   // Notas técnicas del facultativo
+  fecha_subida    DateTime  @default(now())
+  fecha_recepcion DateTime? // Fecha en la que el admin inicia el trabajo
+}
+```
+📊 Estado de Implementación de Datos
 
----
+    [x] Esquema Prisma sincronizado: Actualizado a v7.6.0 con soporte para metadatos de archivos.
 
-# 📊 Estado de Implementación de Datos
+    [x] Seed inicial: Roles maestros (admin/user) insertados.
 
-    [x] Esquema Prisma sincronizado (v7.6.0).
+    [x] Persistencia Física: Sistema de subida a /public/uploads operativo.
 
-    [x] Seed inicial de roles ejecutado.
+    [x] Lógica de Identidad: El id_usuario se captura automáticamente de la sesión activa al subir.
 
-    [x] Relaciones User -> Session operativas.
+    [ ] CRUD de Lectura: Implementar el listado histórico en el Dashboard de Cliente.
 
-    [x] Persistencia de cookies configurada a 7 días.
+    [ ] Gestión de Estados: Crear lógica para que el Admin cambie el estado y asigne fecha_recepcion.
+  
+  
+  🎯 Próximos Pasos (Implementación)
 
-    [ ] Implementar lógica CRUD para la tabla Archivo.
+    Vincular la tabla Archivo con la UI del Dashboard (Zona 3).
 
-    [ ] Implementar sistema de mensajería entre roles.
+    Crear el flujo de administración para que el laboratorio gestione los pedidos entrantes.
 
----
-
-# 🎯 Próximos Pasos (Implementación)
-
-1. Crear el formulario de subida de trabajos (Tabla Archivo).
-2. Vincular cada archivo subido con el ID del usuario en sesión.
-3. Crear vista de "Mis Trabajos" para el rol 'user'.
+    Implementar limpieza automática de archivos huérfanos en el servidor (opcional).
 

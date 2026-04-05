@@ -38,24 +38,36 @@ export type ArchivoMinAggregateOutputType = {
   id_archivo: number | null
   id_usuario: string | null
   nombre_archivo: string | null
+  url_path: string | null
   estado: string | null
+  prioridad: string | null
+  descripcion: string | null
   fecha_subida: Date | null
+  fecha_recepcion: Date | null
 }
 
 export type ArchivoMaxAggregateOutputType = {
   id_archivo: number | null
   id_usuario: string | null
   nombre_archivo: string | null
+  url_path: string | null
   estado: string | null
+  prioridad: string | null
+  descripcion: string | null
   fecha_subida: Date | null
+  fecha_recepcion: Date | null
 }
 
 export type ArchivoCountAggregateOutputType = {
   id_archivo: number
   id_usuario: number
   nombre_archivo: number
+  url_path: number
   estado: number
+  prioridad: number
+  descripcion: number
   fecha_subida: number
+  fecha_recepcion: number
   _all: number
 }
 
@@ -72,24 +84,36 @@ export type ArchivoMinAggregateInputType = {
   id_archivo?: true
   id_usuario?: true
   nombre_archivo?: true
+  url_path?: true
   estado?: true
+  prioridad?: true
+  descripcion?: true
   fecha_subida?: true
+  fecha_recepcion?: true
 }
 
 export type ArchivoMaxAggregateInputType = {
   id_archivo?: true
   id_usuario?: true
   nombre_archivo?: true
+  url_path?: true
   estado?: true
+  prioridad?: true
+  descripcion?: true
   fecha_subida?: true
+  fecha_recepcion?: true
 }
 
 export type ArchivoCountAggregateInputType = {
   id_archivo?: true
   id_usuario?: true
   nombre_archivo?: true
+  url_path?: true
   estado?: true
+  prioridad?: true
+  descripcion?: true
   fecha_subida?: true
+  fecha_recepcion?: true
   _all?: true
 }
 
@@ -183,8 +207,12 @@ export type ArchivoGroupByOutputType = {
   id_archivo: number
   id_usuario: string
   nombre_archivo: string
+  url_path: string
   estado: string
+  prioridad: string
+  descripcion: string | null
   fecha_subida: Date
+  fecha_recepcion: Date | null
   _count: ArchivoCountAggregateOutputType | null
   _avg: ArchivoAvgAggregateOutputType | null
   _sum: ArchivoSumAggregateOutputType | null
@@ -214,8 +242,12 @@ export type ArchivoWhereInput = {
   id_archivo?: Prisma.IntFilter<"Archivo"> | number
   id_usuario?: Prisma.StringFilter<"Archivo"> | string
   nombre_archivo?: Prisma.StringFilter<"Archivo"> | string
+  url_path?: Prisma.StringFilter<"Archivo"> | string
   estado?: Prisma.StringFilter<"Archivo"> | string
+  prioridad?: Prisma.StringFilter<"Archivo"> | string
+  descripcion?: Prisma.StringNullableFilter<"Archivo"> | string | null
   fecha_subida?: Prisma.DateTimeFilter<"Archivo"> | Date | string
+  fecha_recepcion?: Prisma.DateTimeNullableFilter<"Archivo"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
@@ -223,8 +255,12 @@ export type ArchivoOrderByWithRelationInput = {
   id_archivo?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
   nombre_archivo?: Prisma.SortOrder
+  url_path?: Prisma.SortOrder
   estado?: Prisma.SortOrder
+  prioridad?: Prisma.SortOrder
+  descripcion?: Prisma.SortOrderInput | Prisma.SortOrder
   fecha_subida?: Prisma.SortOrder
+  fecha_recepcion?: Prisma.SortOrderInput | Prisma.SortOrder
   usuario?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -235,8 +271,12 @@ export type ArchivoWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ArchivoWhereInput | Prisma.ArchivoWhereInput[]
   id_usuario?: Prisma.StringFilter<"Archivo"> | string
   nombre_archivo?: Prisma.StringFilter<"Archivo"> | string
+  url_path?: Prisma.StringFilter<"Archivo"> | string
   estado?: Prisma.StringFilter<"Archivo"> | string
+  prioridad?: Prisma.StringFilter<"Archivo"> | string
+  descripcion?: Prisma.StringNullableFilter<"Archivo"> | string | null
   fecha_subida?: Prisma.DateTimeFilter<"Archivo"> | Date | string
+  fecha_recepcion?: Prisma.DateTimeNullableFilter<"Archivo"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id_archivo">
 
@@ -244,8 +284,12 @@ export type ArchivoOrderByWithAggregationInput = {
   id_archivo?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
   nombre_archivo?: Prisma.SortOrder
+  url_path?: Prisma.SortOrder
   estado?: Prisma.SortOrder
+  prioridad?: Prisma.SortOrder
+  descripcion?: Prisma.SortOrderInput | Prisma.SortOrder
   fecha_subida?: Prisma.SortOrder
+  fecha_recepcion?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ArchivoCountOrderByAggregateInput
   _avg?: Prisma.ArchivoAvgOrderByAggregateInput
   _max?: Prisma.ArchivoMaxOrderByAggregateInput
@@ -260,14 +304,22 @@ export type ArchivoScalarWhereWithAggregatesInput = {
   id_archivo?: Prisma.IntWithAggregatesFilter<"Archivo"> | number
   id_usuario?: Prisma.StringWithAggregatesFilter<"Archivo"> | string
   nombre_archivo?: Prisma.StringWithAggregatesFilter<"Archivo"> | string
+  url_path?: Prisma.StringWithAggregatesFilter<"Archivo"> | string
   estado?: Prisma.StringWithAggregatesFilter<"Archivo"> | string
+  prioridad?: Prisma.StringWithAggregatesFilter<"Archivo"> | string
+  descripcion?: Prisma.StringNullableWithAggregatesFilter<"Archivo"> | string | null
   fecha_subida?: Prisma.DateTimeWithAggregatesFilter<"Archivo"> | Date | string
+  fecha_recepcion?: Prisma.DateTimeNullableWithAggregatesFilter<"Archivo"> | Date | string | null
 }
 
 export type ArchivoCreateInput = {
   nombre_archivo: string
+  url_path?: string
   estado?: string
+  prioridad?: string
+  descripcion?: string | null
   fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
   usuario: Prisma.UserCreateNestedOneWithoutArchivosInput
 }
 
@@ -275,14 +327,22 @@ export type ArchivoUncheckedCreateInput = {
   id_archivo?: number
   id_usuario: string
   nombre_archivo: string
+  url_path?: string
   estado?: string
+  prioridad?: string
+  descripcion?: string | null
   fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
 }
 
 export type ArchivoUpdateInput = {
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usuario?: Prisma.UserUpdateOneRequiredWithoutArchivosNestedInput
 }
 
@@ -290,30 +350,46 @@ export type ArchivoUncheckedUpdateInput = {
   id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ArchivoCreateManyInput = {
   id_archivo?: number
   id_usuario: string
   nombre_archivo: string
+  url_path?: string
   estado?: string
+  prioridad?: string
+  descripcion?: string | null
   fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
 }
 
 export type ArchivoUpdateManyMutationInput = {
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ArchivoUncheckedUpdateManyInput = {
   id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ArchivoListRelationFilter = {
@@ -330,8 +406,12 @@ export type ArchivoCountOrderByAggregateInput = {
   id_archivo?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
   nombre_archivo?: Prisma.SortOrder
+  url_path?: Prisma.SortOrder
   estado?: Prisma.SortOrder
+  prioridad?: Prisma.SortOrder
+  descripcion?: Prisma.SortOrder
   fecha_subida?: Prisma.SortOrder
+  fecha_recepcion?: Prisma.SortOrder
 }
 
 export type ArchivoAvgOrderByAggregateInput = {
@@ -342,16 +422,24 @@ export type ArchivoMaxOrderByAggregateInput = {
   id_archivo?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
   nombre_archivo?: Prisma.SortOrder
+  url_path?: Prisma.SortOrder
   estado?: Prisma.SortOrder
+  prioridad?: Prisma.SortOrder
+  descripcion?: Prisma.SortOrder
   fecha_subida?: Prisma.SortOrder
+  fecha_recepcion?: Prisma.SortOrder
 }
 
 export type ArchivoMinOrderByAggregateInput = {
   id_archivo?: Prisma.SortOrder
   id_usuario?: Prisma.SortOrder
   nombre_archivo?: Prisma.SortOrder
+  url_path?: Prisma.SortOrder
   estado?: Prisma.SortOrder
+  prioridad?: Prisma.SortOrder
+  descripcion?: Prisma.SortOrder
   fecha_subida?: Prisma.SortOrder
+  fecha_recepcion?: Prisma.SortOrder
 }
 
 export type ArchivoSumOrderByAggregateInput = {
@@ -402,15 +490,23 @@ export type ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput = {
 
 export type ArchivoCreateWithoutUsuarioInput = {
   nombre_archivo: string
+  url_path?: string
   estado?: string
+  prioridad?: string
+  descripcion?: string | null
   fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
 }
 
 export type ArchivoUncheckedCreateWithoutUsuarioInput = {
   id_archivo?: number
   nombre_archivo: string
+  url_path?: string
   estado?: string
+  prioridad?: string
+  descripcion?: string | null
   fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
 }
 
 export type ArchivoCreateOrConnectWithoutUsuarioInput = {
@@ -445,35 +541,55 @@ export type ArchivoScalarWhereInput = {
   id_archivo?: Prisma.IntFilter<"Archivo"> | number
   id_usuario?: Prisma.StringFilter<"Archivo"> | string
   nombre_archivo?: Prisma.StringFilter<"Archivo"> | string
+  url_path?: Prisma.StringFilter<"Archivo"> | string
   estado?: Prisma.StringFilter<"Archivo"> | string
+  prioridad?: Prisma.StringFilter<"Archivo"> | string
+  descripcion?: Prisma.StringNullableFilter<"Archivo"> | string | null
   fecha_subida?: Prisma.DateTimeFilter<"Archivo"> | Date | string
+  fecha_recepcion?: Prisma.DateTimeNullableFilter<"Archivo"> | Date | string | null
 }
 
 export type ArchivoCreateManyUsuarioInput = {
   id_archivo?: number
   nombre_archivo: string
+  url_path?: string
   estado?: string
+  prioridad?: string
+  descripcion?: string | null
   fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
 }
 
 export type ArchivoUpdateWithoutUsuarioInput = {
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ArchivoUncheckedUpdateWithoutUsuarioInput = {
   id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ArchivoUncheckedUpdateManyWithoutUsuarioInput = {
   id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
   estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -482,8 +598,12 @@ export type ArchivoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   id_archivo?: boolean
   id_usuario?: boolean
   nombre_archivo?: boolean
+  url_path?: boolean
   estado?: boolean
+  prioridad?: boolean
+  descripcion?: boolean
   fecha_subida?: boolean
+  fecha_recepcion?: boolean
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["archivo"]>
 
@@ -491,8 +611,12 @@ export type ArchivoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id_archivo?: boolean
   id_usuario?: boolean
   nombre_archivo?: boolean
+  url_path?: boolean
   estado?: boolean
+  prioridad?: boolean
+  descripcion?: boolean
   fecha_subida?: boolean
+  fecha_recepcion?: boolean
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["archivo"]>
 
@@ -500,8 +624,12 @@ export type ArchivoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   id_archivo?: boolean
   id_usuario?: boolean
   nombre_archivo?: boolean
+  url_path?: boolean
   estado?: boolean
+  prioridad?: boolean
+  descripcion?: boolean
   fecha_subida?: boolean
+  fecha_recepcion?: boolean
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["archivo"]>
 
@@ -509,11 +637,15 @@ export type ArchivoSelectScalar = {
   id_archivo?: boolean
   id_usuario?: boolean
   nombre_archivo?: boolean
+  url_path?: boolean
   estado?: boolean
+  prioridad?: boolean
+  descripcion?: boolean
   fecha_subida?: boolean
+  fecha_recepcion?: boolean
 }
 
-export type ArchivoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_archivo" | "id_usuario" | "nombre_archivo" | "estado" | "fecha_subida", ExtArgs["result"]["archivo"]>
+export type ArchivoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_archivo" | "id_usuario" | "nombre_archivo" | "url_path" | "estado" | "prioridad" | "descripcion" | "fecha_subida" | "fecha_recepcion", ExtArgs["result"]["archivo"]>
 export type ArchivoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -533,8 +665,12 @@ export type $ArchivoPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     id_archivo: number
     id_usuario: string
     nombre_archivo: string
+    url_path: string
     estado: string
+    prioridad: string
+    descripcion: string | null
     fecha_subida: Date
+    fecha_recepcion: Date | null
   }, ExtArgs["result"]["archivo"]>
   composites: {}
 }
@@ -962,8 +1098,12 @@ export interface ArchivoFieldRefs {
   readonly id_archivo: Prisma.FieldRef<"Archivo", 'Int'>
   readonly id_usuario: Prisma.FieldRef<"Archivo", 'String'>
   readonly nombre_archivo: Prisma.FieldRef<"Archivo", 'String'>
+  readonly url_path: Prisma.FieldRef<"Archivo", 'String'>
   readonly estado: Prisma.FieldRef<"Archivo", 'String'>
+  readonly prioridad: Prisma.FieldRef<"Archivo", 'String'>
+  readonly descripcion: Prisma.FieldRef<"Archivo", 'String'>
   readonly fecha_subida: Prisma.FieldRef<"Archivo", 'DateTime'>
+  readonly fecha_recepcion: Prisma.FieldRef<"Archivo", 'DateTime'>
 }
     
 

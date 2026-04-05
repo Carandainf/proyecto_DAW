@@ -1115,8 +1115,12 @@ export const ArchivoScalarFieldEnum = {
   id_archivo: 'id_archivo',
   id_usuario: 'id_usuario',
   nombre_archivo: 'nombre_archivo',
+  url_path: 'url_path',
   estado: 'estado',
-  fecha_subida: 'fecha_subida'
+  prioridad: 'prioridad',
+  descripcion: 'descripcion',
+  fecha_subida: 'fecha_subida',
+  fecha_recepcion: 'fecha_recepcion'
 } as const
 
 export type ArchivoScalarFieldEnum = (typeof ArchivoScalarFieldEnum)[keyof typeof ArchivoScalarFieldEnum]
