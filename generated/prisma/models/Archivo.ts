@@ -192,7 +192,7 @@ export type ArchivoGroupByOutputType = {
   _max: ArchivoMaxAggregateOutputType | null
 }
 
-type GetArchivoGroupByPayload<T extends ArchivoGroupByArgs> = Prisma.PrismaPromise<
+export type GetArchivoGroupByPayload<T extends ArchivoGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ArchivoGroupByOutputType, T['by']> &
       {

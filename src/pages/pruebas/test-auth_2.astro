@@ -3,21 +3,21 @@
 const BASE_URL = "http://localhost:4321";
 
 const register = async () => {
-    const res = await fetch(`${BASE_URL}/api/auth-test/register`, {
+    const res = await fetch(`${BASE_URL}/api/test/register`, {
         method: "POST",
     });
     return await res.json();
 };
 
 const login = async () => {
-    const res = await fetch(`${BASE_URL}/api/auth-test/login`, {
+    const res = await fetch(`${BASE_URL}/api/test/login`, {
         method: "POST",
     });
     return await res.json();
 };
 
 const session = async () => {
-    const res = await fetch(`${BASE_URL}/api/auth-test/session`);
+    const res = await fetch(`${BASE_URL}/api/test/session`);
     return await res.json();
 };
 

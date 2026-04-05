@@ -1,13 +1,17 @@
 ---
 import "../styles/global.css";
+const { bodyClass = "p-6" } = Astro.props;
 ---
 
 <html lang="es">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
         <title>Proyecto DAW</title>
     </head>
-    <body class="p-6">
+
+    <!-- si la página no envía nada, usa "p-6" por defecto -->
+    <body class={bodyClass}>
         <slot />
     </body>
 </html>

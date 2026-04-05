@@ -1,20 +1,20 @@
-# proyecto_DAW
+# 🦷 proyecto_DAW: Sistema de gestión de laboratorio dental
 
-> 🦷 Proyecto DAW: Sistema de gestión de laboratorio dental con Astro + TypeScript + Tailwind CSS + SQLite + Prisma + Better Auth
+> Proyecto de Ciclo Formativo de Grado Superior (DAW) desarrollado con el stack más moderno: Astro 5 + TypeScript + Tailwind CSS 4 + SQLite + Prisma + Better Auth.
 
 ---
 
 ## 🚀 Tecnologías utilizadas
 
-| Tecnología                               | Propósito                           |
-| ---------------------------------------- | ----------------------------------- |
-| [Astro](https://astro.build/)            | Framework principal                 |
-| TypeScript                               | Tipado estricto y seguridad         |
-| [Tailwind CSS](https://tailwindcss.com/) | Estilos de la aplicación            |
-| [Prisma 7.x](https://www.prisma.io/)     | ORM para SQLite                     |
-| SQLite                                   | Base de datos ligera                |
-| [Better Auth](https://better-auth.com/)  | Gestión de usuarios y autenticación |
-| Node.js >= 20.19                         | Runtime requerido por Prisma 7.x    |
+| Tecnología                     | Propósito                                   |
+| ------------------------------ | ------------------------------------------- |
+| Astro 5.x                      | Framework principal (SSR Mode)              |
+| TypeScript                     | Tipado estricto y seguridad                 |
+| Tailwind CSS 4.x               | Estilos y diseño nativo mediante PostCSS     |
+| Prisma 7.x                     | ORM para gestión de SQLite                  |
+| SQLite                         | Base de datos relacional ligera             |
+| Better Auth 1.5.6              | Autenticación avanzada y gestión de roles   |
+| Node.js >= 20.19               | Runtime de ejecución                        |
 
 ---
 
@@ -23,148 +23,121 @@
 ```text
 /
 ├── prisma/
-│   ├── schema.prisma
-│   └── seed.ts
+│   ├── schema.prisma      # Definición de tablas (User, Session, Account, etc.)
+│   └── dev.db             # Base de datos local (SQLite)
 ├── src/
-│   ├── pages/
-│   │   ├── index.astro
-│   │   ├── prueba-db.astro
-│   │   └── test-auth.astro
+│   ├── components/
+│   │   └── Navbar.astro   # Navegación dinámica según el ROL del usuario
 │   ├── layouts/
-│   │   └── Layout.astro
+│   │   └── Layout.astro   # Estructura base HTML5 + Tailwind 4
 │   ├── lib/
-│   │   ├── prisma.ts
-│   │   └── auth.ts
+│   │   ├── prisma.ts      # Cliente de base de datos
+│   │   └── auth.ts        # Configuración de Better Auth + Helpers de Roles
+│   ├── pages/
+│   │   ├── api/auth/
+│   │   │   └── [...all].ts # Endpoint central de autenticación (Handler)
+│   │   ├── dashboard/
+│   │   │   ├── admin/      # Vistas protegidas para Administradores
+│   │   │   └── cliente/    # Vistas protegidas para Clientes/Usuarios
+│   │   ├── index.astro
+│   │   └── test-auth.astro # Panel de pruebas de autenticación
 │   └── styles/
-│       └── global.css
-├── generated/
-├── .env
+│       └── global.css     # Importación de Tailwind CSS 4
+├── astro.config.mjs       # Configuración SSR (Node Adapter)
 ├── package.json
-├── tsconfig.json
 └── README.md
-```
 
 ---
 
-## 🛠️ Configuración local
+## 🔑 Autenticación y Control de Acceso
 
-1. Clonar el repositorio:
+El sistema utiliza Better Auth 1.5 con una lógica de persistencia basada en cookies y validación en el servidor.
+Funcionalidades implementadas:
 
-```bash
-git clone https://github.com/Carandainf/proyecto_DAW.git
-cd proyecto_DAW
-```
+    ✅ Registro/Login con validación de credenciales.
 
-2. Instalar dependencias:
+    ✅ Gestión de Roles: Soporte para roles admin y user desde la base de datos.
 
-```bash
-npm install
-```
+    ✅ Protección de Rutas: Helper protectRoute que verifica sesión y rol antes de renderizar la página.
 
-3. Configurar variables de entorno (`.env`):
+    ✅ Redirección Automática:
 
-```env
-DATABASE_URL="file:./prisma/dev.db"
-BETTER_AUTH_SECRET="<secret aleatorio>"
-BETTER_AUTH_URL="http://localhost:4321"
-```
+        Login -> /dashboard/admin (si es administrador).
 
-4. Requisitos:
+        Login -> /dashboard/cliente (si es usuario estándar).
 
-* Node.js >= 20.19
-* Prisma Client generado correctamente
+    ✅ Navbar Dinámico: Muestra enlaces específicos (Panel Admin / Mis Pedidos) basándose en el estado de la sesión.
 
-5. Generar Prisma Client:
-
-```bash
-npx prisma generate
-```
-
-6. Ejecutar seed inicial:
-
-```bash
-npx tsx prisma/seed.ts
-```
-
-7. Ejecutar servidor de desarrollo:
-
-```bash
-npm run dev
-```
-
-Visita [http://localhost:4321] para ver la aplicación.
+Endpoints de Autenticación (v1.5.6):
+Acción	                Ruta API	              Método
+Registro	            /api/auth/sign-up/email	   POST
+Login	                /api/auth/sign-in/email	   POST
+Sesión	              /api/auth/get-session	     GET
+Logout	              /api/auth/sign-out	       POST
 
 ---
 
-## 🔑 Autenticación
+## 🛠 Instalación y Puesta en Marcha
 
-* Better Auth configurado con Prisma Adapter.
-* Registro e inicio de sesión mediante email + contraseña.
-* Sesiones persistentes almacenadas en SQLite.
-* Better Auth usa `expiresIn` para la duración de sesión.
-* Roles iniciales creados mediante seed: `admin` y `user`.
+    Clonar y entrar en la carpeta:
+    Bash
 
----
+    git clone [https://github.com/Carandainf/proyecto_DAW.git](https://github.com/Carandainf/proyecto_DAW.git)
+    cd proyecto_DAW
 
-## ⚡ Comandos útiles
+    Instalar dependencias:
+    Bash
+    npm install
 
-| Comando                  | Descripción                    |
-| ------------------------ | ------------------------------ |
-| `npm run dev`            | Ejecuta el servidor local      |
-| `npm run build`          | Genera build de producción     |
-| `npm run preview`        | Previsualiza el build generado |
-| `npx prisma generate`    | Genera Prisma Client           |
-| `npx prisma studio`      | Explora la base de datos       |
-| `npx tsx prisma/seed.ts` | Inserta datos iniciales        |
+    Configurar variables de entorno (.env):
+    Fragmento de código
 
----
+    DATABASE_URL="file:./prisma/dev.db"
+    BETTER_AUTH_SECRET="tu_secreto_aleatorio_aqui"
+    BETTER_AUTH_URL="http://localhost:4321"
 
-## 📌 Estado actual
+    Sincronizar Base de Datos:
+    Bash
+    npx prisma db push
+    npx prisma generate
 
-* Conexión a SQLite funcionando.
-* Prisma Client generado correctamente.
-* Seed ejecutado con roles iniciales.
-* Better Auth configurado y conectado a Prisma.
-* Página `/prueba-db` funcionando.
-* Tailwind CSS configurado.
-* Proyecto funcionando correctamente en varios equipos mediante GitHub.
+    Lanzar en desarrollo:
+    Bash
+    npm run dev
 
 ---
 
-## 📌 Notas
-
-* Prisma 7.x requiere Node.js >= 20.19.
-* Better Auth está configurado y conectado correctamente con Prisma.
-* La conexión a base de datos SQLite ya está verificada.
-* Existe una página de prueba (`/prueba-db`) para comprobar acceso a la base de datos.
-* La siguiente página en desarrollo es `/test-auth` para probar:
-
-  * Register
-  * Login
-  * Session
-  * Logout
-* No subir `.env` ni `prisma/dev.db` al repositorio.
+##⚡ Comandos de Utilidad
+Comando	                   Acción
+npx prisma studio	         Abre un explorador visual para la base de datos SQLite.
+npm run build	             Genera la versión de producción para Node.js.
+npx prisma db seed	       Ejecuta el volcado de datos iniciales (si existe seed.ts).
 
 ---
 
-## 📂 Próximos pasos
+## 🎨 Configuración de Tailwind CSS 4
 
-1. Crear `/test-auth` con formularios de:
+En esta versión ya no se usan los archivos de configuración .js extensos. Se utiliza la directiva de importación nativa en src/styles/global.css:
+CSS
 
-   * Register
-   * Login
-   * Session
-   * Logout
-2. Añadir protección de rutas según sesión.
-3. Implementar autorización basada en roles.
-4. Comenzar CRUD principal del laboratorio dental.
+@import "tailwindcss";
 
 ---
 
-## 📎 Referencias
+## 🚧 Estado del Desarrollo
 
-* [https://docs.astro.build](https://docs.astro.build)
-* [https://www.prisma.io/docs/](https://www.prisma.io/docs/)
-* [https://better-auth.com/](https://better-auth.com/)
-* [https://tailwindcss.com/](https://tailwindcss.com/)
+    [x] Configuración SSR con Astro 5.
+
+    [x] Integración de Prisma + SQLite.
+
+    [x] Sistema de Autenticación con Roles (Admin/User).
+
+    [x] Middlewares de protección de rutas.
+
+    [x] Navbar dinámico funcional.
+
+    [ ] Implementación de CRUD de pedidos dentales.
+
+    [ ] Diseño final de interfaces del Dashboard.
+
 

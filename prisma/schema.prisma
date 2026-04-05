@@ -13,8 +13,8 @@ datasource db {
 // Mis tablas
 // --- TABLA DE ROLES (Mi diseño original) ---
 model Role {
-  id          Int       @id @default(autoincrement()) @map("id_rol")
-  nombre      String    @unique @map("nombre_rol")
+  id          Int     @id @default(autoincrement()) @map("id_rol")
+  nombre      String  @unique @map("nombre_rol")
   descripcion String?
   usuarios    User[]
 
@@ -23,33 +23,33 @@ model Role {
 
 // --- TABLA DE USUARIOS (Better-Auth + Mi lógica) ---
 model User {
-  id            String    @id // Better-Auth genera esto automáticamente, tiene que ser de tipo string es más seguro
-  name          String    @map("nombre")
-  email         String    @unique
-  emailVerified Boolean   @default(false)
+  id            String   @id // Better-Auth genera esto automáticamente, tiene que ser de tipo string es más seguro
+  name          String   @map("nombre")
+  email         String   @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
   // Conexión con mi tabla de Roles
-  roleId        Int?      @map("id_rol")
-  roleRel       Role?     @relation(fields: [roleId], references: [id])
+  roleId  Int?  @map("id_rol")
+  roleRel Role? @relation(fields: [roleId], references: [id])
 
   // Campos para el Plugin Admin de Better-Auth (Control de acceso rápido)
-  role          String?   @default("user") // "admin" o "user"
-  banned        Boolean?  @default(false)
-  banReason     String?
-  banExpires    DateTime?
+  role       String?   @default("user") // "admin" o "user"
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
 
   // --- MIS TABLAS DE NEGOCIO ---
-  archivos      Archivo[]
-  mensajesEnv   Mensaje[] @relation("Enviados")
-  mensajesRec   Mensaje[] @relation("Recibidos")
-  contactos     Contacto[]
+  archivos    Archivo[]
+  mensajesEnv Mensaje[]  @relation("Enviados")
+  mensajesRec Mensaje[]  @relation("Recibidos")
+  contactos   Contacto[]
 
   // Better-Auth Core
-  sessions      Session[]
-  accounts      Account[]
+  sessions Session[]
+  accounts Account[]
 
   @@map("usuarios")
 }
@@ -103,12 +103,14 @@ model Verification {
 // --- MIS TABLAS DE NEGOCIO ---
 
 model Archivo {
-  id_archivo     Int      @id @default(autoincrement())
-  id_usuario     String
-  nombre_archivo String
-  estado         String   @default("pendiente") 
-  fecha_subida   DateTime @default(now())
-  usuario        User     @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
+  id_archivo      Int       @id @default(autoincrement())
+  id_usuario      String
+  nombre_archivo  String
+  url_path        String    @default("")
+  estado          String    @default("pendiente")
+  fecha_subida    DateTime  @default(now())
+  fecha_recepcion DateTime?
+  usuario         User      @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 
   @@map("archivos")
 }

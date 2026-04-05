@@ -1,7 +1,7 @@
 import "dotenv/config";
 import process from "process";
 
-import { prisma } from '../src/lib/prisma';
+import { prisma } from "@/lib/prisma";
 
 async function main() {
     // Crear Rol de Administrador

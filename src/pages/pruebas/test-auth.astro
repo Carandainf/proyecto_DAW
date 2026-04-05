@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
@@ -103,60 +103,86 @@ import Layout from "../layouts/Layout.astro";
     </div>
 </Layout>
 
-<!-- Código cliente TS/JS -->
 <script type="module">
     const output = document.getElementById("output");
-    const registerForm = document.getElementById("registerForm");
-    const loginForm = document.getElementById("loginForm");
-    const sessionBtn = document.getElementById("sessionBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
 
-    async function handleFetch(url, options = {}) {
-        const res = await fetch(url, {
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            ...options,
-        });
-        const data = await res.json();
-        if (output) output.textContent = JSON.stringify(data, null, 2);
+    // Función genérica para enviar datos
+    async function peticion(url, body) {
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+                credentials: "include",
+            });
+
+            // Intentamos obtener el JSON de respuesta
+            const data = await res.json().catch(() => ({ status: res.status }));
+            output.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+            output.textContent = "Error: " + err.message;
+        }
     }
 
-    registerForm?.addEventListener("submit", async (e) => {
+    // REGISTRO
+    document.getElementById("registerForm").onsubmit = async (e) => {
         e.preventDefault();
-        if (!registerForm) return;
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd);
 
-        const form = new FormData(registerForm);
-        const bodyJson = JSON.stringify(Object.fromEntries(form.entries()));
-
-        console.log("Registro - body a enviar:", bodyJson); // <-- Aquí ves qué se construye
-
-        await handleFetch("/api/auth-test/register", {
-            method: "POST",
-            body: bodyJson,
+        // Better-Auth espera name, email y password
+        await peticion("/api/auth/sign-up/email", {
+            email: data.email,
+            password: data.password,
+            name: data.name || "Usuario Nuevo",
         });
-    });
+    };
 
-    loginForm?.addEventListener("submit", async (e) => {
+    // --- LOGIN CON REDIRECCIÓN POR ROL ---
+    document.getElementById("loginForm").onsubmit = async (e) => {
         e.preventDefault();
-        if (!loginForm) return;
-        const form = new FormData(loginForm);
+        const fd = new FormData(e.target);
+        const data = Object.fromEntries(fd);
 
-        const loginData = {
-            email: form.get("email"),
-            password: form.get("password"),
-        };
-
-        await handleFetch("/api/auth-test/login", {
-            method: "POST",
-            body: JSON.stringify(loginData),
+        // 1. Intentamos el inicio de sesión
+        await peticion("/api/auth/sign-in/email", {
+            email: data.email,
+            password: data.password,
         });
-    });
 
-    sessionBtn?.addEventListener("click", async () => {
-        await handleFetch("/api/auth-test/session");
-    });
+        // 2. Tras el login, pedimos la sesión para saber quién ha entrado
+        // (Añadimos credentials: "include" para que reconozca la cookie recién creada)
+        const resSession = await fetch("/api/auth/get-session", {
+            credentials: "include",
+        });
+        const session = await resSession.json();
 
-    logoutBtn?.addEventListener("click", async () => {
-        await handleFetch("/api/auth-test/logout", { method: "POST" });
-    });
+        // 3. SI LA SESIÓN EXISTE: Redirigimos según el rol del usuario
+        if (session && session.user) {
+            const role = session.user.role;
+
+            // Si es admin va a su panel, si no, al de cliente
+            window.location.href =
+                role === "admin" ? "/dashboard/admin" : "/dashboard/cliente";
+        }
+    };
+
+    // SESSION
+    document.getElementById("sessionBtn").onclick = async () => {
+        try {
+            const res = await fetch("/api/auth/get-session", {
+                credentials: "include",
+            });
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+            output.textContent = "Error Session: " + err.message;
+        }
+    };
+
+    // LOGOUT
+    document.getElementById("logoutBtn").onclick = async () => {
+        // En Better-Auth la ruta por defecto es sign-out
+        await peticion("/api/auth/sign-out", {});
+    };
 </script>

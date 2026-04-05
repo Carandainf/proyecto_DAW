@@ -1,0 +1,58 @@
+---
+// src/components/Navbar.astro
+import { getUserRole } from "@/lib/auth";
+const { loggedIn, role, user } = await getUserRole(Astro.request);
+---
+
+<nav class="flex justify-between p-4 bg-gray-800 text-white">
+    <div class="logo">Mi Proyecto DAW</div>
+
+    <ul class="flex gap-4">
+        <li><a href="/">Inicio</a></li>
+
+        {
+            loggedIn ? (
+                <>
+                    {role === "admin" && (
+                        <li>
+                            <a href="/dashboard/admin" class="text-red-400">
+                                Panel Admin
+                            </a>
+                        </li>
+                    )}
+                    {role === "user" && (
+                        <li>
+                            <a href="/dashboard/cliente" class="text-blue-400">
+                                Mis Pedidos
+                            </a>
+                        </li>
+                    )}
+                    <li>
+                        <span class="opacity-70">
+                            Hola, {user?.name || "Usuario"}
+                        </span>
+                    </li>
+                    <li>
+                        <button id="logout-nav" class="underline">
+                            Salir
+                        </button>
+                    </li>
+                </>
+            ) : (
+                <li>
+                    <a href="/login">Entrar</a>
+                </li>
+            )
+        }
+    </ul>
+</nav>
+
+<script>
+    // Lógica de logout rápida para el navbar
+    document
+        .getElementById("logout-nav")
+        ?.addEventListener("click", async () => {
+            await fetch("/api/auth/sign-out", { method: "POST" });
+            window.location.href = "/";
+        });
+</script>

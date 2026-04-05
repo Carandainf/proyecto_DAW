@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/* 1. Importamos la fuente instalada */
+@import "../../node_modules/@fontsource-variable/inter/index.css";
+
+@theme {
+    /* 2. Definimos los colores del Laboratorio */
+    --color-dent-dark: #020617;
+    /* Fondo profundo */
+    --color-dent-card: #0f172a;
+    /* Fondo de las cajas Bento */
+    --color-dent-border: #1e293b;
+    /* Bordes sutiles */
+    --color-dent-accent: #06b6d4;
+    /* Azul/Cian dental */
+
+    --color-status-pending: #f59e0b;
+    /* Ámbar para "Pendiente" */
+    --color-status-success: #10b981;
+    /* Esmeralda para "Recibido" */
+
+    /* 3. Vinculamos la fuente Inter Variable */
+    --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+    color-scheme: dark;
+}
+
+body {
+    /* Aplicamos la configuración global */
+    @apply bg-dent-dark text-slate-100 font-sans antialiased;
+}
+
+/* scrollbar fina y oscura */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-dent-dark;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-slate-800 rounded-full hover:bg-slate-700;
+}

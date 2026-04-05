@@ -199,7 +199,7 @@ export type ContactoGroupByOutputType = {
   _max: ContactoMaxAggregateOutputType | null
 }
 
-type GetContactoGroupByPayload<T extends ContactoGroupByArgs> = Prisma.PrismaPromise<
+export type GetContactoGroupByPayload<T extends ContactoGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ContactoGroupByOutputType, T['by']> &
       {

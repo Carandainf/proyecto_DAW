@@ -1,0 +1,34 @@
+---
+// index.astro (Cliente)
+import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/Navbar.astro";
+import { protectRoute } from "@/lib/auth";
+
+// Protegemos la ruta específicamente para el rol "user"
+const { shouldRedirect, url, user, role } = await protectRoute(
+    Astro.request,
+    "user",
+);
+
+if (shouldRedirect) {
+    return Astro.redirect(url);
+}
+---
+
+<Layout>
+    <Navbar />
+
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-4 text-blue-700">Dashboard Cliente</h1>
+
+        <p class="mb-4">
+            Bienvenido,
+            <strong>{user?.name}</strong>
+        </p>
+
+        <div class="bg-blue-100 border border-blue-300 rounded p-4">
+            <p>Has entrado correctamente como usuario cliente.</p>
+            <p>Tu rol es: <strong>{role}</strong></p>
+        </div>
+    </div>
+</Layout>

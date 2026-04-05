@@ -1,8 +1,215 @@
-# 🚀 CHANGELOG - proyecto_DAW
+# Changelog
 
-Registro de cambios y evolución del proyecto.
+Todos los cambios importantes del proyecto `proyecto_DAW` se documentarán en este archivo.
+
+El formato está inspirado en Keep a Changelog y versionado semántico.
 
 ---
+
+# [0.5.0] - 2026-04-03
+
+## Añadido
+* **Sistema de Roles y Autorización**:
+  * Implementado mapeo de campo `role` en la configuración de Better Auth.
+  * Creado helper `getUserRole(request)` en `src/lib/auth.ts` para extraer sesión y rol de forma centralizada.
+  * Creado helper `protectRoute(request, role)` para gestionar redirecciones automáticas basadas en permisos.
+* **Navegación Dinámica**:
+  * Nuevo componente `src/components/Navbar.astro`.
+  * Menú adaptativo: muestra enlaces de "Panel Admin" o "Mis Pedidos" según el rol detectado en la cookie de sesión.
+* **Estructura de Dashboards**:
+  * Creada ruta protegida `/dashboard/admin/index.astro`.
+  * Creada ruta protegida `/dashboard/cliente/index.astro`.
+* **Redirecciones Automáticas**:
+  * Implementada lógica de redirección post-login: los administradores van a `/admin` y los usuarios a `/cliente`.
+  * Protección "cross-role": un usuario estándar es rebotado si intenta acceder manualmente a la URL de administración.
+
+## Cambiado
+* **Refactorización de Endpoints API**:
+  * Migración de endpoints de prueba manuales (`/api/auth-test/...`) al manejador dinámico oficial de Better Auth.
+  * Configuración del catch-all route en `src/pages/api/auth/[...all].ts`.
+* **Actualización de Dependencias**:
+  * Forzada la versión de `@prisma/client` y `prisma` a la **7.6.0** para asegurar compatibilidad con el adapter.
+  * Instalación de `@opentelemetry/api` como dependencia necesaria para el motor de Better Auth 1.5.
+
+## Corregido
+* **Error 404 en Rutas de Autenticación**:
+  * Corregidas las URLs de los formularios en el frontend para coincidir con la versión 1.5.x:
+    * `/api/auth/sign-up/email` (con guiones y barras).
+    * `/api/auth/sign-in/email`.
+* **Error de TypeScript `basePath`**: Eliminada propiedad obsoleta en la configuración `advanced` de Better Auth.
+* **Error de Tipado en Componentes**: Corregido el error de "posible nulo" en `user.name` mediante el uso de encadenamiento opcional (`user?.name`) en el Navbar y Dashboards.
+* **Persistencia de Sesión**: Corregido problema de pérdida de sesión en redirecciones mediante la inclusión de `credentials: "include"` en las peticiones fetch de validación.
+
+---
+
+# [0.4.0] - 2026-04-01
+
+## Añadido
+
+* Configuración completa de Better Auth con Prisma Adapter.
+* Endpoints API para autenticación:
+
+  * `/api/auth-test/register`
+  * `/api/auth-test/login`
+  * `/api/auth-test/session`
+  * `/api/auth-test/logout`
+* Página `/test-auth` para pruebas de autenticación.
+* Formularios funcionales de:
+
+  * Register
+  * Login
+  * Get Session
+  * Logout
+* Salida JSON en tiempo real para visualizar respuestas de la API.
+* Gestión de sesión mediante cookies.
+* Configuración de Astro con:
+
+```js
+output: "server"
+```
+
+* Diseño inicial tipo Bento Grid responsive en `/test-auth`.
+* Tarjetas con tamaños variables y comportamiento dinámico según el contenido.
+* Soporte responsive para escritorio, tablet y móvil.
+* Animaciones hover y transición en las tarjetas.
+
+## Cambiado
+
+* Migración definitiva a Tailwind CSS 4.
+* Sustituida la configuración antigua de Tailwind 3.
+* Eliminado el uso de:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+* Sustituido por:
+
+```css
+@import "tailwindcss";
+```
+
+* Cambio de `postcss.config.cjs` a `postcss.config.mjs`.
+* Nuevo contenido de `postcss.config.mjs`:
+
+```js
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
+* Eliminado el plugin `@tailwindcss/vite` del archivo `astro.config.mjs` por incompatibilidad con Astro 5 y Vite.
+* Simplificado `astro.config.mjs` a:
+
+```js
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  output: "server",
+});
+```
+
+## Corregido
+
+* Error de incompatibilidad entre versiones de Vite y `@tailwindcss/vite`.
+* Error:
+
+```text
+Type 'Plugin<any>[]' is not assignable to type 'PluginOption'
+```
+
+* Error de Tailwind 4 relacionado con:
+
+```text
+Missing "./base" specifier in "tailwindcss" package
+```
+
+* Error de PostCSS:
+
+```text
+It looks like you're trying to use `tailwindcss` directly as a PostCSS plugin
+```
+
+* Error en login por enviar `name` en lugar de `email`.
+* Corregido el formulario de login para enviar:
+
+```ts
+const loginData = {
+  email: form.get("email"),
+  password: form.get("password"),
+};
+```
+
+* Corregido el problema por el que `session` devolvía `null` tras iniciar sesión.
+* Corregida la gestión de cookies necesaria para que Better Auth mantenga la sesión.
+* Solucionado el problema visual donde las tarjetas Bento se superponían.
+* Corregido el tamaño excesivo de los ladrillos, que hacía que apareciesen uno debajo de otro.
+* Corregidos los botones que quedaban fuera de sus tarjetas.
+* Corregida la superposición entre las tarjetas `Register` y `Logout`.
+
+---
+
+# [0.3.0] - 2026-03-30
+
+## Añadido
+
+* Configuración inicial de Tailwind CSS 4.
+* Archivo `global.css` con:
+
+```css
+@import "tailwindcss";
+```
+
+* Importación global de estilos desde `Layout.astro`.
+* Primer diseño responsive para la página `/test-auth`.
+* Primeros experimentos con Bento Grid usando CSS Grid y Tailwind.
+
+## Cambiado
+
+* El proyecto pasa de una interfaz básica vertical a una estructura visual basada en tarjetas.
+* El layout general cambia a fondo oscuro con tipografía clara.
+
+---
+
+# [0.2.0] - 2026-03-29
+
+## Añadido
+
+* Integración de Better Auth.
+* Configuración de Prisma Adapter.
+* Registro de usuarios con email y contraseña.
+* Login de usuarios.
+* Persistencia de sesiones en SQLite.
+* Roles iniciales `admin` y `user` creados mediante seed.
+* Configuración del archivo `.env` con:
+
+  * `DATABASE_URL`
+  * `BETTER_AUTH_SECRET`
+  * `BETTER_AUTH_URL`
+
+## Cambiado
+
+* El proyecto deja de ser completamente estático y pasa a usar `output: "server"`.
+
+---
+
+# [0.1.0] - 2026-03-28
+
+## Añadido
+
+* Creación inicial del proyecto con Astro 5 + TypeScript.
+* Integración de Prisma 7.
+* Base de datos SQLite funcionando.
+* Archivo `schema.prisma` inicial.
+* Archivo `seed.ts` para insertar datos iniciales.
+* Página `/prueba-db` para comprobar conexión a base de datos.
+* Configuración inicial de GitHub.
+* README inicial del proyecto.
+
 
 ## 📅 [2026-02-27] - Configuración inicial del proyecto
 

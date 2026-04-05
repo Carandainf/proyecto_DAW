@@ -1,323 +1,108 @@
 # 📚 DEV_NOTES.md
 
-Guía técnica detallada del proyecto DAW.
+Guía técnica detallada del proyecto DAW: Sistema de Laboratorio Dental.
 
 ---
 
-# 1. Base de datos con Prisma + SQLite
+## 🗓 Historial y Actualizaciones
 
-Se decidió usar SQLite para simplificar el desarrollo local y cumplir los requisitos del proyecto.
-
-## Instalación inicial
-
-```bash
-npm install prisma @prisma/client
-npm install -D @types/node tsx
-```
-
-## Inicialización de Prisma
-
-```bash
-npx prisma init --datasource-provider sqlite
-```
-
-Archivos creados:
-
-```text
-prisma/
-├── schema.prisma
-.env
-```
-
-## Variables de entorno
-
-Archivo `.env`:
-
-```env
-DATABASE_URL="file:./prisma/dev.db"
-BETTER_AUTH_SECRET="<secret aleatorio>"
-BETTER_AUTH_URL="http://localhost:4321"
-```
+| Fecha      | Versión / Cambio |
+| :--------- | :--------------- |
+| 03/04/2026 | **v0.5.0: Middleware y Roles**. Implementada protección de rutas `protectRoute`, Navbar dinámico y redirecciones automáticas por rol (Admin/Cliente). Actualización a Prisma 7.6.0. |
+| 01/04/2026 | **v0.4.0: Bento Grid**. Interfaz adaptativa en `/test-auth`, corrección de botones y visualización JSON en tiempo real. |
+| 30/03/2026 | **v0.3.0: Tailwind 4**. Configuración nativa con PostCSS y eliminación de configuraciones obsoletas de v3. |
+| 27/02/2026 | **v0.1.0: Inicio**. Setup inicial Astro 5 + TypeScript + Estructura base. |
 
 ---
 
-# 2. Prisma 7.x y requisito de Node.js
+## 1. Versiones Críticas y Requisitos
 
-Prisma 7.x requiere:
-
-```text
-Node.js >= 20.19
-```
-
-Versión actual usada en el proyecto:
-
-```text
-Prisma 7.5.x
-```
-
-Después de cualquier cambio en `schema.prisma`:
-
-```bash
-npx prisma generate
-```
+* **Node.js**: `>= 20.19` (Requerido por Prisma 7).
+* **Prisma**: `7.6.0` (Sincronizado con `@prisma/client`).
+* **Better Auth**: `1.5.6`.
+* **Tailwind CSS**: `4.0` (vía PostCSS).
 
 ---
 
-# 3. Esquema actual de base de datos
+## 2. Cliente Prisma Global (Singleton)
 
-Tablas principales del proyecto:
-
-* `Role`
-* `User`
-* `Session`
-* `Account`
-* `Verification`
-* `Archivo`
-* `Mensaje`
-* `Contacto`
-
-Better Auth utiliza especialmente:
-
-* `User`
-* `Session`
-* `Account`
-* `Verification`
-
-Roles iniciales definidos:
-
-* `admin`
-* `user`
-
----
-
-# 4. Cliente Prisma global
-
-Archivo:
-
-```text
-src/lib/prisma.ts
-```
-
-Código actual:
+Archivo: `src/lib/prisma.ts`
+Se utiliza un adaptador para `better-sqlite3` para asegurar compatibilidad total con el entorno de ejecución de Astro en modo SSR.
 
 ```ts
-import "dotenv/config";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import { PrismaClient } from "../../generated/prisma/client";
+// Implementación Singleton para evitar fugas de memoria en Hot Reload
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
-const globalForPrisma = globalThis as {
-  prisma?: PrismaClient;
-};
+---
 
-const connectionString = process.env.DATABASE_URL!;
-const adapter = new PrismaBetterSqlite3({
-  url: connectionString,
-});
+## 3. Lógica de Autenticación y Roles
+Configuración de Roles
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    adapter,
-  });
+En src/lib/auth.ts, se ha extendido el modelo de usuario para incluir el campo role. Better Auth mapea este campo directamente desde SQLite.
+Helper de Protección de Rutas
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+Se ha creado una función centralizada para evitar repetir lógica de seguridad en cada página:
+
+```ts
+// src/lib/auth.ts
+export async function protectRoute(request: Request, requiredRole?: string) {
+    const { loggedIn, role, user } = await getUserRole(request);
+    // Retorna objeto con: shouldRedirect, url, user
 }
-```
-
-Se usa un singleton para evitar múltiples conexiones durante hot reload.
 
 ---
 
-# 5. Seed inicial
+## 4. Arquitectura de Navegación
 
-Archivo:
+El componente src/components/Navbar.astro es Server-Side.
 
-```text
-prisma/seed.ts
-```
+    Detecta la sesión en el servidor.
 
-Objetivo:
+    Renderiza enlaces condicionales ({role === 'admin' && ...}).
 
-* Crear rol `admin`
-* Crear rol `user`
-
-Ejecución:
-
-```bash
-npx tsx prisma/seed.ts
-```
-
-Resultado esperado:
-
-```text
-✅ Roles creados
-```
+    No expone lógica sensible al cliente.
 
 ---
 
-# 6. Prueba de conexión a la base de datos
+## 5. Endpoints de API (Evolución)
 
-Archivo:
+Se han migrado los endpoints manuales a la estructura estándar de Better Auth:
 
-```text
-src/pages/prueba-db.astro
-```
+    Antes: /api/auth-test/login
 
-Objetivo:
+    Ahora (Oficial): /api/auth/sign-in/email
 
-* Verificar que Astro puede leer desde Prisma.
-* Confirmar que los roles seed existen.
-
-URL:
-
-```text
-http://localhost:4321/prueba-db
-```
-
-Estado:
-
-```text
-✔ Funcionando
-```
+    Nota: Las peticiones fetch desde el cliente DEBEN incluir credentials: "include" para que las cookies de sesión se procesen correctamente.
 
 ---
 
-# 7. Better Auth
+## 6. Estado Actual del Sistema
 
-Instalación:
+    [x] SSR Mode: Astro configurado con output: "server".
 
-```bash
-npm install better-auth
-```
+    [x] Auth Core: Registro, Login y Logout funcionales.
 
-Archivo principal:
+    [x] RBAC (Role Based Access Control): Redirecciones automáticas basadas en rol.
 
-```text
-src/lib/auth.ts
-```
+    [x] UI: Navbar dinámico y Layouts protegidos.
 
-Código base:
-
-```ts
-import "dotenv/config";
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { prisma } from "@/lib/prisma";
-
-export const auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "sqlite",
-  }),
-
-  emailAndPassword: {
-    enabled: true,
-  },
-
-  session: {
-    expiresIn: 60 * 60 * 24 * 7,
-  },
-
-  secret: process.env.BETTER_AUTH_SECRET!,
-  baseURL: process.env.BETTER_AUTH_URL!,
-});
-```
-
-Nota importante:
-
-```text
-Better Auth actual usa `expiresIn`, no `maxAge`.
-```
+    [x] DB: Prisma 7.6.0 conectado a SQLite.
 
 ---
 
-# 8. Arquitectura actual
+## 7. Próximos Pasos (Lógica de Negocio)
 
-Flujo del proyecto:
+    Gestión de Archivos: Implementar form para que el cliente suba trabajos dentales.
 
-```text
-UI (Astro)
-↓
-API endpoints de Astro
-↓
-Better Auth
-↓
-Prisma
-↓
-SQLite
-```
+    Relación de Datos: Vincular el userId de la sesión con la columna id_usuario de la tabla Archivo.
+
+    Panel de Control: Crear tablas de visualización de estados (Pendiente, En Proceso, Terminado).
 
 ---
 
-# 9. Tailwind CSS
+## 8. Notas de Seguridad
 
-Tailwind ya está instalado y funcionando.
+    Las rutas /dashboard/admin/* están protegidas doblemente: comprueban sesión activa Y que el rol sea estrictamente admin.
 
-Archivos relevantes:
-
-```text
-src/styles/global.css
-src/layouts/Layout.astro
-```
-
-VS Code configurado con soporte para Tailwind en archivos `.astro`.
-
+    El campo name del usuario usa Optional Chaining (user?.name) en los componentes para evitar errores de renderizado si el campo es null en DB.
 ---
-
-# 10. Próxima implementación: `/test-auth`
-
-Página prevista:
-
-```text
-src/pages/test-auth.astro
-```
-
-Endpoints previstos:
-
-```text
-src/pages/api/auth-test/register.ts
-src/pages/api/auth-test/login.ts
-src/pages/api/auth-test/session.ts
-src/pages/api/auth-test/logout.ts
-```
-
-Funcionalidades del panel:
-
-* Register
-* Login
-* Session
-* Logout
-
-Decisiones tomadas:
-
-* Usar formularios HTML de Astro.
-* No usar eventos React.
-* Usar `fetch()`.
-* Usar URL absoluta:
-
-```text
-http://localhost:4321/api/auth-test/...
-```
-
-* Incluir siempre:
-
-```ts
-credentials: "include"
-```
-
-para que las cookies de sesión funcionen correctamente.
-
----
-
-# 11. Estado actual
-
-```text
-✔ SQLite funcionando
-✔ Prisma 7.5.x funcionando
-✔ Better Auth funcionando
-✔ Tailwind funcionando
-✔ Seed ejecutado
-✔ Proyecto funcionando en varios equipos
-✔ /prueba-db funcionando
-⏳ /test-auth pendiente
-```

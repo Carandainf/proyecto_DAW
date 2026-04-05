@@ -6,17 +6,18 @@ Arquitectura técnica actual del proyecto DAW.
 
 ## 📦 Tecnologías utilizadas
 
-| Tecnología       | Uso                                   |
-| ---------------- | ------------------------------------- |
-| Astro 5.x        | Framework principal                   |
-| TypeScript       | Tipado fuerte                         |
-| Tailwind CSS     | Estilos                               |
-| Prisma 7.5.x     | ORM                                   |
-| SQLite           | Base de datos                         |
-| Better Auth      | Sistema de autenticación              |
-| better-sqlite3   | Driver SQLite                         |
-| Node.js >= 20.19 | Runtime requerido                     |
-| Prisma Studio    | Explorador visual de la base de datos |
+| Tecnología                     | Uso                                   |
+| ------------------------------ | ------------------------------------- |
+| Astro 5.x                      | Framework principal                   |
+| TypeScript                     | Tipado fuerte                         |
+| Tailwind CSS 4.x               | Estilos y diseño responsive           |
+| PostCSS + @tailwindcss/postcss | Compilación de Tailwind 4             |
+| Prisma 7.5.x                   | ORM                                   |
+| SQLite                         | Base de datos ligera                  |
+| Better Auth                    | Sistema de autenticación              |
+| better-sqlite3                 | Driver SQLite                         |
+| Node.js >= 20.19               | Runtime requerido                     |
+| Prisma Studio                  | Explorador visual de la base de datos |
 
 ---
 
@@ -25,7 +26,7 @@ Arquitectura técnica actual del proyecto DAW.
 El proyecto sigue una arquitectura por capas:
 
 ```text
-UI (Astro + Tailwind)
+UI (Astro + Tailwind + Bento Grid)
 │
 ▼
 API endpoints de Astro
@@ -48,10 +49,10 @@ SQLite
 Usuario
 │
 ▼
-/test-auth
+/test-auth (UI con panel tipo Bento Grid)
 │
 ▼
-fetch()
+fetch() con credentials: "include"
 │
 ▼
 /api/auth-test/*
@@ -66,7 +67,7 @@ Prisma
 SQLite
 ```
 
-Además existe el endpoint interno principal de Better Auth:
+Endpoint interno principal de Better Auth:
 
 ```text
 /api/auth/*
@@ -127,8 +128,6 @@ proyecto_DAW/
 
 ## 🗄️ Base de datos
 
-Se utiliza SQLite.
-
 Archivo:
 
 ```text
@@ -163,9 +162,9 @@ Verification
 
 Prisma se encarga de:
 
-* Generar tipos TypeScript.
-* Conectar Astro con SQLite.
-* Facilitar migraciones y consultas.
+* Generar tipos TypeScript
+* Conectar Astro con SQLite
+* Facilitar migraciones y consultas
 
 Cliente generado:
 
@@ -191,9 +190,9 @@ src/lib/prisma.ts
 
 Responsabilidad:
 
-* Crear una única instancia de Prisma.
-* Evitar múltiples conexiones durante hot reload.
-* Centralizar el acceso a la base de datos.
+* Crear una única instancia de Prisma
+* Evitar múltiples conexiones durante hot reload
+* Centralizar el acceso a la base de datos
 
 ---
 
@@ -209,16 +208,8 @@ Configuración actual:
 
 * Prisma Adapter
 * Login por email + contraseña
-* Sesiones persistentes
+* Sesiones persistentes con cookies
 * `expiresIn` para duración de sesión
-
-Ejemplo:
-
-```text
-session: {
-  expiresIn: 60 * 60 * 24 * 7
-}
-```
 
 Variables necesarias:
 
@@ -276,7 +267,7 @@ POST /api/auth/signOut
 /api/auth-test/logout
 ```
 
-Estos endpoints actuarán como capa intermedia entre la UI y Better Auth.
+> ⚠️ Estos endpoints son usados por la UI de `/test-auth` y requieren `credentials: "include"` en `fetch()` para mantener cookies de sesión.
 
 ---
 
@@ -290,8 +281,8 @@ src/pages/prueba-db.astro
 
 Objetivo:
 
-* Verificar conexión con Prisma.
-* Mostrar roles existentes.
+* Verificar conexión con Prisma
+* Mostrar roles existentes
 
 ### Panel de autenticación
 
@@ -305,20 +296,14 @@ Objetivo:
 * Login
 * Session
 * Logout
+* Interfaz visual tipo Bento Grid responsive
 
 Decisiones técnicas:
 
-* Formularios HTML nativos de Astro.
-* No usar React.
-* Uso de `fetch()`.
-* Uso de URL absoluta.
-* Uso de:
-
-```ts
-credentials: "include"
-```
-
-para mantener la cookie de sesión.
+* Formularios HTML nativos de Astro
+* No usar React
+* Uso de `fetch()` con URL absoluta
+* `credentials: "include"` obligatorio para cookies
 
 ---
 
@@ -326,23 +311,22 @@ para mantener la cookie de sesión.
 
 ```text
 ✔ Astro funcionando
-✔ Tailwind funcionando
+✔ Tailwind CSS 4 funcionando
 ✔ Prisma 7.5.x funcionando
 ✔ SQLite funcionando
 ✔ Better Auth funcionando
 ✔ Seed ejecutado
 ✔ Roles creados
 ✔ /prueba-db funcionando
-⏳ /test-auth pendiente
+✔ /test-auth funcionando con UI tipo Bento Grid
 ```
 
 ---
 
 ## 🔮 Próximos pasos
 
-1. Crear `/test-auth`.
-2. Verificar registro y login.
-3. Verificar persistencia de sesión.
-4. Añadir protección de rutas.
-5. Implementar autorización por roles.
-6. Empezar CRUD principal del laboratorio dental.
+1. Mejorar UI de `/test-auth`
+2. Añadir protección de rutas privadas
+3. Implementar autorización por roles (`admin`, `user`)
+4. Empezar CRUD principal del laboratorio dental
+5. Preparar despliegue en hosting
