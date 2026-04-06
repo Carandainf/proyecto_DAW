@@ -32,15 +32,31 @@ body {
     @apply bg-dent-dark text-slate-100 font-sans antialiased;
 }
 
-/* scrollbar fina y oscura */
+/* --- bloque de scrollbar --- */
+
+/* scrollbar fina y personalizada */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    /* Un pelín más fina queda más elegante */
 }
 
 ::-webkit-scrollbar-track {
-    @apply bg-dent-dark;
+    background-color: var(--color-dent-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-slate-800 rounded-full hover:bg-slate-700;
+    background-color: var(--color-dent-border);
+    border-radius: 100px;
+    transition: background-color 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    /* Cuando pasa el ratón, brilla con azul dental */
+    background-color: var(--color-dent-accent);
+}
+
+/* Firefox (soporte básico) */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-dent-border) var(--color-dent-dark);
 }

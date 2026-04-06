@@ -13,44 +13,43 @@ export const POST: APIRoute = async ({ request }) => {
 
     try {
         const formData = await request.formData();
-        const file = formData.get("file") as File;
         const descripcion = formData.get("descripcion") as string;
         const prioridad = formData.get("prioridad") as string;
+        const files = formData.getAll("files") as File[];
 
-        if (!file) {
-            return new Response(JSON.stringify({ error: "No hay archivo" }), { status: 400 });
+        // Comprobamos que hay fichero adjunto
+        if (!files || files.length === 0) {
+            return new Response(JSON.stringify({ error: "No se enviaron archivos" }), { status: 400 });
         }
 
-        // 2. Validar extensión (Seguridad RF2)
-        if (!file.name.endsWith(".stl")) {
+        // Comprobamos que el fichero es .stl
+        if (!files.every((file) => file.name.endsWith(".stl"))) {
             return new Response(JSON.stringify({ error: "Formato no permitido. Solo .STL" }), { status: 400 });
         }
 
-        // 3. Crear nombre único para evitar sobrescribir (Timestamp + Nombre)
-        const fileName = `${Date.now()}-${file.name}`;
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        const filePath = path.join(uploadDir, fileName);
+        // Recorremos los ficheros y los guardamos
+        for (const file of files) {
+            const fileName = `${Date.now()}-${file.name}`;
+            const filePath = path.join(process.cwd(), "public", "uploads", fileName);
+            const arrayBuffer = await file.arrayBuffer();
+            await fs.writeFile(filePath, Buffer.from(arrayBuffer));
+            await prisma.archivo.create({
+                data: {
+                    nombre_archivo: file.name,
+                    url_path: `/uploads/${fileName}`,
+                    id_usuario: session.user.id,
+                    estado: "pendiente",
+                    descripcion: descripcion || "", // Añadido un fallback por seguridad
+                    prioridad: prioridad || "normal",
+                },
+            });
+        }
 
-        // 4. Guardar archivo en el sistema de archivos
-        const arrayBuffer = await file.arrayBuffer();
-        await fs.writeFile(filePath, Buffer.from(arrayBuffer));
-
-        // 5. Guardar registro completo en Prisma
-        const nuevoArchivo = await prisma.archivo.create({
-            data: {
-                nombre_archivo: file.name,
-                url_path: `/uploads/${fileName}`,
-                id_usuario: session.user.id,
-                estado: "pendiente",
-                descripcion: descripcion || "", // Ahora sí lo guardamos
-                prioridad: prioridad || "normal",     // Y la prioridad también
-            },
-        });
-
+        // Una vez termina el bucle, le decimos al frontend que todo ha ido bien
         return new Response(JSON.stringify({
-            message: "Archivo subido con éxito",
-            id: nuevoArchivo.id_archivo
+            message: "Archivos subidos con éxito"
         }), { status: 200 });
+        // 👆 ---------------------- 👆
 
     } catch (error) {
         console.error("Error en upload:", error);

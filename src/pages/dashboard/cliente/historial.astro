@@ -1,0 +1,242 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/Navbar.astro";
+import { protectRoute } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+// Protegemos la ruta específicamente para el rol "user"
+const { shouldRedirect, url, user } = await protectRoute(Astro.request, "user");
+if (shouldRedirect) return Astro.redirect(url);
+
+// Traemos TODOS los trabajos de la base de datos
+const todosLosTrabajos = await prisma.archivo.findMany({
+  where: { id_usuario: user?.id },
+  orderBy: { fecha_subida: "desc" },
+});
+---
+
+<Layout title="Historial de Trabajos | DentalLab">
+  <Navbar />
+  <main class="max-w-[1200px] mx-auto p-6">
+    <header
+      class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
+    >
+      <div>
+        <h1 class="text-3xl font-bold text-slate-100 italic">
+          Historial de <span class="text-dent-accent">Trabajos</span>
+        </h1>
+        <p class="text-slate-400 text-sm">
+          Consulta y gestiona todos tus archivos enviados al laboratorio.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button
+          id="downloadPDF"
+          class="bg-dent-accent text-dent-dark px-4 py-2 rounded-xl font-bold text-xs hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-900/20 flex items-center gap-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          DESCARGAR INFORME
+        </button>
+
+        <a
+          href="/dashboard/cliente"
+          class="text-xs bg-dent-card border border-dent-border text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-800 transition-all"
+        >
+          ← VOLVER
+        </a>
+      </div>
+    </header>
+
+    <div class="bg-dent-card border border-dent-border rounded-3xl overflow-hidden shadow-2xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-dent-dark/50 border-b border-dent-border">
+              <th class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest">Fecha</th
+              >
+              <th class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest"
+                >Archivo</th
+              >
+              <th
+                class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-center"
+                >Estado</th
+              >
+              <th
+                class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-right"
+                >Acciones</th
+              >
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-dent-border/50">
+            {
+              todosLosTrabajos.length === 0 ? (
+                <tr>
+                  <td colspan="4" class="p-12 text-center text-slate-500 italic text-sm">
+                    No hay registros de trabajos en tu cuenta.
+                  </td>
+                </tr>
+              ) : (
+                todosLosTrabajos.map((trabajo) => (
+                  <tr class="hover:bg-slate-800/30 transition-colors group">
+                    <td class="p-4 text-sm text-slate-400">
+                      {new Date(trabajo.fecha_subida).toLocaleDateString("es-ES")}
+                    </td>
+                    <td class="p-4">
+                      <div class="flex items-center gap-3">
+                        <div class="p-2 bg-dent-accent/10 rounded-lg text-dent-accent">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <>
+                              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                              <polyline points="14 2 14 8 20 8" />
+                            </>
+                          </svg>
+                        </div>
+                        <span class="text-sm text-slate-200 font-medium">
+                          {trabajo.nombre_archivo}
+                        </span>
+                      </div>
+                    </td>
+                    <td class="p-4 text-center">
+                      <span
+                        class={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase border ${
+                          trabajo.estado === "pendiente"
+                            ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                            : trabajo.estado === "recibido"
+                              ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                              : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                        }`}
+                      >
+                        {trabajo.estado}
+                      </span>
+                    </td>
+                    <td class="p-4 text-right">
+                      <button
+                        class="p-2 text-slate-500 hover:text-dent-accent transition-colors"
+                        title="Descargar"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <>
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                          </>
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+></script>
+<script
+  is:inline
+  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"
+></script>
+
+<script define:vars={{ todosLosTrabajos }}>
+  const btn = document.getElementById("downloadPDF");
+
+  btn?.addEventListener("click", () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // 1. Cabecera del documento
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(6, 182, 212); // Color dent-accent
+    doc.text("DENTAL LAB", 14, 20);
+
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.setFont("helvetica", "normal");
+    doc.text("Informe Detallado de Trabajos Enviados", 14, 28);
+
+    doc.setDrawColor(6, 182, 212);
+    doc.line(14, 32, 196, 32);
+
+    doc.setFontSize(10);
+    doc.text(`Fecha de emisión: ${new Date().toLocaleDateString("es-ES")}`, 14, 40);
+
+    // 2. Preparar los datos
+    const rows = todosLosTrabajos.map((trabajo) => [
+      new Date(trabajo.fecha_subida).toLocaleDateString("es-ES"),
+      trabajo.nombre_archivo,
+      trabajo.estado.toUpperCase(),
+    ]);
+
+    // 3. Generar tabla
+    doc.autoTable({
+      startY: 45,
+      head: [["Fecha de Envío", "Nombre del Archivo", "Estado Actual"]],
+      body: rows,
+      theme: "striped",
+      headStyles: {
+        fillColor: [2, 6, 23], // dent-dark
+        textColor: [255, 255, 255],
+        fontSize: 11,
+        halign: "center",
+      },
+      styles: {
+        cellPadding: 5,
+        fontSize: 10,
+        valign: "middle",
+      },
+      columnStyles: {
+        2: { halign: "center", fontStyle: "bold" },
+      },
+    });
+
+    // 4. Pie de página
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.text(`Página ${i} de ${pageCount}`, 196, 285, { align: "right" });
+    }
+
+    doc.save(`historial_dental_${new Date().getTime()}.pdf`);
+  });
+</script>

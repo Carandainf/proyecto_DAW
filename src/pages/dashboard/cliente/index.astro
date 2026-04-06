@@ -3,6 +3,7 @@
 import Layout from "@/layouts/Layout.astro";
 import Navbar from "@/components/Navbar.astro";
 import { protectRoute } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 // Protegemos la ruta específicamente para el rol "user"
 const { shouldRedirect, url, user, role } = await protectRoute(
@@ -13,6 +14,17 @@ const { shouldRedirect, url, user, role } = await protectRoute(
 if (shouldRedirect) {
     return Astro.redirect(url);
 }
+
+// buscamos los últimos 5 archivos subidos por el usuario actual
+const misTrabajos = await prisma.archivo.findMany({
+    where: {
+        id_usuario: user?.id,
+    },
+    orderBy: {
+        fecha_subida: "desc",
+    },
+    take: 5,
+});
 ---
 
 <Layout bodyClass="p-0">
@@ -95,6 +107,7 @@ if (shouldRedirect) {
                                 type="file"
                                 accept=".stl"
                                 class="hidden"
+                                multiple
                             />
                         </label>
                         <div
@@ -236,8 +249,6 @@ if (shouldRedirect) {
                             fill="none"
                             stroke="currentColor"
                             stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
                             ><path
                                 d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
                             ></path><polyline points="14 2 14 8 20 8"
@@ -251,24 +262,51 @@ if (shouldRedirect) {
                         Mis Trabajos
                     </h2>
                 </div>
-                <div class="flex-1 space-y-3">
-                    <div
-                        class="flex justify-between items-center text-xs p-2 bg-dent-dark rounded-lg border border-dent-border"
-                    >
-                        <span class="text-slate-300 truncate w-24"
-                            >corona_molar.stl</span
-                        >
-                        <span
-                            class="px-2 py-1 bg-status-pending/20 text-status-pending rounded text-[10px]"
-                            >PENDIENTE</span
-                        >
-                    </div>
-                </div>
-                <a
-                    href="#"
-                    class="text-center mt-4 text-dent-accent text-xs hover:underline"
-                    >Ver historial completo</a
+
+                <div
+                    class="flex-1 space-y-3 overflow-y-auto max-h-[220px] pr-2 custom-scrollbar"
                 >
+                    {
+                        misTrabajos.length === 0 ? (
+                            <p class="text-slate-500 text-xs italic text-center py-4">
+                                No has subido ningún trabajo todavía.
+                            </p>
+                        ) : (
+                            misTrabajos.map((trabajo) => (
+                                <div class="flex justify-between items-center text-xs p-3 bg-dent-dark/50 rounded-lg border border-dent-border hover:border-dent-accent/30 transition-all group">
+                                    <div class="flex flex-col gap-1 truncate mr-2">
+                                        <span class="text-slate-200 font-medium truncate">
+                                            {trabajo.nombre_archivo}
+                                        </span>
+                                        <span class="text-[10px] text-slate-500">
+                                            {new Date(
+                                                trabajo.fecha_subida,
+                                            ).toLocaleDateString("es-ES")}
+                                        </span>
+                                    </div>
+                                    <span
+                                        class={`px-2 py-1 rounded text-[9px] font-bold uppercase ${
+                                            trabajo.estado === "pendiente"
+                                                ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                                                : trabajo.estado === "recibido"
+                                                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                                  : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                                        }`}
+                                    >
+                                        {trabajo.estado}
+                                    </span>
+                                </div>
+                            ))
+                        )
+                    }
+                </div>
+
+                <a
+                    href="/dashboard/cliente/historial"
+                    class="text-center mt-4 text-dent-accent text-xs hover:underline font-medium"
+                >
+                    Ver historial completo →
+                </a>
             </section>
         </div>
     </main>
@@ -353,8 +391,18 @@ if (shouldRedirect) {
 
     // Mostrar el nombre del archivo al seleccionarlo
     fileInput?.addEventListener("change", () => {
-        if (fileInput.files?.[0] && preview) {
-            preview.innerText = `Seleccionado: ${fileInput.files[0].name}`;
+        // Comprobamos si hay archivos y si existe el elemento preview
+        if (fileInput.files && fileInput.files.length > 0 && preview) {
+            // Si solo hay 1 archivo, mostramos su nombre original
+            if (fileInput.files.length === 1) {
+                preview.innerText = `📄 Seleccionado: ${fileInput.files[0].name}`;
+            }
+            // Si hay varios, mostramos el total de archivos detectados
+            else {
+                preview.innerText = `📚 Seleccionados: ${fileInput.files.length} archivos .STL`;
+            }
+
+            // Mostramos el cartel de éxito
             preview.classList.remove("hidden");
         }
     });
@@ -363,16 +411,21 @@ if (shouldRedirect) {
         e.preventDefault();
 
         const formData = new FormData();
-        const file = fileInput.files?.[0];
+        const files = fileInput.files;
         const descripcion = (
             form.querySelector("textarea") as HTMLTextAreaElement
         ).value;
         const prioridad = (form.querySelector("select") as HTMLSelectElement)
             .value;
 
-        if (!file) return alert("Selecciona un archivo primero");
+        // CONTROLO SI HA CARGADO ALGÚN FICHERO
+        if (!files || files.length === 0)
+            return alert("Selecciona un archivo primero");
 
-        formData.append("file", file);
+        // Recorremos todos los archivos y los añadimos al FormData
+        for (const file of files) {
+            formData.append("files", file);
+        }
         formData.append("descripcion", descripcion);
         formData.append("prioridad", prioridad);
 
