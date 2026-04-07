@@ -1,0 +1,140 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { prisma } from "@/lib/prisma";
+import { getUserRole } from "@/lib/auth";
+
+const { id } = Astro.params;
+const { user, loggedIn } = await getUserRole(Astro.request);
+
+// Redirigir si no hay sesión
+if (!loggedIn || !user) return Astro.redirect("/test-auth");
+
+// Buscar el trabajo con todos sus mensajes
+const trabajo = await prisma.archivo.findUnique({
+  where: { id_archivo: Number(id) },
+  include: {
+    mensajes: {
+      include: { emisor: true },
+      orderBy: { fecha_envio: "asc" },
+    },
+  },
+});
+
+// Seguridad: Si el trabajo no es del usuario (y no es admin), fuera.
+if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
+  return Astro.redirect("/dashboard/cliente");
+}
+---
+
+<Layout title={`Trabajo: ${trabajo.nombre_archivo}`}>
+  <main class="max-w-4xl mx-auto p-6">
+    <div class="mb-6">
+      <button
+        onclick="history.back()"
+        class="inline-flex items-center gap-2 text-slate-500 hover:text-dent-accent transition-colors text-sm font-medium group cursor-pointer"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="group-hover:-translate-x-1 transition-transform"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+        Volver atrás
+      </button>
+    </div>
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+      <div class="flex justify-between items-start">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">{trabajo.nombre_archivo}</h1>
+          <p class="text-slate-500 text-sm">ID de Control: #LAB-{trabajo.id_archivo}</p>
+        </div>
+        <span
+          class={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+            trabajo.estado === "pendiente"
+              ? "bg-amber-100 text-amber-700"
+              : "bg-emerald-100 text-emerald-700"
+          }`}
+        >
+          {trabajo.estado}
+        </span>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 rounded-xl border border-slate-200 flex flex-col h-[500px]">
+      <div class="p-4 border-b bg-white rounded-t-xl font-semibold text-slate-700">
+        Notas y Comunicación Técnica
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+        {
+          trabajo.mensajes.map((msg) => (
+            <div class={`flex flex-col ${msg.id_emisor === user.id ? "items-end" : "items-start"}`}>
+              <div
+                class={`max-w-[80%] p-3 rounded-lg text-sm ${
+                  msg.id_emisor === user.id
+                    ? "bg-dent-accent text-white rounded-tr-none"
+                    : "bg-white border border-slate-200 text-slate-800 rounded-tl-none"
+                }`}
+              >
+                <p class="font-bold text-xs mb-1">{msg.emisor.name}</p>
+                <p>{msg.contenido}</p>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1">
+                {new Date(msg.fecha_envio).toLocaleString()}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+
+      <form
+        action="/api/mensajes/enviar"
+        method="POST"
+        class="p-4 bg-white rounded-b-xl border-t border-slate-200"
+      >
+        <input type="hidden" name="id_archivo" value={trabajo.id_archivo} />
+
+        <div class="flex flex-col md:flex-row gap-3">
+          <textarea
+            name="contenido"
+            rows="2"
+            required
+            placeholder="Escribe aquí tus indicaciones técnicas..."
+            class="flex-1 p-3 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-dent-accent focus:border-dent-accent outline-none resize-none text-slate-800 bg-slate-50"
+          ></textarea>
+
+          <button
+            type="submit"
+            class="bg-dent-dark text-white px-6 py-2 rounded-lg hover:bg-slate-800 transition-all font-bold self-end md:self-center"
+          >
+            Enviar Mensaje
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const scrollToBottom = () => {
+    const chatContainer = document.querySelector(".overflow-y-auto");
+    if (chatContainer) {
+      chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: "smooth", // Esto hace que el scroll sea fluido y no un salto brusco
+      });
+    }
+  };
+
+  // Ejecuta al cargar y tras un pequeño delay por seguridad de renderizado
+  window.addEventListener("load", scrollToBottom);
+  setTimeout(scrollToBottom, 100);
+</script>

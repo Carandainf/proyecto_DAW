@@ -44,7 +44,6 @@ model User {
   // --- MIS TABLAS DE NEGOCIO ---
   archivos    Archivo[]
   mensajesEnv Mensaje[]  @relation("Enviados")
-  mensajesRec Mensaje[]  @relation("Recibidos")
   contactos   Contacto[]
 
   // Better-Auth Core
@@ -114,17 +113,19 @@ model Archivo {
   fecha_recepcion DateTime?
   usuario         User      @relation(fields: [id_usuario], references: [id], onDelete: Cascade)
 
+  mensajes Mensaje[]
+
   @@map("archivos")
 }
 
 model Mensaje {
   id_mensaje  Int      @id @default(autoincrement())
   id_emisor   String
-  id_receptor String
+  id_archivo  Int
   contenido   String
   fecha_envio DateTime @default(now())
   emisor      User     @relation("Enviados", fields: [id_emisor], references: [id], onDelete: Cascade)
-  receptor    User     @relation("Recibidos", fields: [id_receptor], references: [id], onDelete: Cascade)
+  archivo     Archivo  @relation(fields: [id_archivo], references: [id_archivo], onDelete: Cascade)
 
   @@map("mensajes")
 }

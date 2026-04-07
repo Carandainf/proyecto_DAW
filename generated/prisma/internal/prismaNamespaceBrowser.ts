@@ -164,7 +164,7 @@ export type ArchivoScalarFieldEnum = (typeof ArchivoScalarFieldEnum)[keyof typeo
 export const MensajeScalarFieldEnum = {
   id_mensaje: 'id_mensaje',
   id_emisor: 'id_emisor',
-  id_receptor: 'id_receptor',
+  id_archivo: 'id_archivo',
   contenido: 'contenido',
   fecha_envio: 'fecha_envio'
 } as const

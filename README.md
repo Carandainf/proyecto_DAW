@@ -6,15 +6,15 @@
 
 ## 🚀 Tecnologías utilizadas
 
-| Tecnología                     | Propósito                                   |
-| ------------------------------ | ------------------------------------------- |
-| Astro 5.x                      | Framework principal (SSR Mode)              |
-| TypeScript                     | Tipado estricto y seguridad                 |
-| Tailwind CSS 4.x               | Estilos y diseño nativo mediante PostCSS     |
-| Prisma 7.x                     | ORM para gestión de SQLite                  |
-| SQLite                         | Base de datos relacional ligera             |
-| Better Auth 1.5.6              | Autenticación avanzada y gestión de roles   |
-| Node.js >= 20.19               | Runtime de ejecución                        |
+| Tecnología        | Propósito                                 |
+| ----------------- | ----------------------------------------- |
+| Astro 5.x         | Framework principal (SSR Mode)            |
+| TypeScript        | Tipado estricto y seguridad               |
+| Tailwind CSS 4.x  | Estilos y diseño nativo mediante PostCSS  |
+| Prisma 7.x        | ORM para gestión de SQLite                |
+| SQLite            | Base de datos relacional ligera           |
+| Better Auth 1.5.6 | Autenticación avanzada y gestión de roles |
+| Node.js >= 20.19  | Runtime de ejecución                      |
 
 ---
 
@@ -136,8 +136,13 @@ CSS
 
     [x] Navbar dinámico funcional.
 
+    [x] Generación de informes PDF automáticos.
+
+    [x] Sistema de roles Admin/Cliente con dashboards independientes.
+
     [ ] Implementación de CRUD de pedidos dentales.
 
     [ ] Diseño final de interfaces del Dashboard.
 
 
+```

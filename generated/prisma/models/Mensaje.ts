@@ -28,16 +28,18 @@ export type AggregateMensaje = {
 
 export type MensajeAvgAggregateOutputType = {
   id_mensaje: number | null
+  id_archivo: number | null
 }
 
 export type MensajeSumAggregateOutputType = {
   id_mensaje: number | null
+  id_archivo: number | null
 }
 
 export type MensajeMinAggregateOutputType = {
   id_mensaje: number | null
   id_emisor: string | null
-  id_receptor: string | null
+  id_archivo: number | null
   contenido: string | null
   fecha_envio: Date | null
 }
@@ -45,7 +47,7 @@ export type MensajeMinAggregateOutputType = {
 export type MensajeMaxAggregateOutputType = {
   id_mensaje: number | null
   id_emisor: string | null
-  id_receptor: string | null
+  id_archivo: number | null
   contenido: string | null
   fecha_envio: Date | null
 }
@@ -53,7 +55,7 @@ export type MensajeMaxAggregateOutputType = {
 export type MensajeCountAggregateOutputType = {
   id_mensaje: number
   id_emisor: number
-  id_receptor: number
+  id_archivo: number
   contenido: number
   fecha_envio: number
   _all: number
@@ -62,16 +64,18 @@ export type MensajeCountAggregateOutputType = {
 
 export type MensajeAvgAggregateInputType = {
   id_mensaje?: true
+  id_archivo?: true
 }
 
 export type MensajeSumAggregateInputType = {
   id_mensaje?: true
+  id_archivo?: true
 }
 
 export type MensajeMinAggregateInputType = {
   id_mensaje?: true
   id_emisor?: true
-  id_receptor?: true
+  id_archivo?: true
   contenido?: true
   fecha_envio?: true
 }
@@ -79,7 +83,7 @@ export type MensajeMinAggregateInputType = {
 export type MensajeMaxAggregateInputType = {
   id_mensaje?: true
   id_emisor?: true
-  id_receptor?: true
+  id_archivo?: true
   contenido?: true
   fecha_envio?: true
 }
@@ -87,7 +91,7 @@ export type MensajeMaxAggregateInputType = {
 export type MensajeCountAggregateInputType = {
   id_mensaje?: true
   id_emisor?: true
-  id_receptor?: true
+  id_archivo?: true
   contenido?: true
   fecha_envio?: true
   _all?: true
@@ -182,7 +186,7 @@ export type MensajeGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type MensajeGroupByOutputType = {
   id_mensaje: number
   id_emisor: string
-  id_receptor: string
+  id_archivo: number
   contenido: string
   fecha_envio: Date
   _count: MensajeCountAggregateOutputType | null
@@ -213,21 +217,21 @@ export type MensajeWhereInput = {
   NOT?: Prisma.MensajeWhereInput | Prisma.MensajeWhereInput[]
   id_mensaje?: Prisma.IntFilter<"Mensaje"> | number
   id_emisor?: Prisma.StringFilter<"Mensaje"> | string
-  id_receptor?: Prisma.StringFilter<"Mensaje"> | string
+  id_archivo?: Prisma.IntFilter<"Mensaje"> | number
   contenido?: Prisma.StringFilter<"Mensaje"> | string
   fecha_envio?: Prisma.DateTimeFilter<"Mensaje"> | Date | string
   emisor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  receptor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  archivo?: Prisma.XOR<Prisma.ArchivoScalarRelationFilter, Prisma.ArchivoWhereInput>
 }
 
 export type MensajeOrderByWithRelationInput = {
   id_mensaje?: Prisma.SortOrder
   id_emisor?: Prisma.SortOrder
-  id_receptor?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
   contenido?: Prisma.SortOrder
   fecha_envio?: Prisma.SortOrder
   emisor?: Prisma.UserOrderByWithRelationInput
-  receptor?: Prisma.UserOrderByWithRelationInput
+  archivo?: Prisma.ArchivoOrderByWithRelationInput
 }
 
 export type MensajeWhereUniqueInput = Prisma.AtLeast<{
@@ -236,17 +240,17 @@ export type MensajeWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MensajeWhereInput[]
   NOT?: Prisma.MensajeWhereInput | Prisma.MensajeWhereInput[]
   id_emisor?: Prisma.StringFilter<"Mensaje"> | string
-  id_receptor?: Prisma.StringFilter<"Mensaje"> | string
+  id_archivo?: Prisma.IntFilter<"Mensaje"> | number
   contenido?: Prisma.StringFilter<"Mensaje"> | string
   fecha_envio?: Prisma.DateTimeFilter<"Mensaje"> | Date | string
   emisor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  receptor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  archivo?: Prisma.XOR<Prisma.ArchivoScalarRelationFilter, Prisma.ArchivoWhereInput>
 }, "id_mensaje">
 
 export type MensajeOrderByWithAggregationInput = {
   id_mensaje?: Prisma.SortOrder
   id_emisor?: Prisma.SortOrder
-  id_receptor?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
   contenido?: Prisma.SortOrder
   fecha_envio?: Prisma.SortOrder
   _count?: Prisma.MensajeCountOrderByAggregateInput
@@ -262,7 +266,7 @@ export type MensajeScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MensajeScalarWhereWithAggregatesInput | Prisma.MensajeScalarWhereWithAggregatesInput[]
   id_mensaje?: Prisma.IntWithAggregatesFilter<"Mensaje"> | number
   id_emisor?: Prisma.StringWithAggregatesFilter<"Mensaje"> | string
-  id_receptor?: Prisma.StringWithAggregatesFilter<"Mensaje"> | string
+  id_archivo?: Prisma.IntWithAggregatesFilter<"Mensaje"> | number
   contenido?: Prisma.StringWithAggregatesFilter<"Mensaje"> | string
   fecha_envio?: Prisma.DateTimeWithAggregatesFilter<"Mensaje"> | Date | string
 }
@@ -271,13 +275,13 @@ export type MensajeCreateInput = {
   contenido: string
   fecha_envio?: Date | string
   emisor: Prisma.UserCreateNestedOneWithoutMensajesEnvInput
-  receptor: Prisma.UserCreateNestedOneWithoutMensajesRecInput
+  archivo: Prisma.ArchivoCreateNestedOneWithoutMensajesInput
 }
 
 export type MensajeUncheckedCreateInput = {
   id_mensaje?: number
   id_emisor: string
-  id_receptor: string
+  id_archivo: number
   contenido: string
   fecha_envio?: Date | string
 }
@@ -286,13 +290,13 @@ export type MensajeUpdateInput = {
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emisor?: Prisma.UserUpdateOneRequiredWithoutMensajesEnvNestedInput
-  receptor?: Prisma.UserUpdateOneRequiredWithoutMensajesRecNestedInput
+  archivo?: Prisma.ArchivoUpdateOneRequiredWithoutMensajesNestedInput
 }
 
 export type MensajeUncheckedUpdateInput = {
   id_mensaje?: Prisma.IntFieldUpdateOperationsInput | number
   id_emisor?: Prisma.StringFieldUpdateOperationsInput | string
-  id_receptor?: Prisma.StringFieldUpdateOperationsInput | string
+  id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -300,7 +304,7 @@ export type MensajeUncheckedUpdateInput = {
 export type MensajeCreateManyInput = {
   id_mensaje?: number
   id_emisor: string
-  id_receptor: string
+  id_archivo: number
   contenido: string
   fecha_envio?: Date | string
 }
@@ -313,7 +317,7 @@ export type MensajeUpdateManyMutationInput = {
 export type MensajeUncheckedUpdateManyInput = {
   id_mensaje?: Prisma.IntFieldUpdateOperationsInput | number
   id_emisor?: Prisma.StringFieldUpdateOperationsInput | string
-  id_receptor?: Prisma.StringFieldUpdateOperationsInput | string
+  id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -331,19 +335,20 @@ export type MensajeOrderByRelationAggregateInput = {
 export type MensajeCountOrderByAggregateInput = {
   id_mensaje?: Prisma.SortOrder
   id_emisor?: Prisma.SortOrder
-  id_receptor?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
   contenido?: Prisma.SortOrder
   fecha_envio?: Prisma.SortOrder
 }
 
 export type MensajeAvgOrderByAggregateInput = {
   id_mensaje?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
 }
 
 export type MensajeMaxOrderByAggregateInput = {
   id_mensaje?: Prisma.SortOrder
   id_emisor?: Prisma.SortOrder
-  id_receptor?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
   contenido?: Prisma.SortOrder
   fecha_envio?: Prisma.SortOrder
 }
@@ -351,13 +356,14 @@ export type MensajeMaxOrderByAggregateInput = {
 export type MensajeMinOrderByAggregateInput = {
   id_mensaje?: Prisma.SortOrder
   id_emisor?: Prisma.SortOrder
-  id_receptor?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
   contenido?: Prisma.SortOrder
   fecha_envio?: Prisma.SortOrder
 }
 
 export type MensajeSumOrderByAggregateInput = {
   id_mensaje?: Prisma.SortOrder
+  id_archivo?: Prisma.SortOrder
 }
 
 export type MensajeCreateNestedManyWithoutEmisorInput = {
@@ -367,24 +373,10 @@ export type MensajeCreateNestedManyWithoutEmisorInput = {
   connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
 }
 
-export type MensajeCreateNestedManyWithoutReceptorInput = {
-  create?: Prisma.XOR<Prisma.MensajeCreateWithoutReceptorInput, Prisma.MensajeUncheckedCreateWithoutReceptorInput> | Prisma.MensajeCreateWithoutReceptorInput[] | Prisma.MensajeUncheckedCreateWithoutReceptorInput[]
-  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutReceptorInput | Prisma.MensajeCreateOrConnectWithoutReceptorInput[]
-  createMany?: Prisma.MensajeCreateManyReceptorInputEnvelope
-  connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-}
-
 export type MensajeUncheckedCreateNestedManyWithoutEmisorInput = {
   create?: Prisma.XOR<Prisma.MensajeCreateWithoutEmisorInput, Prisma.MensajeUncheckedCreateWithoutEmisorInput> | Prisma.MensajeCreateWithoutEmisorInput[] | Prisma.MensajeUncheckedCreateWithoutEmisorInput[]
   connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutEmisorInput | Prisma.MensajeCreateOrConnectWithoutEmisorInput[]
   createMany?: Prisma.MensajeCreateManyEmisorInputEnvelope
-  connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-}
-
-export type MensajeUncheckedCreateNestedManyWithoutReceptorInput = {
-  create?: Prisma.XOR<Prisma.MensajeCreateWithoutReceptorInput, Prisma.MensajeUncheckedCreateWithoutReceptorInput> | Prisma.MensajeCreateWithoutReceptorInput[] | Prisma.MensajeUncheckedCreateWithoutReceptorInput[]
-  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutReceptorInput | Prisma.MensajeCreateOrConnectWithoutReceptorInput[]
-  createMany?: Prisma.MensajeCreateManyReceptorInputEnvelope
   connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
 }
 
@@ -402,20 +394,6 @@ export type MensajeUpdateManyWithoutEmisorNestedInput = {
   deleteMany?: Prisma.MensajeScalarWhereInput | Prisma.MensajeScalarWhereInput[]
 }
 
-export type MensajeUpdateManyWithoutReceptorNestedInput = {
-  create?: Prisma.XOR<Prisma.MensajeCreateWithoutReceptorInput, Prisma.MensajeUncheckedCreateWithoutReceptorInput> | Prisma.MensajeCreateWithoutReceptorInput[] | Prisma.MensajeUncheckedCreateWithoutReceptorInput[]
-  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutReceptorInput | Prisma.MensajeCreateOrConnectWithoutReceptorInput[]
-  upsert?: Prisma.MensajeUpsertWithWhereUniqueWithoutReceptorInput | Prisma.MensajeUpsertWithWhereUniqueWithoutReceptorInput[]
-  createMany?: Prisma.MensajeCreateManyReceptorInputEnvelope
-  set?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-  disconnect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-  delete?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-  connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-  update?: Prisma.MensajeUpdateWithWhereUniqueWithoutReceptorInput | Prisma.MensajeUpdateWithWhereUniqueWithoutReceptorInput[]
-  updateMany?: Prisma.MensajeUpdateManyWithWhereWithoutReceptorInput | Prisma.MensajeUpdateManyWithWhereWithoutReceptorInput[]
-  deleteMany?: Prisma.MensajeScalarWhereInput | Prisma.MensajeScalarWhereInput[]
-}
-
 export type MensajeUncheckedUpdateManyWithoutEmisorNestedInput = {
   create?: Prisma.XOR<Prisma.MensajeCreateWithoutEmisorInput, Prisma.MensajeUncheckedCreateWithoutEmisorInput> | Prisma.MensajeCreateWithoutEmisorInput[] | Prisma.MensajeUncheckedCreateWithoutEmisorInput[]
   connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutEmisorInput | Prisma.MensajeCreateOrConnectWithoutEmisorInput[]
@@ -430,29 +408,57 @@ export type MensajeUncheckedUpdateManyWithoutEmisorNestedInput = {
   deleteMany?: Prisma.MensajeScalarWhereInput | Prisma.MensajeScalarWhereInput[]
 }
 
-export type MensajeUncheckedUpdateManyWithoutReceptorNestedInput = {
-  create?: Prisma.XOR<Prisma.MensajeCreateWithoutReceptorInput, Prisma.MensajeUncheckedCreateWithoutReceptorInput> | Prisma.MensajeCreateWithoutReceptorInput[] | Prisma.MensajeUncheckedCreateWithoutReceptorInput[]
-  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutReceptorInput | Prisma.MensajeCreateOrConnectWithoutReceptorInput[]
-  upsert?: Prisma.MensajeUpsertWithWhereUniqueWithoutReceptorInput | Prisma.MensajeUpsertWithWhereUniqueWithoutReceptorInput[]
-  createMany?: Prisma.MensajeCreateManyReceptorInputEnvelope
+export type MensajeCreateNestedManyWithoutArchivoInput = {
+  create?: Prisma.XOR<Prisma.MensajeCreateWithoutArchivoInput, Prisma.MensajeUncheckedCreateWithoutArchivoInput> | Prisma.MensajeCreateWithoutArchivoInput[] | Prisma.MensajeUncheckedCreateWithoutArchivoInput[]
+  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutArchivoInput | Prisma.MensajeCreateOrConnectWithoutArchivoInput[]
+  createMany?: Prisma.MensajeCreateManyArchivoInputEnvelope
+  connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
+}
+
+export type MensajeUncheckedCreateNestedManyWithoutArchivoInput = {
+  create?: Prisma.XOR<Prisma.MensajeCreateWithoutArchivoInput, Prisma.MensajeUncheckedCreateWithoutArchivoInput> | Prisma.MensajeCreateWithoutArchivoInput[] | Prisma.MensajeUncheckedCreateWithoutArchivoInput[]
+  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutArchivoInput | Prisma.MensajeCreateOrConnectWithoutArchivoInput[]
+  createMany?: Prisma.MensajeCreateManyArchivoInputEnvelope
+  connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
+}
+
+export type MensajeUpdateManyWithoutArchivoNestedInput = {
+  create?: Prisma.XOR<Prisma.MensajeCreateWithoutArchivoInput, Prisma.MensajeUncheckedCreateWithoutArchivoInput> | Prisma.MensajeCreateWithoutArchivoInput[] | Prisma.MensajeUncheckedCreateWithoutArchivoInput[]
+  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutArchivoInput | Prisma.MensajeCreateOrConnectWithoutArchivoInput[]
+  upsert?: Prisma.MensajeUpsertWithWhereUniqueWithoutArchivoInput | Prisma.MensajeUpsertWithWhereUniqueWithoutArchivoInput[]
+  createMany?: Prisma.MensajeCreateManyArchivoInputEnvelope
   set?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
   disconnect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
   delete?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
   connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
-  update?: Prisma.MensajeUpdateWithWhereUniqueWithoutReceptorInput | Prisma.MensajeUpdateWithWhereUniqueWithoutReceptorInput[]
-  updateMany?: Prisma.MensajeUpdateManyWithWhereWithoutReceptorInput | Prisma.MensajeUpdateManyWithWhereWithoutReceptorInput[]
+  update?: Prisma.MensajeUpdateWithWhereUniqueWithoutArchivoInput | Prisma.MensajeUpdateWithWhereUniqueWithoutArchivoInput[]
+  updateMany?: Prisma.MensajeUpdateManyWithWhereWithoutArchivoInput | Prisma.MensajeUpdateManyWithWhereWithoutArchivoInput[]
+  deleteMany?: Prisma.MensajeScalarWhereInput | Prisma.MensajeScalarWhereInput[]
+}
+
+export type MensajeUncheckedUpdateManyWithoutArchivoNestedInput = {
+  create?: Prisma.XOR<Prisma.MensajeCreateWithoutArchivoInput, Prisma.MensajeUncheckedCreateWithoutArchivoInput> | Prisma.MensajeCreateWithoutArchivoInput[] | Prisma.MensajeUncheckedCreateWithoutArchivoInput[]
+  connectOrCreate?: Prisma.MensajeCreateOrConnectWithoutArchivoInput | Prisma.MensajeCreateOrConnectWithoutArchivoInput[]
+  upsert?: Prisma.MensajeUpsertWithWhereUniqueWithoutArchivoInput | Prisma.MensajeUpsertWithWhereUniqueWithoutArchivoInput[]
+  createMany?: Prisma.MensajeCreateManyArchivoInputEnvelope
+  set?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
+  disconnect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
+  delete?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
+  connect?: Prisma.MensajeWhereUniqueInput | Prisma.MensajeWhereUniqueInput[]
+  update?: Prisma.MensajeUpdateWithWhereUniqueWithoutArchivoInput | Prisma.MensajeUpdateWithWhereUniqueWithoutArchivoInput[]
+  updateMany?: Prisma.MensajeUpdateManyWithWhereWithoutArchivoInput | Prisma.MensajeUpdateManyWithWhereWithoutArchivoInput[]
   deleteMany?: Prisma.MensajeScalarWhereInput | Prisma.MensajeScalarWhereInput[]
 }
 
 export type MensajeCreateWithoutEmisorInput = {
   contenido: string
   fecha_envio?: Date | string
-  receptor: Prisma.UserCreateNestedOneWithoutMensajesRecInput
+  archivo: Prisma.ArchivoCreateNestedOneWithoutMensajesInput
 }
 
 export type MensajeUncheckedCreateWithoutEmisorInput = {
   id_mensaje?: number
-  id_receptor: string
+  id_archivo: number
   contenido: string
   fecha_envio?: Date | string
 }
@@ -464,28 +470,6 @@ export type MensajeCreateOrConnectWithoutEmisorInput = {
 
 export type MensajeCreateManyEmisorInputEnvelope = {
   data: Prisma.MensajeCreateManyEmisorInput | Prisma.MensajeCreateManyEmisorInput[]
-}
-
-export type MensajeCreateWithoutReceptorInput = {
-  contenido: string
-  fecha_envio?: Date | string
-  emisor: Prisma.UserCreateNestedOneWithoutMensajesEnvInput
-}
-
-export type MensajeUncheckedCreateWithoutReceptorInput = {
-  id_mensaje?: number
-  id_emisor: string
-  contenido: string
-  fecha_envio?: Date | string
-}
-
-export type MensajeCreateOrConnectWithoutReceptorInput = {
-  where: Prisma.MensajeWhereUniqueInput
-  create: Prisma.XOR<Prisma.MensajeCreateWithoutReceptorInput, Prisma.MensajeUncheckedCreateWithoutReceptorInput>
-}
-
-export type MensajeCreateManyReceptorInputEnvelope = {
-  data: Prisma.MensajeCreateManyReceptorInput | Prisma.MensajeCreateManyReceptorInput[]
 }
 
 export type MensajeUpsertWithWhereUniqueWithoutEmisorInput = {
@@ -510,37 +494,52 @@ export type MensajeScalarWhereInput = {
   NOT?: Prisma.MensajeScalarWhereInput | Prisma.MensajeScalarWhereInput[]
   id_mensaje?: Prisma.IntFilter<"Mensaje"> | number
   id_emisor?: Prisma.StringFilter<"Mensaje"> | string
-  id_receptor?: Prisma.StringFilter<"Mensaje"> | string
+  id_archivo?: Prisma.IntFilter<"Mensaje"> | number
   contenido?: Prisma.StringFilter<"Mensaje"> | string
   fecha_envio?: Prisma.DateTimeFilter<"Mensaje"> | Date | string
 }
 
-export type MensajeUpsertWithWhereUniqueWithoutReceptorInput = {
-  where: Prisma.MensajeWhereUniqueInput
-  update: Prisma.XOR<Prisma.MensajeUpdateWithoutReceptorInput, Prisma.MensajeUncheckedUpdateWithoutReceptorInput>
-  create: Prisma.XOR<Prisma.MensajeCreateWithoutReceptorInput, Prisma.MensajeUncheckedCreateWithoutReceptorInput>
+export type MensajeCreateWithoutArchivoInput = {
+  contenido: string
+  fecha_envio?: Date | string
+  emisor: Prisma.UserCreateNestedOneWithoutMensajesEnvInput
 }
 
-export type MensajeUpdateWithWhereUniqueWithoutReceptorInput = {
-  where: Prisma.MensajeWhereUniqueInput
-  data: Prisma.XOR<Prisma.MensajeUpdateWithoutReceptorInput, Prisma.MensajeUncheckedUpdateWithoutReceptorInput>
-}
-
-export type MensajeUpdateManyWithWhereWithoutReceptorInput = {
-  where: Prisma.MensajeScalarWhereInput
-  data: Prisma.XOR<Prisma.MensajeUpdateManyMutationInput, Prisma.MensajeUncheckedUpdateManyWithoutReceptorInput>
-}
-
-export type MensajeCreateManyEmisorInput = {
+export type MensajeUncheckedCreateWithoutArchivoInput = {
   id_mensaje?: number
-  id_receptor: string
+  id_emisor: string
   contenido: string
   fecha_envio?: Date | string
 }
 
-export type MensajeCreateManyReceptorInput = {
+export type MensajeCreateOrConnectWithoutArchivoInput = {
+  where: Prisma.MensajeWhereUniqueInput
+  create: Prisma.XOR<Prisma.MensajeCreateWithoutArchivoInput, Prisma.MensajeUncheckedCreateWithoutArchivoInput>
+}
+
+export type MensajeCreateManyArchivoInputEnvelope = {
+  data: Prisma.MensajeCreateManyArchivoInput | Prisma.MensajeCreateManyArchivoInput[]
+}
+
+export type MensajeUpsertWithWhereUniqueWithoutArchivoInput = {
+  where: Prisma.MensajeWhereUniqueInput
+  update: Prisma.XOR<Prisma.MensajeUpdateWithoutArchivoInput, Prisma.MensajeUncheckedUpdateWithoutArchivoInput>
+  create: Prisma.XOR<Prisma.MensajeCreateWithoutArchivoInput, Prisma.MensajeUncheckedCreateWithoutArchivoInput>
+}
+
+export type MensajeUpdateWithWhereUniqueWithoutArchivoInput = {
+  where: Prisma.MensajeWhereUniqueInput
+  data: Prisma.XOR<Prisma.MensajeUpdateWithoutArchivoInput, Prisma.MensajeUncheckedUpdateWithoutArchivoInput>
+}
+
+export type MensajeUpdateManyWithWhereWithoutArchivoInput = {
+  where: Prisma.MensajeScalarWhereInput
+  data: Prisma.XOR<Prisma.MensajeUpdateManyMutationInput, Prisma.MensajeUncheckedUpdateManyWithoutArchivoInput>
+}
+
+export type MensajeCreateManyEmisorInput = {
   id_mensaje?: number
-  id_emisor: string
+  id_archivo: number
   contenido: string
   fecha_envio?: Date | string
 }
@@ -548,37 +547,44 @@ export type MensajeCreateManyReceptorInput = {
 export type MensajeUpdateWithoutEmisorInput = {
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  receptor?: Prisma.UserUpdateOneRequiredWithoutMensajesRecNestedInput
+  archivo?: Prisma.ArchivoUpdateOneRequiredWithoutMensajesNestedInput
 }
 
 export type MensajeUncheckedUpdateWithoutEmisorInput = {
   id_mensaje?: Prisma.IntFieldUpdateOperationsInput | number
-  id_receptor?: Prisma.StringFieldUpdateOperationsInput | string
+  id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MensajeUncheckedUpdateManyWithoutEmisorInput = {
   id_mensaje?: Prisma.IntFieldUpdateOperationsInput | number
-  id_receptor?: Prisma.StringFieldUpdateOperationsInput | string
+  id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type MensajeUpdateWithoutReceptorInput = {
+export type MensajeCreateManyArchivoInput = {
+  id_mensaje?: number
+  id_emisor: string
+  contenido: string
+  fecha_envio?: Date | string
+}
+
+export type MensajeUpdateWithoutArchivoInput = {
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   emisor?: Prisma.UserUpdateOneRequiredWithoutMensajesEnvNestedInput
 }
 
-export type MensajeUncheckedUpdateWithoutReceptorInput = {
+export type MensajeUncheckedUpdateWithoutArchivoInput = {
   id_mensaje?: Prisma.IntFieldUpdateOperationsInput | number
   id_emisor?: Prisma.StringFieldUpdateOperationsInput | string
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
   fecha_envio?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type MensajeUncheckedUpdateManyWithoutReceptorInput = {
+export type MensajeUncheckedUpdateManyWithoutArchivoInput = {
   id_mensaje?: Prisma.IntFieldUpdateOperationsInput | number
   id_emisor?: Prisma.StringFieldUpdateOperationsInput | string
   contenido?: Prisma.StringFieldUpdateOperationsInput | string
@@ -590,65 +596,65 @@ export type MensajeUncheckedUpdateManyWithoutReceptorInput = {
 export type MensajeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_mensaje?: boolean
   id_emisor?: boolean
-  id_receptor?: boolean
+  id_archivo?: boolean
   contenido?: boolean
   fecha_envio?: boolean
   emisor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  receptor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  archivo?: boolean | Prisma.ArchivoDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mensaje"]>
 
 export type MensajeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_mensaje?: boolean
   id_emisor?: boolean
-  id_receptor?: boolean
+  id_archivo?: boolean
   contenido?: boolean
   fecha_envio?: boolean
   emisor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  receptor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  archivo?: boolean | Prisma.ArchivoDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mensaje"]>
 
 export type MensajeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_mensaje?: boolean
   id_emisor?: boolean
-  id_receptor?: boolean
+  id_archivo?: boolean
   contenido?: boolean
   fecha_envio?: boolean
   emisor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  receptor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  archivo?: boolean | Prisma.ArchivoDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["mensaje"]>
 
 export type MensajeSelectScalar = {
   id_mensaje?: boolean
   id_emisor?: boolean
-  id_receptor?: boolean
+  id_archivo?: boolean
   contenido?: boolean
   fecha_envio?: boolean
 }
 
-export type MensajeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_mensaje" | "id_emisor" | "id_receptor" | "contenido" | "fecha_envio", ExtArgs["result"]["mensaje"]>
+export type MensajeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_mensaje" | "id_emisor" | "id_archivo" | "contenido" | "fecha_envio", ExtArgs["result"]["mensaje"]>
 export type MensajeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emisor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  receptor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  archivo?: boolean | Prisma.ArchivoDefaultArgs<ExtArgs>
 }
 export type MensajeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emisor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  receptor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  archivo?: boolean | Prisma.ArchivoDefaultArgs<ExtArgs>
 }
 export type MensajeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emisor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  receptor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  archivo?: boolean | Prisma.ArchivoDefaultArgs<ExtArgs>
 }
 
 export type $MensajePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Mensaje"
   objects: {
     emisor: Prisma.$UserPayload<ExtArgs>
-    receptor: Prisma.$UserPayload<ExtArgs>
+    archivo: Prisma.$ArchivoPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_mensaje: number
     id_emisor: string
-    id_receptor: string
+    id_archivo: number
     contenido: string
     fecha_envio: Date
   }, ExtArgs["result"]["mensaje"]>
@@ -1046,7 +1052,7 @@ readonly fields: MensajeFieldRefs;
 export interface Prisma__MensajeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   emisor<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  receptor<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  archivo<T extends Prisma.ArchivoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ArchivoDefaultArgs<ExtArgs>>): Prisma.Prisma__ArchivoClient<runtime.Types.Result.GetResult<Prisma.$ArchivoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1078,7 +1084,7 @@ export interface Prisma__MensajeClient<T, Null = never, ExtArgs extends runtime.
 export interface MensajeFieldRefs {
   readonly id_mensaje: Prisma.FieldRef<"Mensaje", 'Int'>
   readonly id_emisor: Prisma.FieldRef<"Mensaje", 'String'>
-  readonly id_receptor: Prisma.FieldRef<"Mensaje", 'String'>
+  readonly id_archivo: Prisma.FieldRef<"Mensaje", 'Int'>
   readonly contenido: Prisma.FieldRef<"Mensaje", 'String'>
   readonly fecha_envio: Prisma.FieldRef<"Mensaje", 'DateTime'>
 }

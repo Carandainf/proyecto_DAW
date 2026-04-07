@@ -78,7 +78,11 @@ const todosLosTrabajos = await prisma.archivo.findMany({
               >
               <th
                 class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-right"
-                >Acciones</th
+                >Descargas</th
+              >
+              <th
+                class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-right"
+                >Notas</th
               >
             </tr>
           </thead>
@@ -86,7 +90,7 @@ const todosLosTrabajos = await prisma.archivo.findMany({
             {
               todosLosTrabajos.length === 0 ? (
                 <tr>
-                  <td colspan="4" class="p-12 text-center text-slate-500 italic text-sm">
+                  <td colspan="5" class="p-12 text-center text-slate-500 italic text-sm">
                     No hay registros de trabajos en tu cuenta.
                   </td>
                 </tr>
@@ -135,9 +139,10 @@ const todosLosTrabajos = await prisma.archivo.findMany({
                       </span>
                     </td>
                     <td class="p-4 text-right">
-                      <button
-                        class="p-2 text-slate-500 hover:text-dent-accent transition-colors"
-                        title="Descargar"
+                      <a
+                        href={`/api/download/${trabajo.id_archivo}`}
+                        class="p-2 text-slate-500 hover:text-dent-accent active:scale-90 active:text-emerald-400 transition-all inline-block"
+                        title="Descargar archivo original"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -150,13 +155,32 @@ const todosLosTrabajos = await prisma.archivo.findMany({
                           stroke-linecap="round"
                           stroke-linejoin="round"
                         >
-                          <>
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                          </>
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
                         </svg>
-                      </button>
+                      </a>
+                    </td>
+                    <td class="p-4 text-right">
+                      <a
+                        href={`/dashboard/cliente/trabajo/${trabajo.id_archivo}`}
+                        class="p-2 hover:bg-slate-100 rounded-full inline-block text-slate-400 hover:text-dent-accent"
+                        title="Ver conversación"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                        </svg>
+                      </a>
                     </td>
                   </tr>
                 ))

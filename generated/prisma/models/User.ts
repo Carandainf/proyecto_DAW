@@ -275,7 +275,6 @@ export type UserWhereInput = {
   roleRel?: Prisma.XOR<Prisma.RoleNullableScalarRelationFilter, Prisma.RoleWhereInput> | null
   archivos?: Prisma.ArchivoListRelationFilter
   mensajesEnv?: Prisma.MensajeListRelationFilter
-  mensajesRec?: Prisma.MensajeListRelationFilter
   contactos?: Prisma.ContactoListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
@@ -297,7 +296,6 @@ export type UserOrderByWithRelationInput = {
   roleRel?: Prisma.RoleOrderByWithRelationInput
   archivos?: Prisma.ArchivoOrderByRelationAggregateInput
   mensajesEnv?: Prisma.MensajeOrderByRelationAggregateInput
-  mensajesRec?: Prisma.MensajeOrderByRelationAggregateInput
   contactos?: Prisma.ContactoOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
@@ -322,7 +320,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   roleRel?: Prisma.XOR<Prisma.RoleNullableScalarRelationFilter, Prisma.RoleWhereInput> | null
   archivos?: Prisma.ArchivoListRelationFilter
   mensajesEnv?: Prisma.MensajeListRelationFilter
-  mensajesRec?: Prisma.MensajeListRelationFilter
   contactos?: Prisma.ContactoListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
@@ -381,7 +378,6 @@ export type UserCreateInput = {
   roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
   archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -402,7 +398,6 @@ export type UserUncheckedCreateInput = {
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -423,7 +418,6 @@ export type UserUpdateInput = {
   roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
   archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -444,7 +438,6 @@ export type UserUncheckedUpdateInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -681,26 +674,12 @@ export type UserCreateNestedOneWithoutMensajesEnvInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserCreateNestedOneWithoutMensajesRecInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutMensajesRecInput, Prisma.UserUncheckedCreateWithoutMensajesRecInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMensajesRecInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
 export type UserUpdateOneRequiredWithoutMensajesEnvNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutMensajesEnvInput, Prisma.UserUncheckedCreateWithoutMensajesEnvInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutMensajesEnvInput
   upsert?: Prisma.UserUpsertWithoutMensajesEnvInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMensajesEnvInput, Prisma.UserUpdateWithoutMensajesEnvInput>, Prisma.UserUncheckedUpdateWithoutMensajesEnvInput>
-}
-
-export type UserUpdateOneRequiredWithoutMensajesRecNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutMensajesRecInput, Prisma.UserUncheckedCreateWithoutMensajesRecInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMensajesRecInput
-  upsert?: Prisma.UserUpsertWithoutMensajesRecInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMensajesRecInput, Prisma.UserUpdateWithoutMensajesRecInput>, Prisma.UserUncheckedUpdateWithoutMensajesRecInput>
 }
 
 export type UserCreateNestedOneWithoutContactosInput = {
@@ -733,7 +712,6 @@ export type UserCreateWithoutRoleRelInput = {
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -753,7 +731,6 @@ export type UserUncheckedCreateWithoutRoleRelInput = {
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -817,7 +794,6 @@ export type UserCreateWithoutSessionsInput = {
   roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
   archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
 }
@@ -837,7 +813,6 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
 }
@@ -873,7 +848,6 @@ export type UserUpdateWithoutSessionsInput = {
   roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
   archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
 }
@@ -893,7 +867,6 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -913,7 +886,6 @@ export type UserCreateWithoutAccountsInput = {
   roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
   archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
 }
@@ -933,7 +905,6 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
 }
@@ -969,7 +940,6 @@ export type UserUpdateWithoutAccountsInput = {
   roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
   archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
 }
@@ -989,7 +959,6 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1008,7 +977,6 @@ export type UserCreateWithoutArchivosInput = {
   banExpires?: Date | string | null
   roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
   mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -1028,7 +996,6 @@ export type UserUncheckedCreateWithoutArchivosInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -1064,7 +1031,6 @@ export type UserUpdateWithoutArchivosInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
   mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -1084,7 +1050,6 @@ export type UserUncheckedUpdateWithoutArchivosInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1104,7 +1069,6 @@ export type UserCreateWithoutMensajesEnvInput = {
   banExpires?: Date | string | null
   roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
   archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -1124,7 +1088,6 @@ export type UserUncheckedCreateWithoutMensajesEnvInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -1133,51 +1096,6 @@ export type UserUncheckedCreateWithoutMensajesEnvInput = {
 export type UserCreateOrConnectWithoutMensajesEnvInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutMensajesEnvInput, Prisma.UserUncheckedCreateWithoutMensajesEnvInput>
-}
-
-export type UserCreateWithoutMensajesRecInput = {
-  id: string
-  name: string
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
-  archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
-  mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  contactos?: Prisma.ContactoCreateNestedManyWithoutAdminInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutMensajesRecInput = {
-  id: string
-  name: string
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  roleId?: number | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
-  mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  contactos?: Prisma.ContactoUncheckedCreateNestedManyWithoutAdminInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutMensajesRecInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutMensajesRecInput, Prisma.UserUncheckedCreateWithoutMensajesRecInput>
 }
 
 export type UserUpsertWithoutMensajesEnvInput = {
@@ -1205,7 +1123,6 @@ export type UserUpdateWithoutMensajesEnvInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
   archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -1225,58 +1142,6 @@ export type UserUncheckedUpdateWithoutMensajesEnvInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
-  contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserUpsertWithoutMensajesRecInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutMensajesRecInput, Prisma.UserUncheckedUpdateWithoutMensajesRecInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutMensajesRecInput, Prisma.UserUncheckedCreateWithoutMensajesRecInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutMensajesRecInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutMensajesRecInput, Prisma.UserUncheckedUpdateWithoutMensajesRecInput>
-}
-
-export type UserUpdateWithoutMensajesRecInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
-  archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
-  mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutMensajesRecInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  roleId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
-  mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
   contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1297,7 +1162,6 @@ export type UserCreateWithoutContactosInput = {
   roleRel?: Prisma.RoleCreateNestedOneWithoutUsuariosInput
   archivos?: Prisma.ArchivoCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeCreateNestedManyWithoutReceptorInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
 }
@@ -1317,7 +1181,6 @@ export type UserUncheckedCreateWithoutContactosInput = {
   banExpires?: Date | string | null
   archivos?: Prisma.ArchivoUncheckedCreateNestedManyWithoutUsuarioInput
   mensajesEnv?: Prisma.MensajeUncheckedCreateNestedManyWithoutEmisorInput
-  mensajesRec?: Prisma.MensajeUncheckedCreateNestedManyWithoutReceptorInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1353,7 +1216,6 @@ export type UserUpdateWithoutContactosInput = {
   roleRel?: Prisma.RoleUpdateOneWithoutUsuariosNestedInput
   archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
 }
@@ -1373,7 +1235,6 @@ export type UserUncheckedUpdateWithoutContactosInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1406,7 +1267,6 @@ export type UserUpdateWithoutRoleRelInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -1426,7 +1286,6 @@ export type UserUncheckedUpdateWithoutRoleRelInput = {
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   archivos?: Prisma.ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput
   mensajesEnv?: Prisma.MensajeUncheckedUpdateManyWithoutEmisorNestedInput
-  mensajesRec?: Prisma.MensajeUncheckedUpdateManyWithoutReceptorNestedInput
   contactos?: Prisma.ContactoUncheckedUpdateManyWithoutAdminNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1454,7 +1313,6 @@ export type UserUncheckedUpdateManyWithoutRoleRelInput = {
 export type UserCountOutputType = {
   archivos: number
   mensajesEnv: number
-  mensajesRec: number
   contactos: number
   sessions: number
   accounts: number
@@ -1463,7 +1321,6 @@ export type UserCountOutputType = {
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   archivos?: boolean | UserCountOutputTypeCountArchivosArgs
   mensajesEnv?: boolean | UserCountOutputTypeCountMensajesEnvArgs
-  mensajesRec?: boolean | UserCountOutputTypeCountMensajesRecArgs
   contactos?: boolean | UserCountOutputTypeCountContactosArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
@@ -1490,13 +1347,6 @@ export type UserCountOutputTypeCountArchivosArgs<ExtArgs extends runtime.Types.E
  * UserCountOutputType without action
  */
 export type UserCountOutputTypeCountMensajesEnvArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MensajeWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountMensajesRecArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MensajeWhereInput
 }
 
@@ -1538,7 +1388,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   roleRel?: boolean | Prisma.User$roleRelArgs<ExtArgs>
   archivos?: boolean | Prisma.User$archivosArgs<ExtArgs>
   mensajesEnv?: boolean | Prisma.User$mensajesEnvArgs<ExtArgs>
-  mensajesRec?: boolean | Prisma.User$mensajesRecArgs<ExtArgs>
   contactos?: boolean | Prisma.User$contactosArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1597,7 +1446,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   roleRel?: boolean | Prisma.User$roleRelArgs<ExtArgs>
   archivos?: boolean | Prisma.User$archivosArgs<ExtArgs>
   mensajesEnv?: boolean | Prisma.User$mensajesEnvArgs<ExtArgs>
-  mensajesRec?: boolean | Prisma.User$mensajesRecArgs<ExtArgs>
   contactos?: boolean | Prisma.User$contactosArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1616,7 +1464,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     roleRel: Prisma.$RolePayload<ExtArgs> | null
     archivos: Prisma.$ArchivoPayload<ExtArgs>[]
     mensajesEnv: Prisma.$MensajePayload<ExtArgs>[]
-    mensajesRec: Prisma.$MensajePayload<ExtArgs>[]
     contactos: Prisma.$ContactoPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
@@ -2031,7 +1878,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   roleRel<T extends Prisma.User$roleRelArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$roleRelArgs<ExtArgs>>): Prisma.Prisma__RoleClient<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   archivos<T extends Prisma.User$archivosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$archivosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ArchivoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mensajesEnv<T extends Prisma.User$mensajesEnvArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mensajesEnvArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MensajePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  mensajesRec<T extends Prisma.User$mensajesRecArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mensajesRecArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MensajePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contactos<T extends Prisma.User$contactosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contactosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2521,30 +2367,6 @@ export type User$archivosArgs<ExtArgs extends runtime.Types.Extensions.InternalA
  * User.mensajesEnv
  */
 export type User$mensajesEnvArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Mensaje
-   */
-  select?: Prisma.MensajeSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Mensaje
-   */
-  omit?: Prisma.MensajeOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MensajeInclude<ExtArgs> | null
-  where?: Prisma.MensajeWhereInput
-  orderBy?: Prisma.MensajeOrderByWithRelationInput | Prisma.MensajeOrderByWithRelationInput[]
-  cursor?: Prisma.MensajeWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MensajeScalarFieldEnum | Prisma.MensajeScalarFieldEnum[]
-}
-
-/**
- * User.mensajesRec
- */
-export type User$mensajesRecArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Mensaje
    */

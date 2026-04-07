@@ -249,6 +249,7 @@ export type ArchivoWhereInput = {
   fecha_subida?: Prisma.DateTimeFilter<"Archivo"> | Date | string
   fecha_recepcion?: Prisma.DateTimeNullableFilter<"Archivo"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  mensajes?: Prisma.MensajeListRelationFilter
 }
 
 export type ArchivoOrderByWithRelationInput = {
@@ -262,6 +263,7 @@ export type ArchivoOrderByWithRelationInput = {
   fecha_subida?: Prisma.SortOrder
   fecha_recepcion?: Prisma.SortOrderInput | Prisma.SortOrder
   usuario?: Prisma.UserOrderByWithRelationInput
+  mensajes?: Prisma.MensajeOrderByRelationAggregateInput
 }
 
 export type ArchivoWhereUniqueInput = Prisma.AtLeast<{
@@ -278,6 +280,7 @@ export type ArchivoWhereUniqueInput = Prisma.AtLeast<{
   fecha_subida?: Prisma.DateTimeFilter<"Archivo"> | Date | string
   fecha_recepcion?: Prisma.DateTimeNullableFilter<"Archivo"> | Date | string | null
   usuario?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  mensajes?: Prisma.MensajeListRelationFilter
 }, "id_archivo">
 
 export type ArchivoOrderByWithAggregationInput = {
@@ -321,6 +324,7 @@ export type ArchivoCreateInput = {
   fecha_subida?: Date | string
   fecha_recepcion?: Date | string | null
   usuario: Prisma.UserCreateNestedOneWithoutArchivosInput
+  mensajes?: Prisma.MensajeCreateNestedManyWithoutArchivoInput
 }
 
 export type ArchivoUncheckedCreateInput = {
@@ -333,6 +337,7 @@ export type ArchivoUncheckedCreateInput = {
   descripcion?: string | null
   fecha_subida?: Date | string
   fecha_recepcion?: Date | string | null
+  mensajes?: Prisma.MensajeUncheckedCreateNestedManyWithoutArchivoInput
 }
 
 export type ArchivoUpdateInput = {
@@ -344,6 +349,7 @@ export type ArchivoUpdateInput = {
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   usuario?: Prisma.UserUpdateOneRequiredWithoutArchivosNestedInput
+  mensajes?: Prisma.MensajeUpdateManyWithoutArchivoNestedInput
 }
 
 export type ArchivoUncheckedUpdateInput = {
@@ -356,6 +362,7 @@ export type ArchivoUncheckedUpdateInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mensajes?: Prisma.MensajeUncheckedUpdateManyWithoutArchivoNestedInput
 }
 
 export type ArchivoCreateManyInput = {
@@ -446,6 +453,11 @@ export type ArchivoSumOrderByAggregateInput = {
   id_archivo?: Prisma.SortOrder
 }
 
+export type ArchivoScalarRelationFilter = {
+  is?: Prisma.ArchivoWhereInput
+  isNot?: Prisma.ArchivoWhereInput
+}
+
 export type ArchivoCreateNestedManyWithoutUsuarioInput = {
   create?: Prisma.XOR<Prisma.ArchivoCreateWithoutUsuarioInput, Prisma.ArchivoUncheckedCreateWithoutUsuarioInput> | Prisma.ArchivoCreateWithoutUsuarioInput[] | Prisma.ArchivoUncheckedCreateWithoutUsuarioInput[]
   connectOrCreate?: Prisma.ArchivoCreateOrConnectWithoutUsuarioInput | Prisma.ArchivoCreateOrConnectWithoutUsuarioInput[]
@@ -488,6 +500,20 @@ export type ArchivoUncheckedUpdateManyWithoutUsuarioNestedInput = {
   deleteMany?: Prisma.ArchivoScalarWhereInput | Prisma.ArchivoScalarWhereInput[]
 }
 
+export type ArchivoCreateNestedOneWithoutMensajesInput = {
+  create?: Prisma.XOR<Prisma.ArchivoCreateWithoutMensajesInput, Prisma.ArchivoUncheckedCreateWithoutMensajesInput>
+  connectOrCreate?: Prisma.ArchivoCreateOrConnectWithoutMensajesInput
+  connect?: Prisma.ArchivoWhereUniqueInput
+}
+
+export type ArchivoUpdateOneRequiredWithoutMensajesNestedInput = {
+  create?: Prisma.XOR<Prisma.ArchivoCreateWithoutMensajesInput, Prisma.ArchivoUncheckedCreateWithoutMensajesInput>
+  connectOrCreate?: Prisma.ArchivoCreateOrConnectWithoutMensajesInput
+  upsert?: Prisma.ArchivoUpsertWithoutMensajesInput
+  connect?: Prisma.ArchivoWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ArchivoUpdateToOneWithWhereWithoutMensajesInput, Prisma.ArchivoUpdateWithoutMensajesInput>, Prisma.ArchivoUncheckedUpdateWithoutMensajesInput>
+}
+
 export type ArchivoCreateWithoutUsuarioInput = {
   nombre_archivo: string
   url_path?: string
@@ -496,6 +522,7 @@ export type ArchivoCreateWithoutUsuarioInput = {
   descripcion?: string | null
   fecha_subida?: Date | string
   fecha_recepcion?: Date | string | null
+  mensajes?: Prisma.MensajeCreateNestedManyWithoutArchivoInput
 }
 
 export type ArchivoUncheckedCreateWithoutUsuarioInput = {
@@ -507,6 +534,7 @@ export type ArchivoUncheckedCreateWithoutUsuarioInput = {
   descripcion?: string | null
   fecha_subida?: Date | string
   fecha_recepcion?: Date | string | null
+  mensajes?: Prisma.MensajeUncheckedCreateNestedManyWithoutArchivoInput
 }
 
 export type ArchivoCreateOrConnectWithoutUsuarioInput = {
@@ -549,6 +577,68 @@ export type ArchivoScalarWhereInput = {
   fecha_recepcion?: Prisma.DateTimeNullableFilter<"Archivo"> | Date | string | null
 }
 
+export type ArchivoCreateWithoutMensajesInput = {
+  nombre_archivo: string
+  url_path?: string
+  estado?: string
+  prioridad?: string
+  descripcion?: string | null
+  fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
+  usuario: Prisma.UserCreateNestedOneWithoutArchivosInput
+}
+
+export type ArchivoUncheckedCreateWithoutMensajesInput = {
+  id_archivo?: number
+  id_usuario: string
+  nombre_archivo: string
+  url_path?: string
+  estado?: string
+  prioridad?: string
+  descripcion?: string | null
+  fecha_subida?: Date | string
+  fecha_recepcion?: Date | string | null
+}
+
+export type ArchivoCreateOrConnectWithoutMensajesInput = {
+  where: Prisma.ArchivoWhereUniqueInput
+  create: Prisma.XOR<Prisma.ArchivoCreateWithoutMensajesInput, Prisma.ArchivoUncheckedCreateWithoutMensajesInput>
+}
+
+export type ArchivoUpsertWithoutMensajesInput = {
+  update: Prisma.XOR<Prisma.ArchivoUpdateWithoutMensajesInput, Prisma.ArchivoUncheckedUpdateWithoutMensajesInput>
+  create: Prisma.XOR<Prisma.ArchivoCreateWithoutMensajesInput, Prisma.ArchivoUncheckedCreateWithoutMensajesInput>
+  where?: Prisma.ArchivoWhereInput
+}
+
+export type ArchivoUpdateToOneWithWhereWithoutMensajesInput = {
+  where?: Prisma.ArchivoWhereInput
+  data: Prisma.XOR<Prisma.ArchivoUpdateWithoutMensajesInput, Prisma.ArchivoUncheckedUpdateWithoutMensajesInput>
+}
+
+export type ArchivoUpdateWithoutMensajesInput = {
+  nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  usuario?: Prisma.UserUpdateOneRequiredWithoutArchivosNestedInput
+}
+
+export type ArchivoUncheckedUpdateWithoutMensajesInput = {
+  id_archivo?: Prisma.IntFieldUpdateOperationsInput | number
+  id_usuario?: Prisma.StringFieldUpdateOperationsInput | string
+  nombre_archivo?: Prisma.StringFieldUpdateOperationsInput | string
+  url_path?: Prisma.StringFieldUpdateOperationsInput | string
+  estado?: Prisma.StringFieldUpdateOperationsInput | string
+  prioridad?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 export type ArchivoCreateManyUsuarioInput = {
   id_archivo?: number
   nombre_archivo: string
@@ -568,6 +658,7 @@ export type ArchivoUpdateWithoutUsuarioInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mensajes?: Prisma.MensajeUpdateManyWithoutArchivoNestedInput
 }
 
 export type ArchivoUncheckedUpdateWithoutUsuarioInput = {
@@ -579,6 +670,7 @@ export type ArchivoUncheckedUpdateWithoutUsuarioInput = {
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fecha_subida?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fecha_recepcion?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  mensajes?: Prisma.MensajeUncheckedUpdateManyWithoutArchivoNestedInput
 }
 
 export type ArchivoUncheckedUpdateManyWithoutUsuarioInput = {
@@ -593,6 +685,35 @@ export type ArchivoUncheckedUpdateManyWithoutUsuarioInput = {
 }
 
 
+/**
+ * Count Type ArchivoCountOutputType
+ */
+
+export type ArchivoCountOutputType = {
+  mensajes: number
+}
+
+export type ArchivoCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  mensajes?: boolean | ArchivoCountOutputTypeCountMensajesArgs
+}
+
+/**
+ * ArchivoCountOutputType without action
+ */
+export type ArchivoCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ArchivoCountOutputType
+   */
+  select?: Prisma.ArchivoCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ArchivoCountOutputType without action
+ */
+export type ArchivoCountOutputTypeCountMensajesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MensajeWhereInput
+}
+
 
 export type ArchivoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id_archivo?: boolean
@@ -605,6 +726,8 @@ export type ArchivoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   fecha_subida?: boolean
   fecha_recepcion?: boolean
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  mensajes?: boolean | Prisma.Archivo$mensajesArgs<ExtArgs>
+  _count?: boolean | Prisma.ArchivoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["archivo"]>
 
 export type ArchivoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -648,6 +771,8 @@ export type ArchivoSelectScalar = {
 export type ArchivoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id_archivo" | "id_usuario" | "nombre_archivo" | "url_path" | "estado" | "prioridad" | "descripcion" | "fecha_subida" | "fecha_recepcion", ExtArgs["result"]["archivo"]>
 export type ArchivoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  mensajes?: boolean | Prisma.Archivo$mensajesArgs<ExtArgs>
+  _count?: boolean | Prisma.ArchivoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ArchivoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   usuario?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -660,6 +785,7 @@ export type $ArchivoPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Archivo"
   objects: {
     usuario: Prisma.$UserPayload<ExtArgs>
+    mensajes: Prisma.$MensajePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id_archivo: number
@@ -1066,6 +1192,7 @@ readonly fields: ArchivoFieldRefs;
 export interface Prisma__ArchivoClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   usuario<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  mensajes<T extends Prisma.Archivo$mensajesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Archivo$mensajesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MensajePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1500,6 +1627,30 @@ export type ArchivoDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Archivos to delete.
    */
   limit?: number
+}
+
+/**
+ * Archivo.mensajes
+ */
+export type Archivo$mensajesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Mensaje
+   */
+  select?: Prisma.MensajeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Mensaje
+   */
+  omit?: Prisma.MensajeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MensajeInclude<ExtArgs> | null
+  where?: Prisma.MensajeWhereInput
+  orderBy?: Prisma.MensajeOrderByWithRelationInput | Prisma.MensajeOrderByWithRelationInput[]
+  cursor?: Prisma.MensajeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MensajeScalarFieldEnum | Prisma.MensajeScalarFieldEnum[]
 }
 
 /**
