@@ -5,22 +5,46 @@ import Navbar from "@/components/Navbar.astro";
 import { protectRoute } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// Protegemos la ruta específicamente para el rol "user"
+// 1. Protegemos la ruta
 const { shouldRedirect, url, user, role } = await protectRoute(Astro.request, "user");
 
 if (shouldRedirect) {
   return Astro.redirect(url);
 }
 
-// buscamos los últimos 5 archivos subidos por el usuario actual
+/**
+ * Como hemos pasado el 'shouldRedirect', sabemos que 'user' existe.
+ * Si volvemos a validar 'if (!user)', TS "limpia" el tipo y
+ * a partir de aquí user.id ya no dará erroren ninguna parte del código.
+ */
+if (!user) return Astro.redirect("/");
+
+// 2. Buscamos los últimos 5 archivos subidos
 const misTrabajos = await prisma.archivo.findMany({
   where: {
-    id_usuario: user?.id,
+    id_usuario: user.id,
   },
   orderBy: {
     fecha_subida: "desc",
   },
   take: 5,
+});
+
+// 3. Obtener los últimos 5 mensajes de cualquier trabajo del cliente
+const ultimasNotificaciones = await prisma.mensaje.findMany({
+  where: {
+    archivo: {
+      id_usuario: user.id, // Mensajes de SUS trabajos
+    },
+    // Solo mensajes que NO sean suyos (del lab)
+    id_emisor: { not: user.id },
+  },
+  take: 5,
+  orderBy: { fecha_envio: "desc" },
+  include: {
+    archivo: true,
+    emisor: true,
+  },
 });
 ---
 
@@ -163,34 +187,59 @@ const misTrabajos = await prisma.archivo.findMany({
       </section>
 
       <section
-        class="bg-dent-card border border-dent-border rounded-3xl p-6 flex flex-col hover:border-dent-accent/50 transition-colors shadow-lg"
+        class="bg-dent-card border border-dent-border rounded-3xl p-6 flex flex-col hover:border-dent-accent/50 transition-colors shadow-lg h-full"
       >
-        <div class="flex items-center gap-3 mb-4">
-          <div class="p-2 bg-blue-500/10 rounded-lg">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 text-blue-400"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              ><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg
-            >
-          </div>
-          <h2 class="text-lg font-semibold text-slate-100">Mensajes</h2>
+        <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <span class="relative flex h-3 w-3">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-dent-accent opacity-75"
+            ></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-dent-accent"></span>
+          </span>
+          Actividad Reciente
+        </h2>
+
+        <div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar min-h-[200px]">
+          {
+            ultimasNotificaciones.length === 0 ? (
+              <div class="h-full flex items-center justify-center">
+                <p class="text-slate-500 text-sm italic text-center">
+                  No hay mensajes nuevos del laboratorio.
+                </p>
+              </div>
+            ) : (
+              ultimasNotificaciones.map((notif) => (
+                <a
+                  href={`/dashboard/cliente/trabajo/${notif.id_archivo}`}
+                  class="block p-3 rounded-xl bg-dent-dark/50 border border-dent-border hover:border-dent-accent/30 transition-all group"
+                >
+                  <div class="flex justify-between items-start mb-1">
+                    <span class="text-[10px] font-bold text-dent-accent uppercase truncate mr-2">
+                      {notif.archivo.nombre_archivo}
+                    </span>
+                    <span class="text-[9px] text-slate-500 whitespace-nowrap">
+                      {new Date(notif.fecha_envio).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-300 line-clamp-2 group-hover:text-white transition-colors">
+                    <span class="font-bold text-slate-400">{notif.emisor.name}:</span> "
+                    {notif.contenido}"
+                  </p>
+                </a>
+              ))
+            )
+          }
         </div>
-        <div class="flex-1 overflow-hidden flex flex-col justify-center text-center">
-          <p class="text-slate-500 text-sm italic italic">
-            No hay mensajes nuevos del laboratorio.
-          </p>
-        </div>
-        <button
-          class="w-full mt-4 py-2 bg-dent-dark border border-dent-border rounded-xl text-xs hover:bg-dent-border transition-colors"
+
+        <a
+          href="/dashboard/cliente/historial"
+          class="text-center mt-4 text-dent-accent text-xs hover:underline font-medium"
         >
-          Ver chat completo
-        </button>
+          Ir a la mensajería →
+        </a>
       </section>
 
       <section

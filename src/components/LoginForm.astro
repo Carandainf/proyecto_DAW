@@ -1,0 +1,94 @@
+---
+// Componente de Login para el Home
+---
+
+<div class="w-full">
+  <form id="loginForm" class="space-y-4">
+    <div>
+      <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 ml-1 tracking-widest"
+        >Email</label
+      >
+      <input
+        name="email"
+        type="email"
+        placeholder="ejemplo@clinica.com"
+        class="w-full bg-slate-100 border border-slate-200 text-slate-900 p-3 rounded-xl outline-none focus:border-dent-accent transition-colors"
+        required
+      />
+    </div>
+    <div>
+      <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1 ml-1 tracking-widest"
+        >Contraseña</label
+      >
+      <input
+        name="password"
+        type="password"
+        placeholder="••••••••"
+        class="w-full bg-slate-100 border border-slate-200 text-slate-900 p-3 rounded-xl outline-none focus:border-dent-accent transition-colors"
+        required
+      />
+    </div>
+
+    <button
+      type="submit"
+      id="loginBtn"
+      class="w-full bg-dent-dark text-white font-bold py-3 rounded-xl uppercase text-xs tracking-[0.2em] shadow-lg hover:bg-slate-800 transition-all active:scale-[0.98]"
+    >
+      Entrar al Portal
+    </button>
+
+    <div
+      id="loginError"
+      class="hidden text-red-500 text-[10px] font-bold text-center mt-2 uppercase"
+    >
+      Credenciales incorrectas
+    </div>
+  </form>
+</div>
+
+<script>
+  const loginForm = document.getElementById("loginForm") as HTMLFormElement | null;
+  const loginError = document.getElementById("loginError");
+  const loginBtn = document.getElementById("loginBtn") as HTMLButtonElement;
+
+  loginForm?.addEventListener("submit", async (e: SubmitEvent) => {
+    e.preventDefault();
+    if (loginError) loginError.classList.add("hidden");
+
+    // Feedback visual
+    const originalText = loginBtn.innerText;
+    loginBtn.innerText = "VERIFICANDO...";
+    loginBtn.disabled = true;
+
+    const target = e.target as HTMLFormElement;
+    const fd = new FormData(target);
+    const data = Object.fromEntries(fd);
+
+    try {
+      // 1. Intentamos el login
+      const loginRes = await fetch("/api/auth/sign-in/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+
+      if (!loginRes.ok) throw new Error("Login fallido");
+
+      // 2. Verificamos la sesión para redirigir
+      const res = await fetch("/api/auth/get-session", { credentials: "include" });
+      const session = await res.json();
+
+      if (session?.user) {
+        window.location.href =
+          session.user.role === "admin" ? "/dashboard/admin" : "/dashboard/cliente";
+      } else {
+        throw new Error("No se pudo recuperar la sesión");
+      }
+    } catch (err) {
+      if (loginError) loginError.classList.remove("hidden");
+      loginBtn.innerText = originalText;
+      loginBtn.disabled = false;
+    }
+  });
+</script>
