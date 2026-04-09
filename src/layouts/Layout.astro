@@ -1,17 +1,18 @@
 ---
 import "../styles/global.css";
-const { bodyClass = "p-6" } = Astro.props;
+
+// Añadimos darkMode a las props, por defecto es false
+const { bodyClass = "p-6", title = "Proyecto DAW", darkMode = false } = Astro.props;
 ---
 
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width" />
-        <title>Proyecto DAW</title>
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
 
-    <!-- si la página no envía nada, usa "p-6" por defecto -->
-    <body class={bodyClass}>
-        <slot />
-    </body>
+  <body class={`${bodyClass} ${darkMode ? "dark bg-dent-bg text-dent-dark" : ""}`}>
+    <slot />
+  </body>
 </html>

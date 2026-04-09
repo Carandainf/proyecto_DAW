@@ -26,7 +26,7 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
 }
 ---
 
-<Layout title={`Trabajo: ${trabajo.nombre_archivo}`}>
+<Layout title={`Trabajo: ${trabajo.nombre_archivo}`} darkMode={true}>
   <main class="max-w-4xl mx-auto p-6">
     <div class="mb-6">
       <button
@@ -68,7 +68,7 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
       </div>
     </section>
 
-    <section class="bg-slate-50 rounded-xl border border-slate-200 flex flex-col h-[500px]">
+    <section class="bg-slate-50 rounded-xl border border-slate-200 flex flex-col h-125">
       <div class="p-4 border-b bg-white rounded-t-xl font-semibold text-slate-700">
         Notas y Comunicación Técnica
       </div>

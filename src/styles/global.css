@@ -1,62 +1,75 @@
 @import "tailwindcss";
 
-/* 1. Importamos la fuente instalada */
 @import "../../node_modules/@fontsource-variable/inter/index.css";
 
 @theme {
-    /* 2. Definimos los colores del Laboratorio */
-    --color-dent-dark: #020617;
-    /* Fondo profundo */
-    --color-dent-card: #0f172a;
-    /* Fondo de las cajas Bento */
-    --color-dent-border: #1e293b;
-    /* Bordes sutiles */
-    --color-dent-accent: #06b6d4;
-    /* Azul/Cian dental */
+  /* --- VALORES POR DEFECTO (MODO CLARO para el Home) --- */
+  --color-dent-bg: #f8fafc;
+  --color-dent-card: #ffffff;
+  --color-dent-border: #e2e8f0;
+  --color-dent-accent: #0ea5e9;
+  --color-dent-dark: #0f172a; /* Texto principal oscuro */
 
-    --color-status-pending: #f59e0b;
-    /* Ámbar para "Pendiente" */
-    --color-status-success: #10b981;
-    /* Esmeralda para "Recibido" */
+  --color-status-pending: #f59e0b;
+  --color-status-success: #10b981;
 
-    /* 3. Vinculamos la fuente Inter Variable */
-    --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* --- LA MAGIA PARA EL DASHBOARD --- */
+.dark {
+  --color-dent-bg: #020617; /* antiguo fondo oscuro */
+  --color-dent-card: #0f172a; /* primer formato de cajas */
+  --color-dent-border: #1e293b;
+  --color-dent-dark: #f1f5f9; /* Texto principal ahora es claro (slate-100) */
+
+  input,
+  textarea,
+  select {
+    @apply bg-slate-900 border-slate-700 text-slate-100 placeholder:text-slate-500;
+  }
+
+  /* Estilo específico para cuando el input está enfocado */
+  input:focus,
+  textarea:focus {
+    @apply border-dent-accent ring-1 ring-dent-accent/20 outline-hidden;
+  }
+
+  color-scheme: dark;
 }
 
 :root {
-    color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
-    /* Aplicamos la configuración global */
-    @apply bg-dent-dark text-slate-100 font-sans antialiased;
+  /* Usamos las variables. Si hay un padre .dark, estas cambiarán solas */
+  @apply bg-dent-bg text-dent-dark font-sans antialiased transition-colors duration-300;
 }
 
 /* --- bloque de scrollbar --- */
 
-/* scrollbar fina y personalizada */
+/* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
-    width: 6px;
-    /* Un pelín más fina queda más elegante */
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background-color: var(--color-dent-dark);
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--color-dent-border);
-    border-radius: 100px;
-    transition: background-color 0.2s;
+  background-color: #cbd5e1;
+  border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    /* Cuando pasa el ratón, brilla con azul dental */
-    background-color: var(--color-dent-accent);
+  background-color: var(--color-dent-accent);
 }
 
-/* Firefox (soporte básico) */
+/* Firefox */
 * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-dent-border) var(--color-dent-dark);
+  scrollbar-width: thin;
+  /* Thumb gris y fondo transparente para que no ensucie el diseño */
+  scrollbar-color: #cbd5e1 transparent;
 }
