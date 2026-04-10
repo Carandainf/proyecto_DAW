@@ -96,15 +96,25 @@ const pathname = new URL(Astro.request.url).pathname;
 </nav>
 
 <script>
-  // Manejo del Logout
-  document.getElementById("logout-nav")?.addEventListener("click", async () => {
+  // Vamos hacer un Logouth
+  document.getElementById("logout-nav")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+
     try {
-      // Importante: No pasamos body si el endpoint no lo espera o enviamos un objeto vacío
-      await fetch("/api/auth/sign-out", {
+      // Enviamos un POST con un body vacío '{}' para que Better-Auth lo acepte
+      const res = await fetch("/api/auth/sign-out", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+        credentials: "include",
       });
 
-      window.location.href = "/";
+      if (res.ok) {
+        // En lugar de un reload, redirigimos a la home para asegurarnos que sale del dashboard
+        window.location.href = "/";
+      } else {
+        console.error("Error en la respuesta del servidor:", res.status);
+      }
     } catch (err) {
       console.error("Error al cerrar sesión:", err);
     }

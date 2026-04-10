@@ -131,13 +131,17 @@ model Mensaje {
 }
 
 model Contacto {
-  id_contacto Int      @id @default(autoincrement())
-  nombre      String
-  email       String
-  mensaje     String
-  fecha_envio DateTime @default(now())
-  id_admin    String?
-  admin       User?    @relation(fields: [id_admin], references: [id], onDelete: SetNull)
+  id_contacto   Int       @id @default(autoincrement())
+  nombre        String
+  email         String
+  asunto        String
+  mensaje       String
+  leido         Boolean   @default(false)
+  fecha_envio   DateTime  @default(now())
+  // trazabilidad para gestionar los cambios
+  id_admin      String?
+  fecha_gestion DateTime?
+  admin         User?     @relation(fields: [id_admin], references: [id], onDelete: SetNull)
 
   @@map("contactos")
 }

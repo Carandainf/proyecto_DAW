@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import LoginForm from "../components/LoginForm.astro";
+import ContactForm from "../components/ContactForm.astro"; // Importamos
 import { protectRoute } from "@/lib/auth";
 
 const auth = await protectRoute(Astro.request);
@@ -11,18 +12,17 @@ if (auth.user) {
 
 <Layout title="Laboratorio Dental - Acceso">
   <main class="min-h-screen p-4 md:p-8 flex items-center justify-center">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-6xl w-full">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl w-full">
       <section
-        class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col justify-end min-h-75 relative overflow-hidden shadow-sm"
+        class="md:col-span-3 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col justify-end min-h-[300px] relative overflow-hidden shadow-sm"
       >
         <div class="absolute inset-0 bg-linear-to-br from-dent-accent/5 to-transparent"></div>
         <h1 class="text-4xl md:text-6xl font-black text-dent-dark relative z-10 leading-tight">
           Precisión Digital <br />
           <span class="text-dent-accent">en cada pieza.</span>
         </h1>
-        <p class="text-slate-500 mt-4 max-w-md relative z-10 font-medium">
-          Tu portal exclusivo para la gestión de trabajos protésicos y comunicación directa con el
-          laboratorio.
+        <p class="text-slate-500 mt-4 max-w-md relative z-10 font-medium italic">
+          Tu portal exclusivo para la gestión de trabajos protésicos y comunicación directa.
         </p>
       </section>
 
@@ -34,38 +34,57 @@ if (auth.user) {
         <div class="mt-6 text-center">
           <a
             href="#"
-            class="text-xs font-bold text-slate-400 hover:text-dent-accent transition-colors uppercase tracking-widest"
+            class="text-[10px] font-bold text-slate-400 hover:text-dent-accent transition-colors uppercase tracking-widest"
           >
             ¿Has olvidado tu contraseña?
           </a>
         </div>
       </section>
 
-      <section class="bg-slate-900 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
-        <h3 class="text-white font-bold text-lg">¿Aún no eres cliente?</h3>
-        <p class="text-slate-300 text-xs mt-2">
-          Contacta con nosotros para abrir tu cuenta profesional y empezar a enviar tus archivos
-          STL.
-        </p>
-        <button
-          class="mt-4 py-3 bg-dent-accent text-white rounded-xl text-xs font-bold hover:opacity-90 transition-all uppercase tracking-widest shadow-lg shadow-blue-600/20"
-        >
-          Solicitar acceso
-        </button>
+      <section class="md:col-span-2 bg-slate-900 rounded-3xl p-8 shadow-xl">
+        <div class="mb-6">
+          <h3 class="text-white font-bold text-xl uppercase tracking-tighter">¿Hablamos?</h3>
+          <p class="text-slate-400 text-xs">
+            Solicita tu acceso profesional o resuelve dudas técnicas.
+          </p>
+        </div>
+        <ContactForm />
       </section>
 
       <section
-        class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl p-6 flex items-center gap-6 shadow-sm"
+        class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl overflow-hidden min-h-[300px] relative group"
       >
-        <div class="flex gap-2">
-          <div class="w-2.5 h-2.5 rounded-full bg-status-success animate-pulse"></div>
+        <div
+          class="absolute top-4 left-4 z-10 bg-dent-dark/80 backdrop-blur-md p-3 rounded-2xl border border-white/10"
+        >
+          <p class="text-white text-[10px] font-bold uppercase tracking-widest">Sede Central</p>
+          <p class="text-dent-accent text-xs font-medium">
+            Av de Sor Teresa Prat, 15, Carretera de Cádiz, 29003 Málaga
+          </p>
+        </div>
+
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.9846855879027!2d-4.439174599999999!3d36.6989059!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd72f77fe30405e5%3A0xb44f7091e40acc9e!2sPolo%20Digital%20M%C3%A1laga!5e0!3m2!1ses!2ses!4v1775838133322!5m2!1ses!2ses"
+          class="w-full h-full grayscale hover:grayscale-0 transition-all duration-700 opacity-60 group-hover:opacity-100"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+        >
+        </iframe>
+      </section>
+
+      <section
+        class="md:col-span-4 bg-dent-card border border-dent-border rounded-3xl p-4 flex items-center justify-center gap-6 shadow-sm"
+      >
+        <div class="flex gap-2 items-center">
+          <div class="w-2 h-2 rounded-full bg-status-success animate-pulse"></div>
           <div class="text-[10px] text-status-success font-black uppercase tracking-widest">
             Servicio Activo
           </div>
         </div>
         <div class="h-4 w-px bg-dent-border"></div>
-        <p class="text-slate-500 text-xs italic font-medium">
-          Soporte técnico disponible de 09:00 a 19:00
+        <p class="text-slate-500 text-[10px] italic font-medium">
+          Soporte técnico de 09:00 a 19:00 | +34 900 000 000
         </p>
       </section>
     </div>

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Footer from "../components/Footer.astro";
 
 // Añadimos darkMode a las props, por defecto es false
 const { bodyClass = "p-6", title = "Proyecto DAW", darkMode = false } = Astro.props;
@@ -14,5 +15,6 @@ const { bodyClass = "p-6", title = "Proyecto DAW", darkMode = false } = Astro.pr
 
   <body class={`${bodyClass} ${darkMode ? "dark bg-dent-bg text-dent-dark" : ""}`}>
     <slot />
+    <Footer />
   </body>
 </html>

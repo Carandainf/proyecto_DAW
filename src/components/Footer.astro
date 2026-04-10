@@ -1,0 +1,101 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="mt-12 pb-8 px-4 md:px-8">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div
+      class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col justify-between"
+    >
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <div
+            class="w-8 h-8 bg-dent-accent rounded-lg flex items-center justify-center font-black text-dent-dark"
+          >
+            L
+          </div>
+          <span class="text-xl font-black text-dent-dark tracking-tighter uppercase"
+            >Laboratorio <span class="text-dent-accent">Dental</span></span
+          >
+        </div>
+        <p class="text-slate-500 text-xs leading-relaxed max-w-md">
+          Líderes en prótesis fija, removible y flujos digitales. Combinamos la artesanía dental
+          tradicional con la tecnología CAD/CAM más avanzada para ofrecer precisión absoluta a
+          clínicas profesionales.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mt-6">
+        <ul class="text-[10px] text-slate-400 space-y-1 uppercase font-bold tracking-widest">
+          <li>• Prótesis sobre implantes</li>
+          <li>• Coronas Zirconio/Disilicato</li>
+        </ul>
+        <ul class="text-[10px] text-slate-400 space-y-1 uppercase font-bold tracking-widest">
+          <li>• Ortodoncia Invisible</li>
+          <li>• Estética Dental Avanzada</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bg-dent-card border border-dent-border rounded-3xl p-8">
+      <h4 class="text-xs font-black text-dent-dark uppercase tracking-[0.2em] mb-4">Contacto</h4>
+      <div class="space-y-4">
+        <div>
+          <p class="text-[10px] text-slate-400 uppercase font-bold">Email Directo</p>
+          <p class="text-xs text-dent-dark font-medium">contacto@tulaboratorio.com</p>
+        </div>
+        <div>
+          <p class="text-[10px] text-slate-400 uppercase font-bold">Horario de Entrega</p>
+          <p class="text-xs text-dent-dark font-medium">L - V: 09:00 - 14:00 | 16:00 - 19:00</p>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <a
+            href="#"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-dent-accent hover:text-dent-dark transition-all"
+            >IG</a
+          >
+          <a
+            href="#"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-dent-accent hover:text-dent-dark transition-all"
+            >FB</a
+          >
+          <a
+            href="#"
+            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-dent-accent hover:text-dent-dark transition-all"
+            >IN</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-dent-dark text-white rounded-3xl p-8 flex flex-col justify-between">
+      <div class="space-y-3">
+        <h4 class="text-xs font-black text-dent-accent uppercase tracking-[0.2em]">Legal</h4>
+        <nav class="flex flex-col gap-2">
+          <a
+            href="/privacidad"
+            class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-bold"
+            >Privacidad</a
+          >
+          <a
+            href="#"
+            class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-bold"
+            >Aviso Legal</a
+          >
+          <a
+            href="#"
+            class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-bold"
+            >Cookies</a
+          >
+        </nav>
+      </div>
+
+      <div class="mt-8">
+        <p class="text-[9px] text-slate-500 font-medium">
+          © {currentYear} Laboratorio Dental Digital.<br />
+          <span class="text-dent-accent/50">Proyecto DAW - Créditos: Carlos</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>

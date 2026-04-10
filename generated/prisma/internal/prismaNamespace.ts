@@ -1141,9 +1141,12 @@ export const ContactoScalarFieldEnum = {
   id_contacto: 'id_contacto',
   nombre: 'nombre',
   email: 'email',
+  asunto: 'asunto',
   mensaje: 'mensaje',
+  leido: 'leido',
   fecha_envio: 'fecha_envio',
-  id_admin: 'id_admin'
+  id_admin: 'id_admin',
+  fecha_gestion: 'fecha_gestion'
 } as const
 
 export type ContactoScalarFieldEnum = (typeof ContactoScalarFieldEnum)[keyof typeof ContactoScalarFieldEnum]
