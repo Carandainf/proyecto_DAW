@@ -35,6 +35,15 @@
     @apply border-dent-accent ring-1 ring-dent-accent/20 outline-hidden;
   }
 
+  /* Sobreescribimos la scrollbar solo para el modo oscuro */
+  ::-webkit-scrollbar-thumb {
+    background-color: #334155; /* Un gris azulado oscuro (slate-700) */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-dent-accent); /* Brilla en cian al pasar el ratón */
+  }
+
   color-scheme: dark;
 }
 

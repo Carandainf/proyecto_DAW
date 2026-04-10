@@ -65,23 +65,17 @@ const todosLosTrabajos = await prisma.archivo.findMany({
     <div class="bg-dent-card border border-dent-border rounded-3xl overflow-hidden shadow-2xl">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-dent-dark/50 border-b border-dent-border">
-              <th class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest">Fecha</th
-              >
-              <th class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest"
-                >Archivo</th
-              >
-              <th
-                class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-center"
+          <thead class="bg-dent-dark/80 border-b border-dent-border">
+            <tr>
+              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider">Fecha</th>
+              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider">Archivo</th>
+              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider text-center"
                 >Estado</th
               >
-              <th
-                class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-right"
+              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider text-right"
                 >Descargas</th
               >
-              <th
-                class="p-4 text-xs font-bold text-dent-accent uppercase tracking-widest text-right"
+              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider text-right"
                 >Notas</th
               >
             </tr>

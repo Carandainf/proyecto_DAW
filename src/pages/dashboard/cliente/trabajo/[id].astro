@@ -7,7 +7,7 @@ const { id } = Astro.params;
 const { user, loggedIn } = await getUserRole(Astro.request);
 
 // Redirigir si no hay sesión
-if (!loggedIn || !user) return Astro.redirect("/test-auth");
+if (!loggedIn || !user) return Astro.redirect("/");
 
 // Buscar el trabajo con todos sus mensajes
 const trabajo = await prisma.archivo.findUnique({
@@ -50,17 +50,18 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
         Volver atrás
       </button>
     </div>
-    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-8">
+
+    <section class="bg-dent-card rounded-xl shadow-lg border border-dent-border p-6 mb-8">
       <div class="flex justify-between items-start">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">{trabajo.nombre_archivo}</h1>
-          <p class="text-slate-500 text-sm">ID de Control: #LAB-{trabajo.id_archivo}</p>
+          <h1 class="text-2xl font-bold text-slate-100">{trabajo.nombre_archivo}</h1>
+          <p class="text-slate-400 text-sm">ID de Control: #LAB-{trabajo.id_archivo}</p>
         </div>
         <span
-          class={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+          class={`px-3 py-1 rounded-full text-[10px] font-bold uppercase border ${
             trabajo.estado === "pendiente"
-              ? "bg-amber-100 text-amber-700"
-              : "bg-emerald-100 text-emerald-700"
+              ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+              : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
           }`}
         >
           {trabajo.estado}
@@ -68,26 +69,28 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
       </div>
     </section>
 
-    <section class="bg-slate-50 rounded-xl border border-slate-200 flex flex-col h-125">
-      <div class="p-4 border-b bg-white rounded-t-xl font-semibold text-slate-700">
+    <section
+      class="bg-dent-dark/30 rounded-xl border border-dent-border flex flex-col h-125 overflow-hidden"
+    >
+      <div class="p-4 border-b border-dent-border bg-dent-card/50 font-semibold text-slate-200">
         Notas y Comunicación Técnica
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+      <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
         {
           trabajo.mensajes.map((msg) => (
             <div class={`flex flex-col ${msg.id_emisor === user.id ? "items-end" : "items-start"}`}>
               <div
-                class={`max-w-[80%] p-3 rounded-lg text-sm ${
+                class={`max-w-[80%] p-3 rounded-xl text-sm ${
                   msg.id_emisor === user.id
-                    ? "bg-dent-accent text-white rounded-tr-none"
-                    : "bg-white border border-slate-200 text-slate-800 rounded-tl-none"
+                    ? "bg-dent-accent text-dent-dark font-medium rounded-tr-none"
+                    : "bg-dent-card border border-dent-border text-slate-200 rounded-tl-none"
                 }`}
               >
-                <p class="font-bold text-xs mb-1">{msg.emisor.name}</p>
+                <p class="font-bold text-[10px] uppercase opacity-70 mb-1">{msg.emisor.name}</p>
                 <p>{msg.contenido}</p>
               </div>
-              <span class="text-[10px] text-slate-400 mt-1">
+              <span class="text-[9px] text-slate-500 mt-1">
                 {new Date(msg.fecha_envio).toLocaleString()}
               </span>
             </div>
@@ -98,7 +101,7 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
       <form
         action="/api/mensajes/enviar"
         method="POST"
-        class="p-4 bg-white rounded-b-xl border-t border-slate-200"
+        class="p-4 bg-dent-card border-t border-dent-border"
       >
         <input type="hidden" name="id_archivo" value={trabajo.id_archivo} />
 
@@ -108,12 +111,12 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
             rows="2"
             required
             placeholder="Escribe aquí tus indicaciones técnicas..."
-            class="flex-1 p-3 border-2 border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-dent-accent focus:border-dent-accent outline-none resize-none text-slate-800 bg-slate-50"
+            class="flex-1 p-3 border-2 border-dent-border rounded-lg text-sm focus:ring-2 focus:ring-dent-accent focus:border-dent-accent outline-none resize-none text-slate-200 bg-dent-dark"
           ></textarea>
 
           <button
             type="submit"
-            class="bg-dent-dark text-white px-6 py-2 rounded-lg hover:bg-slate-800 transition-all font-bold self-end md:self-center"
+            class="bg-dent-accent text-dent-dark px-6 py-2 rounded-lg hover:bg-cyan-400 transition-all font-bold self-end md:self-center shadow-lg shadow-dent-accent/10 active:scale-95"
           >
             Enviar Mensaje
           </button>
@@ -127,14 +130,13 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
   const scrollToBottom = () => {
     const chatContainer = document.querySelector(".overflow-y-auto");
     if (chatContainer) {
-      chatContainer.scrollTo({
-        top: chatContainer.scrollHeight,
-        behavior: "smooth", // Esto hace que el scroll sea fluido y no un salto brusco
-      });
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   };
 
-  // Ejecuta al cargar y tras un pequeño delay por seguridad de renderizado
+  // Ejecuta al cargar
   window.addEventListener("load", scrollToBottom);
+
+  // Pequeño observador para asegurar que si hay imágenes o carga lenta, baje al final
   setTimeout(scrollToBottom, 100);
 </script>

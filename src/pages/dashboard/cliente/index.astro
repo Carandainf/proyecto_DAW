@@ -50,7 +50,6 @@ const ultimasNotificaciones = await prisma.mensaje.findMany({
 
 <Layout bodyClass="p-0" title="Panel de Administración" darkMode={true} />
 <Navbar />
-
 <main class="max-w-7xl mx-auto p-4 md:p-8">
   <header class="mb-8">
     <h1 class="text-3xl font-bold text-slate-100">
@@ -59,15 +58,15 @@ const ultimasNotificaciones = await prisma.mensaje.findMany({
     <p class="text-slate-400">Panel de gestión de trabajos dentales</p>
   </header>
 
-  <div class="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-4 auto-rows-[200px]">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto md:auto-rows-[250px]">
     <section
-      class="relative md:col-span-2 md:row-span-2 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col hover:border-dent-accent/30 transition-all shadow-xl"
+      class="relative md:col-span-2 md:row-span-2 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col hover:border-dent-accent/30 transition-all shadow-xl overflow-hidden"
     >
       <div class="flex items-center gap-4 mb-6">
         <div class="p-3 bg-dent-accent/10 rounded-2xl">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-8 h-8 text-dent-accent"
+            class="w-6 h-6 text-dent-accent"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -79,23 +78,23 @@ const ultimasNotificaciones = await prisma.mensaje.findMany({
           >
         </div>
         <div>
-          <h2 class="text-2xl font-bold text-slate-100">Nueva Orden de Trabajo</h2>
-          <p class="text-slate-400 text-sm">Configure los detalles de su diseño 3D</p>
+          <h2 class="text-xl font-bold text-slate-100">Nueva Orden de Trabajo</h2>
+          <p class="text-slate-400 text-xs">Configure los detalles de su diseño 3D</p>
         </div>
       </div>
 
-      <form id="upload-form" class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div class="relative group">
+      <form id="upload-form" class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="relative group h-full min-h-40">
           <label
             for="file-upload"
-            class="flex flex-col items-center justify-center h-full border-2 border-dashed border-dent-border rounded-2xl bg-dent-dark/30 group-hover:bg-dent-dark/50 group-hover:border-dent-accent/50 transition-all duration-300 cursor-pointer p-6 text-center"
+            class="flex flex-col items-center justify-center h-full border-2 border-dashed border-dent-border rounded-2xl bg-dent-dark/30 group-hover:bg-dent-dark/50 group-hover:border-dent-accent/50 transition-all cursor-pointer p-4 text-center"
           >
             <div
-              class="p-4 bg-dent-dark rounded-full mb-4 group-hover:scale-110 transition-transform"
+              class="p-3 bg-dent-dark rounded-full mb-3 group-hover:scale-110 transition-transform"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-10 h-10 text-slate-500 group-hover:text-dent-accent"
+                class="w-8 h-8 text-slate-500 group-hover:text-dent-accent"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -104,230 +103,176 @@ const ultimasNotificaciones = await prisma.mensaje.findMany({
                   d="M12 12v9"></path><path d="m16 16-4-4-4 4"></path></svg
               >
             </div>
-            <p class="text-slate-300 font-medium">Arrastre su archivo .STL</p>
-            <p class="text-xs text-slate-500 mt-2">O haga clic para explorar carpetas</p>
+            <p class="text-slate-300 text-sm font-medium">Arrastre su archivo .STL</p>
             <input id="file-upload" type="file" accept=".stl" class="hidden" multiple />
           </label>
           <div
             id="file-name-preview"
-            class="hidden absolute bottom-4 left-4 right-4 bg-dent-accent/20 border border-dent-accent/30 p-2 rounded-lg text-xs text-dent-accent text-center truncate"
+            class="hidden absolute bottom-2 left-2 right-2 bg-dent-accent/20 border border-dent-accent/30 p-2 rounded-lg text-[10px] text-dent-accent text-center truncate"
           >
             Archivo seleccionado
           </div>
         </div>
 
-        <div class="flex flex-col gap-5">
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-slate-300"
-              >Observaciones para el Laboratorio</label
-            >
+        <div class="flex flex-col gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-medium text-slate-400">Observaciones</label>
             <textarea
-              class="w-full bg-dent-dark border border-dent-border rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-dent-accent/50 min-h-30 resize-none"
-              placeholder="Ej: Ajustar oclusión en pieza 46, usar resina de alta precisión..."
-            ></textarea>
+              class="w-full bg-dent-dark border border-dent-border rounded-xl p-3 text-sm text-slate-200 focus:ring-2 focus:ring-dent-accent/50 min-h-24 resize-none"
+              placeholder="Instrucciones..."></textarea>
           </div>
-
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-slate-300">Prioridad</label>
+          <div class="space-y-1">
+            <label class="text-xs font-medium text-slate-400">Prioridad</label>
             <select
-              class="w-full bg-dent-dark border border-dent-border rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-dent-accent/50"
+              class="w-full bg-dent-dark border border-dent-border rounded-xl p-2 text-sm text-slate-200"
             >
               <option value="normal">Estándar (3-5 días)</option>
               <option value="urgente">Urgente (24-48h)</option>
             </select>
           </div>
-
-          <div class="mt-auto">
-            <button
-              type="submit"
-              class="w-full bg-dent-accent hover:bg-cyan-400 text-dent-dark font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-dent-accent/20"
+          <button
+            type="submit"
+            class="w-full bg-dent-accent hover:bg-cyan-400 text-dent-dark font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"><path d="m5 12 5 5L19 7"></path></svg
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"><path d="m5 12 5 5L19 7"></path></svg
-              >
-              ENVIAR TRABAJO
-            </button>
-            <p class="text-[10px] text-center text-slate-500 mt-3 uppercase tracking-widest">
-              Se notificará al administrador al instante
-            </p>
-          </div>
+            ENVIAR TRABAJO
+          </button>
         </div>
       </form>
+
       <div
         id="success-message"
         class="hidden absolute inset-0 bg-dent-card rounded-3xl flex-col items-center justify-center text-center p-8 z-10"
       >
-      </div>
-      <div
-        class="w-20 h-20 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mb-4 animate-bounce"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-12 h-12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg
+        <div
+          class="w-16 h-16 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mb-4 animate-bounce"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-10 h-10"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg
+          >
+        </div>
+        <h3 class="text-2xl font-bold text-slate-100 italic">¡Trabajo Recibido!</h3>
+        <p class="text-slate-400 mt-2 text-sm">El archivo se ha subido correctamente.</p>
+        <button
+          onclick="location.reload()"
+          class="mt-6 text-dent-accent hover:underline text-sm font-medium"
+          >Subir otro archivo</button
         >
       </div>
-      <h3 class="text-2xl font-bold text-slate-100 italic">¡Trabajo Recibido!</h3>
-      <p class="text-slate-400 mt-2">
-        El archivo se ha subido correctamente.<br />Ya puedes verlo en tu historial.
-      </p>
-      <button
-        onclick="location.reload()"
-        class="mt-6 text-dent-accent hover:underline text-sm font-medium">Subir otro archivo</button
+    </section>
+
+    <section
+      class="bg-dent-card border border-dent-border rounded-3xl p-6 flex flex-col hover:border-dent-accent/50 transition-colors shadow-lg overflow-hidden"
+    >
+      <h2 class="text-md font-bold text-white mb-4 flex items-center gap-2">
+        <span class="relative flex h-2 w-2">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-dent-accent opacity-75"
+          ></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-dent-accent"></span>
+        </span>
+        Actividad Reciente
+      </h2>
+      <div class="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar">
+        {
+          ultimasNotificaciones.length === 0 ? (
+            <p class="text-slate-500 text-xs italic text-center py-10">No hay mensajes nuevos.</p>
+          ) : (
+            ultimasNotificaciones.map((notif) => (
+              <a
+                href={`/dashboard/cliente/trabajo/${notif.id_archivo}`}
+                class="block p-3 rounded-xl bg-dent-dark/50 border border-dent-border hover:border-dent-accent/30 transition-all group"
+              >
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-[9px] font-bold text-dent-accent uppercase truncate mr-2">
+                    {notif.archivo.nombre_archivo}
+                  </span>
+                  <span class="text-[9px] text-slate-500">
+                    {new Date(notif.fecha_envio).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-300 line-clamp-1 group-hover:text-white">
+                  <span class="font-bold text-slate-400">{notif.emisor.name}:</span> "
+                  {notif.contenido}"
+                </p>
+              </a>
+            ))
+          )
+        }
+      </div>
+    </section>
+
+    <section
+      class="bg-dent-card border border-dent-border rounded-3xl p-6 flex flex-col hover:border-dent-accent/50 transition-colors shadow-lg overflow-hidden"
+    >
+      <div class="flex items-center gap-3 mb-4">
+        <div class="p-2 bg-emerald-500/10 rounded-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5 text-emerald-400"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline
+              points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line></svg
+          >
+        </div>
+        <h2 class="text-md font-semibold text-slate-100">Mis Trabajos</h2>
+      </div>
+      <div class="flex-1 space-y-2 overflow-y-auto pr-2 custom-scrollbar">
+        {
+          misTrabajos.length === 0 ? (
+            <p class="text-slate-500 text-xs italic text-center py-10">Sin trabajos.</p>
+          ) : (
+            misTrabajos.map((trabajo) => (
+              <a
+                href={`/dashboard/cliente/trabajo/${trabajo.id_archivo}`}
+                class="flex justify-between items-center p-2 bg-dent-dark/50 rounded-lg border border-dent-border hover:border-dent-accent/30 transition-all group"
+              >
+                <div class="flex flex-col min-w-0">
+                  <span class="text-[11px] text-slate-200 font-medium truncate group-hover:text-dent-accent transition-colors">
+                    {trabajo.nombre_archivo}
+                  </span>
+                  <span class="text-[9px] text-slate-500">
+                    {new Date(trabajo.fecha_subida).toLocaleDateString("es-ES")}
+                  </span>
+                </div>
+                <span
+                  class={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${trabajo.estado === "pendiente" ? "text-amber-500" : "text-emerald-500"}`}
+                >
+                  {trabajo.estado}
+                </span>
+              </a>
+            ))
+          )
+        }
+      </div>
+      <a
+        href="/dashboard/cliente/historial"
+        class="text-center mt-3 text-dent-accent text-[10px] hover:underline font-medium"
+        >Ver historial →</a
       >
     </section>
   </div>
-
-  <section
-    class="bg-dent-card border border-dent-border rounded-3xl p-6 flex flex-col hover:border-dent-accent/50 transition-colors shadow-lg h-full"
-  >
-    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-      <span class="relative flex h-3 w-3">
-        <span
-          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-dent-accent opacity-75"
-        ></span>
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-dent-accent"></span>
-      </span>
-      Actividad Reciente
-    </h2>
-
-    <div class="flex-1 space-y-4 overflow-y-auto pr-2 custom-scrollbar min-h-50">
-      {
-        ultimasNotificaciones.length === 0 ? (
-          <div class="h-full flex items-center justify-center">
-            <p class="text-slate-500 text-sm italic text-center">
-              No hay mensajes nuevos del laboratorio.
-            </p>
-          </div>
-        ) : (
-          ultimasNotificaciones.map((notif) => (
-            <a
-              href={`/dashboard/cliente/trabajo/${notif.id_archivo}`}
-              class="block p-3 rounded-xl bg-dent-dark/50 border border-dent-border hover:border-dent-accent/30 transition-all group"
-            >
-              <div class="flex justify-between items-start mb-1">
-                <span class="text-[10px] font-bold text-dent-accent uppercase truncate mr-2">
-                  {notif.archivo.nombre_archivo}
-                </span>
-                <span class="text-[9px] text-slate-500 whitespace-nowrap">
-                  {new Date(notif.fecha_envio).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-              <p class="text-xs text-slate-300 line-clamp-2 group-hover:text-white transition-colors">
-                <span class="font-bold text-slate-400">{notif.emisor.name}:</span> "
-                {notif.contenido}"
-              </p>
-            </a>
-          ))
-        )
-      }
-    </div>
-
-    <a
-      href="/dashboard/cliente/historial"
-      class="text-center mt-4 text-dent-accent text-xs hover:underline font-medium"
-    >
-      Ir a la mensajería →
-    </a>
-  </section>
-
-  <section
-    class="bg-dent-card border border-dent-border rounded-3xl p-6 flex flex-col hover:border-dent-accent/50 transition-colors shadow-lg"
-  >
-    <div class="flex items-center gap-3 mb-4">
-      <div class="p-2 bg-emerald-500/10 rounded-lg">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-6 h-6 text-emerald-400"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline
-            points="14 2 14 8 20 8"></polyline><line x1="16" x2="8" y1="13" y2="13"></line><line
-            x1="16"
-            x2="8"
-            y1="17"
-            y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg
-        >
-      </div>
-      <h2 class="text-lg font-semibold text-slate-100">Mis Trabajos</h2>
-    </div>
-
-    <div class="flex-1 space-y-3 overflow-y-auto max-h-55 pr-2 custom-scrollbar">
-      {
-        misTrabajos.length === 0 ? (
-          <p class="text-slate-500 text-xs italic text-center py-4">
-            No has subido ningún trabajo todavía.
-          </p>
-        ) : (
-          misTrabajos.map((trabajo) => (
-            /* 1. Usamos el enlace como contenedor principal */
-            <a
-              href={`/dashboard/cliente/trabajo/${trabajo.id_archivo}`}
-              class="flex justify-between items-center text-xs p-3 bg-dent-dark/50 rounded-lg border border-dent-border hover:border-dent-accent/30 hover:bg-dent-dark/80 transition-all group mb-2 last:mb-0"
-            >
-              {/* 2. Columna Izquierda: Nombre y Fecha */}
-              <div class="flex flex-col gap-1 truncate mr-2">
-                <span class="text-slate-200 font-medium truncate flex items-center gap-1 group-hover:text-dent-accent transition-colors">
-                  {trabajo.nombre_archivo}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                  </svg>
-                </span>
-                <span class="text-[10px] text-slate-500">
-                  {new Date(trabajo.fecha_subida).toLocaleDateString("es-ES")}
-                </span>
-              </div>
-
-              {/* 3. Columna Derecha: Estado */}
-              <span
-                class={`px-2 py-1 rounded text-[9px] font-bold uppercase whitespace-nowrap ${
-                  trabajo.estado === "pendiente"
-                    ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                    : trabajo.estado === "recibido"
-                      ? "bg-blue-500/10 text-blue-400 border border-blue-500/20"
-                      : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
-                }`}
-              >
-                {trabajo.estado}
-              </span>
-            </a>
-          ))
-        )
-      }
-    </div>
-
-    <a
-      href="/dashboard/cliente/historial"
-      class="text-center mt-4 text-dent-accent text-xs hover:underline font-medium"
-    >
-      Ver historial completo →
-    </a>
-  </section>
 </main>
+
+#
 
 <script>
   const form = document.getElementById("upload-form") as HTMLFormElement;

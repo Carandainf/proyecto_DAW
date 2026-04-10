@@ -1,58 +1,112 @@
 ---
 // src/components/Navbar.astro
 import { getUserRole } from "@/lib/auth";
-const { loggedIn, role, user } = await getUserRole(Astro.request);
+const { loggedIn, role } = await getUserRole(Astro.request);
+
+// Obtenemos la ruta actual para saber qué enlace resaltar
+const pathname = new URL(Astro.request.url).pathname;
 ---
 
-<nav class="flex justify-between p-4 bg-gray-800 text-white">
-    <div class="logo">Mi Proyecto DAW</div>
+<nav class="bg-dent-card/80 backdrop-blur-md border-b border-dent-border sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+    <a href="/" class="flex items-center gap-2 group transition-transform active:scale-95">
+      <div
+        class="w-8 h-8 bg-dent-accent rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:rotate-3 transition-transform"
+      >
+        <span class="text-dent-dark font-black text-xl">D</span>
+      </div>
+      <span class="text-slate-100 font-bold tracking-tight italic hidden sm:block">
+        Dental<span class="text-dent-accent">Lab</span>
+      </span>
+    </a>
 
-    <ul class="flex gap-4">
-        <li><a href="/">Inicio</a></li>
+    <ul class="flex items-center gap-6">
+      <li>
+        <a
+          href="/"
+          class={`text-sm font-medium transition-colors ${pathname === "/" ? "text-dent-accent" : "text-slate-400 hover:text-dent-accent"}`}
+        >
+          Inicio
+        </a>
+      </li>
 
-        {
-            loggedIn ? (
-                <>
-                    {role === "admin" && (
-                        <li>
-                            <a href="/dashboard/admin" class="text-red-400">
-                                Panel Admin
-                            </a>
-                        </li>
-                    )}
-                    {role === "user" && (
-                        <li>
-                            <a href="/dashboard/cliente" class="text-blue-400">
-                                Mis Pedidos
-                            </a>
-                        </li>
-                    )}
-                    <li>
-                        <span class="opacity-70">
-                            Hola, {user?.name || "Usuario"}
-                        </span>
-                    </li>
-                    <li>
-                        <button id="logout-nav" class="underline">
-                            Salir
-                        </button>
-                    </li>
-                </>
-            ) : (
-                <li>
-                    <a href="/login">Entrar</a>
-                </li>
-            )
-        }
+      {
+        loggedIn ? (
+          <>
+            {role === "admin" && (
+              <li>
+                <a
+                  href="/dashboard/admin"
+                  class={`text-sm font-medium transition-colors ${pathname.startsWith("/dashboard/admin") ? "text-red-400" : "text-slate-400 hover:text-red-300"}`}
+                >
+                  Panel Admin
+                </a>
+              </li>
+            )}
+            {role === "user" && (
+              <li>
+                <a
+                  href="/dashboard/cliente"
+                  class={`text-sm font-medium transition-colors ${pathname.startsWith("/dashboard/cliente") ? "text-dent-accent" : "text-slate-400 hover:text-cyan-300"}`}
+                >
+                  Mis Pedidos
+                </a>
+              </li>
+            )}
+
+            <div class="w-px h-4 bg-dent-border hidden sm:block" />
+
+            <li>
+              <button
+                id="logout-nav"
+                class="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-red-400 transition-all uppercase tracking-widest cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Salir
+              </button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <a
+              href="/login"
+              class="bg-dent-accent text-dent-dark px-4 py-2 rounded-xl text-xs font-bold hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-900/20 active:scale-95"
+            >
+              ENTRAR
+            </a>
+          </li>
+        )
+      }
     </ul>
+  </div>
 </nav>
 
 <script>
-    // Lógica de logout rápida para el navbar
-    document
-        .getElementById("logout-nav")
-        ?.addEventListener("click", async () => {
-            await fetch("/api/auth/sign-out", { method: "POST" });
-            window.location.href = "/";
-        });
+  // Manejo del Logout
+  document.getElementById("logout-nav")?.addEventListener("click", async () => {
+    try {
+      // Importante: No pasamos body si el endpoint no lo espera o enviamos un objeto vacío
+      await fetch("/api/auth/sign-out", {
+        method: "POST",
+      });
+
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Error al cerrar sesión:", err);
+    }
+  });
 </script>
