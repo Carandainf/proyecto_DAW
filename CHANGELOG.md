@@ -6,6 +6,52 @@ El formato está inspirado en Keep a Changelog y versionado semántico.
 
 ---
 
+---
+
+# [0.8.5] - 2026-04-12
+
+## Añadido
+
+- **Sistema de Contacto Seguro**:
+  - Implementación del componente `ContactForm.astro` con validación en servidor.
+  - Protección Anti-Spam activa mediante técnica **Honeypot** (campos invisibles para bloquear bots sin captchas).
+  - Creación del endpoint API `/api/contacto/enviar.ts` para el procesamiento seguro de consultas.
+
+- **Arquitectura Legal Integrada**:
+  - Nuevas rutas obligatorias RGPD/LSSI:
+    - `/privacidad`
+    - `/aviso-legal`
+    - `/cookies`
+  - Configuración de cookies técnicas sin necesidad de banner intrusivo (sin tracking de terceros).
+
+- **Trazabilidad Administrativa**:
+  - Extensión del esquema Prisma en la tabla `Contacto`:
+    - `id_admin`
+    - `fecha_gestion`
+  - Preparación de la base de datos para auditoría interna (quién respondió y cuándo).
+
+## Cambiado
+
+- **Refactorización del Layout Base**:
+  - Implementación de **Sticky Footer** con Flexbox (`min-h-screen` + `flex-grow`).
+  - Renderizado condicional en `Layout.astro` para ocultar/simplificar el footer en páginas legales.
+
+- **Mejora de la UI Corporativa**:
+  - Actualización del componente `Footer.astro` con enlaces dinámicos y diseño adaptativo.
+
+## Corregido
+
+- **Error de Renderizado de Slots**:
+  - Solucionado problema de autocierre en `Layout.astro` que rompía el árbol DOM.
+
+- **Validación de Tipos en API**:
+  - Corregidos conflictos de tipado al extraer datos desde `FormData` en el endpoint de contacto.
+
+- **Ajustes de UX Legal**:
+  - Eliminado layout shift en dispositivos móviles en páginas legales.
+
+---
+
 # [0.7.0] - 2026-04-07
 
 ## Añadido

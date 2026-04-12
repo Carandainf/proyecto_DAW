@@ -1,0 +1,76 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Política de Cookies - Laboratorio Dental">
+  <main class="min-h-screen p-8 flex justify-center items-start pt-20">
+    <div class="max-w-3xl w-full bg-dent-card border border-dent-border rounded-3xl p-8 shadow-sm">
+      <h1 class="text-3xl font-black text-dent-dark mb-6 tracking-tight">
+        Política de <span class="text-dent-accent">Cookies</span>
+      </h1>
+
+      <div class="space-y-6 text-slate-500 text-sm leading-relaxed">
+        <div class="bg-emerald-500/5 border border-emerald-500/20 p-4 rounded-2xl mb-4">
+          <p class="text-emerald-600 font-bold text-xs uppercase tracking-widest">
+            Navegación Privada
+          </p>
+          <p class="text-[11px] mt-1 text-emerald-700/70">
+            Este sitio web <strong>no utiliza cookies de seguimiento, publicidad o analítica</strong
+            > para los visitantes públicos.
+          </p>
+        </div>
+
+        <section>
+          <h2 class="text-dent-dark font-bold uppercase text-xs tracking-widest mb-2">
+            1. ¿Qué son las cookies?
+          </h2>
+          <p>
+            Una cookie es un pequeño archivo que se almacena en el navegador del usuario al acceder
+            a determinadas páginas web.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-dent-dark font-bold uppercase text-xs tracking-widest mb-2">
+            2. Cookies Técnicas (Dashboard)
+          </h2>
+          <p>
+            Para los usuarios registrados que acceden al panel de gestión, utilizamos cookies
+            estrictamente necesarias para:
+          </p>
+          <ul class="mt-2 list-disc ml-5">
+            <li>
+              <strong>Autenticación:</strong> Mantener la sesión abierta de forma segura durante la gestión
+              de trabajos.
+            </li>
+            <li>
+              <strong>Seguridad:</strong> Proteger contra ataques de falsificación de peticiones en sitios
+              cruzados (CSRF).
+            </li>
+          </ul>
+          <p class="mt-2 italic">
+            Estas cookies no requieren el consentimiento del usuario según el Art. 22.2 de la LSSI
+            al ser esenciales para la prestación del servicio solicitado.
+          </p>
+        </section>
+
+        <div class="pt-6 border-t border-dent-border mt-8">
+          <a href="/" class="text-dent-accent font-bold hover:underline flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg
+            >
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

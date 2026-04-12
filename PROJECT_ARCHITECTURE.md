@@ -1,294 +1,143 @@
 # 🏗️ PROJECT_ARCHITECTURE.md
 
 > Arquitectura técnica del proyecto DAW: Sistema de Gestión de Laboratorio Dental.
->
-> Última actualización: `07/04/2026` · Versión actual: `v0.7.0`
+
+> Última actualización: `12/04/2026` · Versión actual: `v0.8.5`
 
 ---
 
 # 📦 Stack Tecnológico
 
-| Tecnología                  | Versión | Uso                                      |
-| --------------------------- | ------- | ---------------------------------------- |
-| `Astro`                     | `5.x`   | Framework principal con renderizado SSR  |
-| `TypeScript`                | Última  | Tipado estricto en toda la aplicación    |
-| `Tailwind CSS`              | `4.x`   | Sistema de estilos y variables de diseño |
-| `Prisma`                    | `7.6.x` | ORM para acceso a SQLite                 |
-| `Better Auth`               | `1.5.x` | Autenticación, sesión y RBAC             |
-| `jsPDF` + `jspdf-autotable` | Última  | Generación de informes PDF en cliente    |
-| `Lucide` / SVGs             | Última  | Sistema de iconografía técnica           |
+| Tecnología   | Versión | Uso                                       |
+| ------------ | ------- | ----------------------------------------- |
+| Astro        | 5.x     | Framework principal con renderizado SSR   |
+| TypeScript   | Última  | Tipado estricto en toda la aplicación     |
+| Tailwind CSS | 4.x     | Sistema de estilos nativo y variables CSS |
+| Prisma       | 7.x     | ORM para acceso a SQLite                  |
+| Better Auth  | 1.5.x   | Autenticación, sesión y RBAC              |
+| jsPDF        | Última  | Generación de informes PDF en cliente     |
+| SQLite       | 3.x     | Base de datos relacional ligera           |
 
 ---
 
-# 1. 🧱 Arquitectura de Capas
+# 1. 🧱 Arquitectura de Capas y Seguridad
 
-El sistema utiliza una arquitectura SSR (`Server-Side Rendering`) para mantener la lógica crítica y los datos sensibles en el servidor.
+El sistema utiliza una arquitectura SSR (Server-Side Rendering) para proteger la lógica de negocio y los datos sensibles.
 
-```text
-CLIENTE (Navegador)
-│
-├── UI: Astro Components + Tailwind 4
-├── Layout: Bento Grid + Layout.astro
-├── Logic: jsPDF (Generación local de PDF)
-└── Auth: Cookies + Gestión de sesión
-│
-▼
-SERVIDOR (Astro Runtime)
-│
-├── API Endpoints
-│   ├── /api/auth/[...all]
-│   ├── /api/upload
-│   └── /api/get-session
-│
-├── Middleware / Seguridad
-│   └── protectRoute(request, role)
-│
-└── Persistencia
-    └── Prisma Client (Singleton)
-│
-▼
-CAPA DE DATOS
-│
-├── SQLite → prisma/dev.db
-└── Storage → /public/uploads
-```
+## Capas del Sistema
 
-## Principios de Diseño
+### UI (Astro + Tailwind 4)
 
-- SSR para proteger acceso a datos sensibles.
-- Cliente ligero: sólo UI y generación de PDF.
-- Lógica de negocio concentrada en endpoints y helpers.
-- Persistencia desacoplada mediante Prisma.
+- Diseño basado en Bento Grid
+- Interfaz adaptativa
+- Soporte nativo para modo oscuro
+
+### Seguridad (Honeypot & Auth)
+
+- Protección anti-bots mediante campos invisibles (honeypot)
+- Validación de sesión mediante cookies seguras
+
+### Servidor (Astro Runtime)
+
+- Endpoints API:
+  - Autenticación
+  - Gestión de archivos
+  - Sistema de contacto
+- Middleware `protectRoute(request, role)` para RBAC
+
+### Persistencia (Prisma + SQLite)
+
+- Acceso a datos mediante Prisma
+- Patrón Singleton para optimizar conexiones
 
 ---
 
-# 2. 🔄 Flujo de Gestión Documental (PDF)
+# 2. 🔐 Sistema de Seguridad y Roles (RBAC)
 
-La generación de documentos se realiza completamente en el cliente para evitar carga adicional en el servidor.
-
-## Flujo
-
-```text
-1. Prisma obtiene los registros desde SQLite.
-2. Astro renderiza la página SSR.
-3. Los datos se inyectan al navegador mediante define:vars.
-4. El usuario pulsa "Descargar PDF".
-5. jsPDF genera el documento localmente.
-6. El navegador descarga el Blob sin nuevas llamadas API.
-```
-
-## Inyección de Datos
-
-```astro
-define:vars={{ todosLosTrabajos }}
-```
-
-## Generación de PDF
+El control de acceso se centraliza mediante:
 
 ```ts
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+protectRoute(request, role)
 
-const pdf = new jsPDF();
-```
-
-## Beneficios
-
-- Reduce consumo de CPU en el servidor.
-- Elimina peticiones innecesarias.
-- Permite exportación inmediata desde el historial.
-
----
+Niveles de validación
+Validación de sesión:
+Verifica la cookie de Better Auth en cada request
+Validación de rol:
+Compara role (admin | user) con el requerido
+Matriz de acceso
+Usuario	Destino Permitido	Capa Legal
+admin	/dashboard/admin	Acceso a gestión global
+user	/dashboard/cliente	Acceso a sus pedidos
+público	/	Formulario con Honeypot
 
 # 3. 📂 Estructura del Proyecto
-
-```text
 proyecto_DAW/
-├── public/
-│   └── uploads/                  # Almacenamiento físico de STL / OBJ
-│
-├── prisma/
-│   ├── schema.prisma             # Modelo de datos
-│   └── dev.db                    # Base de datos SQLite
-│
 ├── src/
-│   ├── components/               # Navbar, BentoCard, tablas, botones
-│   ├── layouts/                  # Layout.astro y plantillas base
+│   ├── components/
+│   │   ├── ContactForm.astro
+│   │   ├── Footer.astro
+│   │   └── Navbar.astro
+│   │
 │   ├── lib/
-│   │   ├── prisma.ts             # Prisma Singleton
-│   │   ├── auth.ts               # Better Auth + configuración de roles
-│   │   └── protectRoute.ts       # Seguridad y RBAC
+│   │   ├── auth.ts
+│   │   └── prisma.ts
 │   │
 │   ├── pages/
 │   │   ├── api/
-│   │   │   ├── auth/[...all].ts
-│   │   │   ├── upload.ts
-│   │   │   └── get-session.ts
+│   │   │   ├── contacto/enviar.ts
+│   │   │   └── upload.ts
 │   │   │
 │   │   ├── dashboard/
-│   │   │   ├── admin/            # Gestión global del laboratorio
-│   │   │   └── cliente/          # Historial y subida de archivos
-│   │   │
-│   │   ├── test-auth.astro
-│   │   └── index.astro
-│   │
-│   └── styles/
-│       ├── global.css
-│       └── tailwind.css
+│   │   ├── privacidad.astro
+│   │   ├── aviso-legal.astro
+│   │   └── cookies.astro
 │
-├── .prettierrc
-├── astro.config.mjs
-├── tailwind.config.ts
-└── package.json
-```
+└── prisma/
+    └── schema.prisma
 
----
+# 4. 🗄️ Modelo de Datos y Trazabilidad
 
-# 4. 🔐 Sistema de Seguridad y Roles (RBAC)
+El sistema utiliza un modelo relacional que permite el seguimiento completo de las interacciones.
 
-El control de acceso se centraliza mediante `protectRoute(request, role)`.
+Tabla Archivo (Pedidos)
+Relación: User (1) → (N) Archivo
+Campos clave:
+estado
+prioridad (normal, urgente)
+Tabla Contacto (Nuevo)
 
-## Nivel 1: Validación de Sesión
+Diseñada para entornos multi-empleado:
 
-Verifica que el usuario tenga una sesión activa y una cookie válida.
+id_admin → Identifica quién gestionó el mensaje
+fecha_gestion → Timestamp de la acción
+leido → Control de estado en dashboard
+# 5. ⚖️ Cumplimiento Legal (LSSI-CE / RGPD)
 
-```ts
-const session = await auth.api.getSession({ headers: request.headers });
-```
+La arquitectura incorpora una capa legal completa:
 
-Si no existe sesión:
-
-```text
-→ Redirección a /test-auth
-```
-
----
-
-## Nivel 2: Validación de Rol
-
-Se compara el rol almacenado en la sesión con el rol requerido por la página.
-
-```ts
-if (session.user.role !== requiredRole) {
-  return redirect("/dashboard/cliente");
-}
-```
-
-## Reglas Actuales
-
-| Usuario            | Destino Permitido    |
-| ------------------ | -------------------- |
-| `admin`            | `/dashboard/admin`   |
-| `cliente` / `user` | `/dashboard/cliente` |
-| Sin sesión         | `/test-auth`         |
-
-## Flujo de Seguridad
-
-```text
-Petición → protectRoute()
-         → Validar sesión
-         → Validar rol
-         → Permitir acceso / Redirigir
-```
-
----
-
-# 5. 🗄️ Modelo de Datos
-
-## Tabla `User`
-
-Gestionada por Better Auth y extendida con el campo `role`.
-
-```ts
-role: "admin" | "user";
-```
-
-Campos relevantes:
-
-| Campo   | Tipo     | Descripción                       |
-| ------- | -------- | --------------------------------- |
-| `id`    | `string` | Identificador del usuario         |
-| `email` | `string` | Correo de acceso                  |
-| `name`  | `string` | Nombre visible                    |
-| `role`  | `string` | Rol del sistema (`admin`, `user`) |
-
----
-
-## Tabla `Archivo`
-
-Representa cada fichero STL/OBJ asociado a un usuario.
-
-| Campo            | Tipo            | Descripción                           |
-| ---------------- | --------------- | ------------------------------------- |
-| `id`             | `String (UUID)` | Identificador único                   |
-| `nombre_archivo` | `String`        | Nombre original del archivo           |
-| `url_path`       | `String`        | Ruta física en el servidor            |
-| `estado`         | `Enum`          | `pendiente`, `recibido`, `completado` |
-| `id_usuario`     | `String`        | Relación con `User.id`                |
-| `prioridad`      | `String`        | `normal` o `urgente`                  |
-
-## Relación Actual
-
-```text
-User (1) ──────── (N) Archivo
-```
-
-Un usuario puede tener múltiples archivos asociados.
-
----
+Privacidad
+Información clara sobre tratamiento de datos personales
+Cookies
+Uso exclusivo de cookies técnicas (Better Auth)
+No requiere banner de consentimiento (sin tracking externo)
+Aviso Legal
+Identificación del responsable del servicio
 
 # 6. 🚀 Estado de la Implementación
-
-| Área                                         | Estado |
-| -------------------------------------------- | ------ |
-| Autenticación (Sign-up / Sign-in / Sign-out) | ✅     |
-| RBAC y rutas protegidas                      | ✅     |
-| Dashboards por rol                           | ✅     |
-| Navbar dinámico                              | ✅     |
-| Upload de STL con persistencia               | ✅     |
-| Exportación PDF con datos reales             | ✅     |
-| Configuración DX + Prettier + Astro          | ✅     |
-
----
-
-# 7. 📌 Próximos Hitos
-
-## Prioridad Alta
-
-- [ ] Crear API de descarga segura para archivos en `/uploads`.
-- [ ] Validar permisos antes de permitir la descarga.
-- [ ] Implementar sistema de mensajería asociado a cada archivo.
-- [ ] Añadir relación `Archivo → Mensajes (1:N)`.
-
----
-
-## Mejoras de Interfaz
-
-- [ ] Añadir buscador dinámico en la tabla de historial.
-- [ ] Implementar filtros por estado y prioridad.
-- [ ] Añadir paginación en dashboard de cliente.
-- [ ] Mejorar feedback visual en subida de archivos.
-
----
-
-## Escalabilidad Futura
-
-- [ ] Sustituir SQLite por PostgreSQL.
-- [ ] Migrar `/public/uploads` a almacenamiento externo (`S3`, `Cloudflare R2`).
-- [ ] Añadir auditoría de acciones y trazabilidad.
-- [ ] Implementar notificaciones en tiempo real.
-
----
+Área	Estado
+Autenticación con Roles	✅ Completado
+Protección Anti-Spam (Honeypot)	✅ Completado
+Páginas legales + Footer dinámico	✅ Completado
+Trazabilidad de administración	✅ Completado
+Dashboard Admin (CRUD pedidos)	🚧 En proceso
+Mensajería interna por pedido	📅 Planificado
+Generación de informes PDF	✅ Completado
 
 # 📎 Resumen Arquitectónico
-
-```text
-Frontend  → Astro + Tailwind + TypeScript
-Backend   → Astro SSR + API Routes
+Frontend  → Astro (SSR) + Tailwind 4
+Backend   → API Routes (Node.js)
 Auth      → Better Auth + RBAC
-ORM       → Prisma Singleton
+Security  → Honeypot + Middlewares
 Database  → SQLite
-Storage   → /public/uploads
-Reports   → jsPDF + AutoTable
-Security  → protectRoute(request, role)
+ORM       → Prisma
 ```

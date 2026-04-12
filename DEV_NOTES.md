@@ -8,12 +8,15 @@
 
 # 🗓 Historial y Actualizaciones
 
-| Fecha        | Versión  | Descripción                                                                                                                                                                              |
-| ------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fecha | Versión | Descripción |
+| ----- | ------- | ----------- |
+
+12/04/2026,v0.8.5,Seguridad y Layout. Implementado sistema Honeypot anti-spam. Corrección de arquitectura de Layout (Flexbox Sticky Footer). Creación de rutas legales dinámicas y condicionales.
+10/04/2026,v0.8.0,"Trazabilidad Admin. Extensión del esquema Prisma para tracking de gestión de mensajes (id_admin, fecha_gestion)."
 | `07/04/2026` | `v0.7.0` | Documentación y DX. Implementada exportación a PDF corporativo con `jsPDF`, configuración avanzada de entorno (`Prettier` + `Astro`) y resolución de conflictos de tipos en formularios. |
-| `05/04/2026` | `v0.6.0` | Gestión de archivos. Implementado endpoint de subida STL, almacenamiento físico en `/public/uploads` y vinculación con ID de usuario.                                                    |
-| `03/04/2026` | `v0.5.0` | Middleware y roles. Implementada protección `protectRoute`, navbar dinámico y redirecciones automáticas según rol (`Admin` / `Cliente`).                                                 |
-| `01/04/2026` | `v0.4.0` | Bento Grid. Interfaz adaptativa en `/test-auth`, corrección de botones y visualización JSON en tiempo real.                                                                              |
+| `05/04/2026` | `v0.6.0` | Gestión de archivos. Implementado endpoint de subida STL, almacenamiento físico en `/public/uploads` y vinculación con ID de usuario. |
+| `03/04/2026` | `v0.5.0` | Middleware y roles. Implementada protección `protectRoute`, navbar dinámico y redirecciones automáticas según rol (`Admin` / `Cliente`). |
+| `01/04/2026` | `v0.4.0` | Bento Grid. Interfaz adaptativa en `/test-auth`, corrección de botones y visualización JSON en tiempo real. |
 
 ---
 
@@ -291,26 +294,112 @@ Esto asegura que el rol ya esté disponible antes de decidir la redirección.
 
 ---
 
-# 7. 🚀 Estado Actual del Proyecto
+# 7. 🛡️ Seguridad en Formularios: Estrategia Honeypot
 
-| Módulo                        | Estado |
-| ----------------------------- | ------ |
-| SSR Mode (`output: "server"`) | ✅     |
-| Registro / Login / RBAC       | ✅     |
-| Protección de rutas por rol   | ✅     |
-| Historial dinámico            | ✅     |
-| Exportación PDF profesional   | ✅     |
-| DX y autoformateo             | ✅     |
+Para el formulario de contacto se ha evitado el uso de Captchas intrusivos, optando por una técnica de Honeypot.
+Implementación Técnica
+
+    Se añade un campo de texto oculto mediante CSS (display: none o fuera del viewport).
+
+    Se le asigna un nombre genérico atractivo para bots (ej: fax_number).
+
+    En el backend (/api/contacto/enviar.ts), se valida:
+
+    ```typescript
+
+    const honey = formData.get("fax_number");
+    if (honey) return new Response("Bot detectado", { status: 400 });
+    ```
+    ---
+
+# 8. 📐 Solución de Layout y Renderizado (Slots)
+
+## El problema del "Layout Cerrado"
+
+Se detectó un bug donde el Footer aparecía en la cabecera o el contenido quedaba fuera del DOM esperado.
+Causa: Uso de etiquetas de autocierre en el componente Layout (<Layout />).
+Solución: Los Layouts en Astro deben envolver el contenido para que el slot funcione correctamente.
+
+Fragmento de código:
+
+<Layout title="Dashboard" />
+<Navbar /> <Layout title="Dashboard">
+  <Navbar />
+  <main>...</main>
+</Layout>
+
+## Sticky Footer (Flexbox)
+
+Para evitar que el footer flote en mitad de la pantalla en páginas con poco contenido (como las legales), se aplicó la siguiente estructura en Layout.astro:
+
+````html
+<body class="flex flex-col min-h-screen">
+  <div class="flex-grow">
+    <slot />
+  </div>
+  <footer />
+</body>
+
+--- # 9. ⚖️ Gestión de Rutas Legales Se ha implementado una lógica de filtrado de rutas en el Layout
+principal para ocultar componentes innecesarios en páginas de lectura legal (Aviso Legal,
+Privacidad, Cookies). ## Lógica Condicional ```typescript const legalPaths = ["/privacidad",
+"/aviso-legal", "/cookies"]; const isLegalPage = legalPaths.includes(Astro.url.pathname); Esto
+permite renderizar un footer simplificado o directamente eliminarlo para mejorar la UX en documentos
+oficiales. --- # 10. 📋 Troubleshooting de Base de Datos ## Error de Conexión en Desarrollo Si al
+realizar cambios en el esquema Prisma (npx prisma db push) los tipos de TypeScript no se actualizan
+en VS Code: Comando de rescate: ```bash npx prisma generate Y reiniciar el Language Server de
+TypeScript en el IDE (Cmd/Ctrl + Shift + P -> Restart TS Server). # 📎 Resumen Técnico ```text
+Frontend: Astro + TypeScript Auth: Better Auth ORM: Prisma Storage: /public/uploads PDF: jsPDF +
+jspdf-autotable SSR: output = "server" RBAC: protectRoute(request, role)
+````
+
+# 🚀 Estado Actual del Proyecto (v0.8.5)
+
+## 🏷️ Leyenda de Estados
+
+| Estado | Significado   |
+| ------ | ------------- |
+| ✅     | Completado    |
+| 🚧     | En desarrollo |
+| 📅     | Planificado   |
 
 ---
 
-# 8. 📌 Próximos Objetivos
+## 📊 Estado por Módulo
+
+| Módulo              | Descripción                                                        | Estado |
+| ------------------- | ------------------------------------------------------------------ | ------ |
+| Arquitectura SSR    | Astro 5 con `output: "server"` y persistencia en SQLite            | ✅     |
+| Auth & RBAC         | Sistema de roles (`admin` / `user`) con Better Auth 1.5            | ✅     |
+| Seguridad Anti-Spam | Protección de formularios mediante técnica Honeypot (sin Captchas) | ✅     |
+| Capa Legal RGPD     | Páginas de Privacidad, Aviso Legal y Cookies (técnicas)            | ✅     |
+| Layout Robusto      | Estructura Flexbox (Sticky Footer) y corrección de Slots           | ✅     |
+| Gestión de Archivos | Subida de archivos `.stl` con renombrado único y vínculo a Prisma  | ✅     |
+| Exportación PDF     | Generación de informes profesionales en cliente con jsPDF          | ✅     |
+| Dashboard Cliente   | Panel de actividad, historial y envío de trabajos                  | ✅     |
+| Dashboard Admin     | Gestión global, trazabilidad de mensajes y control de estados      | 🚧     |
+| DX & Tooling        | Prettier, Astro Plugin y tipado estricto con TypeScript            | ✅     |
+
+---
+
+## 📈 Resumen
+
+```text
+Completado  → 9 módulos
+En progreso → 1 módulo
+Planificado → 0 módulos
+
+---
+
+# 📌 Próximos Objetivos
 
 ## Prioridad Alta
 
-- [ ] Crear una API de descarga segura para servir archivos desde una carpeta protegida.
-- [ ] Implementar sistema de mensajería y comentarios por archivo.
-- [ ] Desarrollar un panel de administración global para gestión de estados de trabajo.
+[ ] Dashboard Admin: Implementar la vista de gestión de mensajes de contacto con botones de "Marcar como gestionado" (usando el campo id_admin).
+
+[ ] Feedback de Subida: Añadir barra de progreso real en el componente de upload de archivos .STL.
+
+[ ] Notificaciones: Sistema de avisos visuales (Toasts) tras acciones exitosas en el dashboard.
 
 ## Mejoras Futuras
 
@@ -318,17 +407,4 @@ Esto asegura que el rol ya esté disponible antes de decidir la redirección.
 - [ ] Generar historial de auditoría.
 - [ ] Añadir notificaciones en tiempo real.
 - [ ] Migrar almacenamiento local a servicio externo (`S3`, `Cloudflare R2`, etc.).
-
----
-
-# 📎 Resumen Técnico
-
-```text
-Frontend: Astro + TypeScript
-Auth: Better Auth
-ORM: Prisma
-Storage: /public/uploads
-PDF: jsPDF + jspdf-autotable
-SSR: output = "server"
-RBAC: protectRoute(request, role)
 ```

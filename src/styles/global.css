@@ -82,3 +82,40 @@ body {
   /* Thumb gris y fondo transparente para que no ensucie el diseño */
   scrollbar-color: #cbd5e1 transparent;
 }
+
+/* --- Añadido para interactividad de tarjetas --- */
+
+@utility contacto-card {
+  @apply cursor-pointer transition-all duration-300 active:scale-95;
+}
+
+/* Animaciones de salida para cuando el admin gestiona algo */
+.animate-out {
+  animation-fill-mode: forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-out;
+}
+
+.zoom-out {
+  animation: zoomOut 0.5s ease-out;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zoomOut {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.9);
+  }
+}

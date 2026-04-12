@@ -1,148 +1,220 @@
-# 🦷 proyecto_DAW: Sistema de gestión de laboratorio dental
+# 🦷 proyecto_DAW: Sistema de Gestión de Laboratorio Dental
 
-> Proyecto de Ciclo Formativo de Grado Superior (DAW) desarrollado con el stack más moderno: Astro 5 + TypeScript + Tailwind CSS 4 + SQLite + Prisma + Better Auth.
+> Proyecto de Ciclo Formativo de Grado Superior (DAW) desarrollado con arquitectura moderna SSR, tipado estricto y control de acceso por roles.
 
----
-
-## 🚀 Tecnologías utilizadas
-
-| Tecnología        | Propósito                                 |
-| ----------------- | ----------------------------------------- |
-| Astro 5.x         | Framework principal (SSR Mode)            |
-| TypeScript        | Tipado estricto y seguridad               |
-| Tailwind CSS 4.x  | Estilos y diseño nativo mediante PostCSS  |
-| Prisma 7.x        | ORM para gestión de SQLite                |
-| SQLite            | Base de datos relacional ligera           |
-| Better Auth 1.5.6 | Autenticación avanzada y gestión de roles |
-| Node.js >= 20.19  | Runtime de ejecución                      |
+> Última actualización: `07/04/2026` · Versión actual: `v0.7.0`
 
 ---
 
-## 🗂 Estructura del proyecto
+# 📦 Stack Tecnológico
+
+| Tecnología   | Versión | Uso                                                         |
+| ------------ | ------- | ----------------------------------------------------------- |
+| Astro        | 5.x     | Framework principal con SSR                                 |
+| TypeScript   | Última  | Tipado estricto en toda la aplicación                       |
+| Tailwind CSS | 4.x     | Estilos con enfoque **CSS-first** (`@import "tailwindcss"`) |
+| Prisma       | 7.x     | ORM para acceso a SQLite                                    |
+| SQLite       | Última  | Base de datos relacional ligera                             |
+| Better Auth  | 1.5.x   | Autenticación + RBAC                                        |
+| Node.js      | >=20.19 | Runtime de ejecución                                        |
+
+---
+
+# 🧱 Arquitectura General
+
+```text
+CLIENTE (Astro + Tailwind)
+│
+├── UI dinámica (Bento Grid)
+├── Formularios (Contacto + Auth)
+└── Generación PDF (jsPDF)
+│
+▼
+SERVIDOR (Astro SSR)
+│
+├── API Routes (/auth, /upload, /contacto)
+├── Middleware (RBAC con protectRoute)
+└── Prisma Client (Singleton)
+│
+▼
+DATOS
+│
+├── SQLite (prisma/dev.db)
+└── Storage (/public/uploads)
+```
+
+# 📂 Estructura del Proyecto
 
 ```text
 /
 ├── prisma/
-│   ├── schema.prisma      # Definición de tablas (User, Session, Account, etc.)
-│   └── dev.db             # Base de datos local (SQLite)
+│   ├── schema.prisma
+│   └── dev.db
+│
+├── public/
+│   └── uploads/
+│
 ├── src/
 │   ├── components/
-│   │   └── Navbar.astro   # Navegación dinámica según el ROL del usuario
+│   │   ├── Navbar.astro
+│   │   ├── ContactForm.astro     # Formulario con Honeypot
+│   │   └── Footer.astro          # Footer corporativo
+│   │
 │   ├── layouts/
-│   │   └── Layout.astro   # Estructura base HTML5 + Tailwind 4
+│   │   └── Layout.astro
+│   │
 │   ├── lib/
-│   │   ├── prisma.ts      # Cliente de base de datos
-│   │   └── auth.ts        # Configuración de Better Auth + Helpers de Roles
+│   │   ├── prisma.ts
+│   │   └── auth.ts
+│   │
 │   ├── pages/
-│   │   ├── api/auth/
-│   │   │   └── [...all].ts # Endpoint central de autenticación (Handler)
+│   │   ├── api/
+│   │   │   ├── auth/[...all].ts
+│   │   │   └── contacto/
+│   │   │       └── enviar.ts
+│   │   │
 │   │   ├── dashboard/
-│   │   │   ├── admin/      # Vistas protegidas para Administradores
-│   │   │   └── cliente/    # Vistas protegidas para Clientes/Usuarios
-│   │   ├── index.astro
-│   │   └── test-auth.astro # Panel de pruebas de autenticación
+│   │   │   ├── admin/
+│   │   │   └── cliente/
+│   │   │
+│   │   ├── privacidad.astro
+│   │   ├── aviso-legal.astro
+│   │   ├── cookies.astro
+│   │   ├── test-auth.astro
+│   │   └── index.astro
+│   │
 │   └── styles/
-│       └── global.css     # Importación de Tailwind CSS 4
-├── astro.config.mjs       # Configuración SSR (Node Adapter)
+│       └── global.css
+│
+├── astro.config.mjs
 ├── package.json
 └── README.md
+```
 
----
+# 🔐 Autenticación y Control de Acceso (RBAC)
 
-## 🔑 Autenticación y Control de Acceso
+Sistema basado en Better Auth con validación en servidor.
 
-El sistema utiliza Better Auth 1.5 con una lógica de persistencia basada en cookies y validación en el servidor.
-Funcionalidades implementadas:
+Funcionalidades
+Registro y login con validación segura
+Gestión de roles (admin, user)
+Middleware protectRoute(request, role)
+Redirecciones automáticas tras login
+Navbar dinámico según sesión
+Flujo
 
-    ✅ Registro/Login con validación de credenciales.
+Login → Validación sesión → Validación rol
+→ /dashboard/admin | /dashboard/cliente
 
-    ✅ Gestión de Roles: Soporte para roles admin y user desde la base de datos.
+# Endpoints de Autenticación
 
-    ✅ Protección de Rutas: Helper protectRoute que verifica sesión y rol antes de renderizar la página.
+| Acción   | Ruta                    | Método |
+| -------- | ----------------------- | ------ |
+| Registro | /api/auth/sign-up/email | POST   |
+| Login    | /api/auth/sign-in/email | POST   |
+| Sesión   | /api/auth/get-session   | GET    |
+| Logout   | /api/auth/sign-out      | POST   |
 
-    ✅ Redirección Automática:
+# 🛡️ Seguridad y Protección de Datos
 
-        Login -> /dashboard/admin (si es administrador).
+El sistema implementa medidas avanzadas orientadas a seguridad y cumplimiento legal:
 
-        Login -> /dashboard/cliente (si es usuario estándar).
+Honeypot Anti-Bot: Protección invisible en formularios sin CAPTCHA
+Prevención SQL Injection: Uso de Prisma (queries parametrizadas)
+RBAC en servidor: Validación de sesión y rol en cada request
+Cumplimiento RGPD/LSSI:
+Página de privacidad
+Aviso legal
+Política de cookies técnicas
 
-    ✅ Navbar Dinámico: Muestra enlaces específicos (Panel Admin / Mis Pedidos) basándose en el estado de la sesión.
+# 📊 Base de Datos y Trazabilidad
 
-Endpoints de Autenticación (v1.5.6):
-Acción	                Ruta API	              Método
-Registro	            /api/auth/sign-up/email	   POST
-Login	                /api/auth/sign-in/email	   POST
-Sesión	              /api/auth/get-session	     GET
-Logout	              /api/auth/sign-out	       POST
+El sistema utiliza Prisma sobre SQLite con modelo orientado a trazabilidad.
 
----
+Características
+Relación User → Archivo (1:N)
+Persistencia de trabajos STL/OBJ
+Control de estado (pendiente, recibido, completado)
+Sistema de Contacto
+Registro de usuario que envía el mensaje
+Identificación del administrador que lo gestiona (id_admin)
+Registro temporal de gestión (fecha_gestion)
 
-## 🛠 Instalación y Puesta en Marcha
+# 🛠 Instalación y Puesta en Marcha
 
-    Clonar y entrar en la carpeta:
-    Bash
+1. Clonar repositorio
+   git clone https://github.com/Carandainf/proyecto_DAW.git
+   cd proyecto_DAW
+2. Instalar dependencias
+   npm install
+3. Variables de entorno
+   DATABASE_URL="file:./prisma/dev.db"
+   BETTER_AUTH_SECRET="tu_secreto"
+   BETTER_AUTH_URL="http://localhost:4321"
+4. Base de datos
+   npx prisma db push
+   npx prisma generate
+5. Desarrollo
+   npm run dev
 
-    git clone [https://github.com/Carandainf/proyecto_DAW.git](https://github.com/Carandainf/proyecto_DAW.git)
-    cd proyecto_DAW
+# ⚡ Comandos de Utilidad
 
-    Instalar dependencias:
-    Bash
-    npm install
+Comando Acción
+npx prisma studio UI para explorar la DB
+npm run build Build de producción
+npx prisma db seed Datos iniciales
 
-    Configurar variables de entorno (.env):
-    Fragmento de código
+# 🎨 Configuración Tailwind CSS 4
 
-    DATABASE_URL="file:./prisma/dev.db"
-    BETTER_AUTH_SECRET="tu_secreto_aleatorio_aqui"
-    BETTER_AUTH_URL="http://localhost:4321"
-
-    Sincronizar Base de Datos:
-    Bash
-    npx prisma db push
-    npx prisma generate
-
-    Lanzar en desarrollo:
-    Bash
-    npm run dev
-
----
-
-##⚡ Comandos de Utilidad
-Comando	                   Acción
-npx prisma studio	         Abre un explorador visual para la base de datos SQLite.
-npm run build	             Genera la versión de producción para Node.js.
-npx prisma db seed	       Ejecuta el volcado de datos iniciales (si existe seed.ts).
-
----
-
-## 🎨 Configuración de Tailwind CSS 4
-
-En esta versión ya no se usan los archivos de configuración .js extensos. Se utiliza la directiva de importación nativa en src/styles/global.css:
-CSS
+Configuración CSS-first sin plugins adicionales en Astro:
 
 @import "tailwindcss";
 
+✔ Astro 5 detecta automáticamente Tailwind
+✔ No requiere configuración JS adicional
+
+# 🚀 Estado del Desarrollo
+
+Funcionalidades completadas
+SSR con Astro 5
+Prisma + SQLite
+Autenticación con roles (RBAC)
+Middleware de protección de rutas
+Navbar dinámico
+Sistema de subida de archivos STL
+Sistema de contacto con Honeypot
+Arquitectura legal (RGPD / LSSI)
+Trazabilidad de mensajes (admin + timestamp)
+
+# En progreso
+
+Diseño final del dashboard
+CRUD completo de trabajos dentales
+Exportación PDF avanzada
+
+# 🔮 Roadmap Técnico
+
+API segura de descarga de archivos
+Sistema de mensajería por archivo
+Filtros y buscador en dashboard
+Migración a PostgreSQL
+Storage externo (S3 / R2)
+Auditoría y logs de actividad
+
+# 📎 Documentación Técnica
+
+DEV_NOTES.md → Historial técnico
+PROJECT_ARCHITECTURE.md → Arquitectura
+DATABASE_DESIGN.md → Base de datos
+
+# 🧠 Resumen
+
+Frontend → Astro + Tailwind + TypeScript
+Backend → Astro SSR + API Routes
+Auth → Better Auth + RBAC
+ORM → Prisma
+DB → SQLite
+Storage → /public/uploads
+Security → protectRoute + Honeypot
+
 ---
-
-## 🚧 Estado del Desarrollo
-
-    [x] Configuración SSR con Astro 5.
-
-    [x] Integración de Prisma + SQLite.
-
-    [x] Sistema de Autenticación con Roles (Admin/User).
-
-    [x] Middlewares de protección de rutas.
-
-    [x] Navbar dinámico funcional.
-
-    [x] Generación de informes PDF automáticos.
-
-    [x] Sistema de roles Admin/Cliente con dashboards independientes.
-
-    [ ] Implementación de CRUD de pedidos dentales.
-
-    [ ] Diseño final de interfaces del Dashboard.
-
-
-```

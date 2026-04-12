@@ -178,7 +178,21 @@ model Archivo {
 
 ---
 
-# 4. 🔗 Relaciones entre Tablas
+# 4. 📬 Modelo Contacto (Trazabilidad y Seguridad)
+
+> Modelo clave para cumplimiento RGPD y auditoría interna del laboratorio.
+
+| Campo         | Tipo      | Descripción                                      |
+| ------------- | --------- | ------------------------------------------------ |
+| id            | Int       | PK autoincremental                               |
+| nombre        | String    | Nombre del remitente                             |
+| email         | String    | Email de contacto                                |
+| mensaje       | String    | Contenido de la consulta                         |
+| leido         | Boolean   | Control de estado (`default: false`)             |
+| id_admin      | String?   | FK: ID del administrador que atendió la consulta |
+| fecha_gestion | DateTime? | Timestamp de cuándo se resolvió la consulta      |
+
+# 5. 🔗 Relaciones entre Tablas
 
 ## Relación Principal
 
@@ -190,6 +204,14 @@ Un usuario puede tener múltiples trabajos.
 
 Cada `Archivo` pertenece únicamente a un usuario.
 
+## Relación de Auditoría:
+
+// En el modelo Contacto:
+
+```text
+admin_gestor  User?  @relation(fields: [id_admin], references: [id])
+```
+
 ## Relación Prisma
 
 ```prisma
@@ -198,7 +220,7 @@ usuario User @relation(fields: [id_usuario], references: [id])
 
 ---
 
-# 5. 🧪 Seed Inicial y Datos Base
+# 6. 🧪 Seed Inicial y Datos Base
 
 Se ha definido una semilla inicial para garantizar los roles mínimos del sistema.
 
@@ -217,7 +239,7 @@ Se ha definido una semilla inicial para garantizar los roles mínimos del sistem
 
 ---
 
-# 6. 🔐 Seguridad y Restricciones de Acceso
+# 7. 🔐 Seguridad y Restricciones de Acceso
 
 La capa de datos debe validar siempre la relación entre sesión y `id_usuario`.
 
@@ -237,7 +259,19 @@ Sin esta validación, un usuario podría acceder a archivos ajenos manipulando e
 
 ---
 
-# 7. 🚀 Estado de Implementación
+# 8. 🛡️ Integridad y Seguridad de Datos
+
+    Aislamiento de Usuarios: Las consultas siempre filtran por session.user.id. Ningún usuario puede ver registros de Archivo que no le pertenezcan.
+
+    Protección Anti-Spam: Aunque no se guarda en DB, la API valida el campo Honeypot antes de realizar el prisma.contacto.create.
+
+    Tipado Seguro: Se utiliza npx prisma generate para sincronizar los modelos con las interfaces de TypeScript, evitando errores de "campo inexistente" en tiempo de compilación.
+
+---
+
+# 9. 🚀 Estado de Implementación
+
+## 📦 Funcionalidades
 
 | Funcionalidad                                   | Estado |
 | ----------------------------------------------- | ------ |
@@ -251,7 +285,19 @@ Sin esta validación, un usuario podría acceder a archivos ajenos manipulando e
 
 ---
 
-# 8. 📌 Próximos Pasos en la Capa de Datos
+## 🗄️ Modelo de Datos
+
+| Tabla / Atributo | Estado | Notas                                               |
+| ---------------- | ------ | --------------------------------------------------- |
+| User (Roles)     | ✅     | Funcionando en login y registro                     |
+| Archivo (STL)    | ✅     | Vinculado a la subida física de archivos            |
+| Contacto         | ✅     | Soporte completo de trazabilidad administrativa     |
+| Trazabilidad     | ✅     | Campos `id_admin` y `fecha_gestion` operativos      |
+| Enums            | 🚧     | Pendiente migrar `String` a `Enum` nativo en Prisma |
+
+---
+
+# 10. 📌 Próximos Pasos en la Capa de Datos
 
 ## Modelo `Mensaje`
 
@@ -323,4 +369,19 @@ Tecnologías:
 - Prisma
 - Better Auth
 - Prisma Studio
+```
+
+# 📎 Resumen Técnico
+
+```text
+    Motor: SQLite (Desarrollo) / Preparado para PostgreSQL.
+
+    ORM: Prisma 7.x.
+
+    Relaciones:
+
+        User (1) ── (N) Archivo (Trabajos dentales)
+
+        User (1) ── (N) Contacto (Auditoría de gestión de mensajes)
+
 ```
