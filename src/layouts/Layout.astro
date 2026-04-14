@@ -28,3 +28,18 @@ const isLegalPage =
     {!isLegalPage && <Footer />}
   </body>
 </html>
+
+// Problemas con el refresco de la información en el dashboard, de moemnto lo soluciono de esta
+forma
+<script is:inline>
+  // Solo activar en el dashboard
+  if (window.location.pathname.includes("/dashboard")) {
+    setInterval(() => {
+      // Si el usuario no tiene el foco en un textarea o input, recarga
+      const elementoActivo = document.activeElement.tagName;
+      if (elementoActivo !== "TEXTAREA" && elementoActivo !== "INPUT") {
+        window.location.reload();
+      }
+    }, 60000); // Lo he puesto a 1 minuto de momento, ya veremos si lo cambio
+  }
+</script>

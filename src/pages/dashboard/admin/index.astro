@@ -15,10 +15,28 @@ const contactosPendientes = await prisma.contacto.findMany({
   orderBy: { id_contacto: "desc" },
 });
 
-const trabajosUrgentes = await prisma.archivo.findMany({
-  where: { estado: "pendiente", prioridad: "urgente" },
+// Todos los pendientes ordenados: primero urgentes, luego normales
+const trabajosActivos = await prisma.archivo.findMany({
+  where: {
+    estado: { in: ["pendiente", "en_proceso"] },
+  },
   include: { usuario: true },
+  orderBy: [{ prioridad: "desc" }, { fecha_subida: "asc" }],
 });
+
+// Filtramos en JS para no saturar la base de datos con dos llamadas
+// Los que están "en el horno" (Tienen prioridad máxima de visualización)
+const enCurso = trabajosActivos.filter((t) => t.estado === "en_proceso");
+
+// Los urgentes que TODAVÍA no se han empezado
+const urgentes = trabajosActivos.filter(
+  (t) => t.prioridad === "urgente" && t.estado === "pendiente"
+);
+
+// Los normales que TODAVÍA no se han empezado
+const normales = trabajosActivos.filter(
+  (t) => t.prioridad !== "urgente" && t.estado === "pendiente"
+);
 
 const actividadReciente = await prisma.mensaje.findMany({
   take: 5,
@@ -26,7 +44,8 @@ const actividadReciente = await prisma.mensaje.findMany({
   include: { archivo: true, emisor: true },
 });
 
-const totalPendientes = await prisma.archivo.count({ where: { estado: "pendiente" } });
+// Total de trabajos por terminar
+const totalTrabajosActivos = trabajosActivos.length;
 ---
 
 <Layout title="Panel de Control Admin" darkMode={true}>
@@ -45,7 +64,7 @@ const totalPendientes = await prisma.archivo.count({ where: { estado: "pendiente
         <div class="bg-dent-card border border-dent-border px-4 py-2 rounded-2xl">
           <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Cola Global</p>
           <p class="text-xl font-black text-dent-accent">
-            {totalPendientes}
+            {totalTrabajosActivos}
             <span class="text-xs text-slate-400 font-normal">trabajos</span>
           </p>
         </div>
@@ -119,91 +138,146 @@ const totalPendientes = await prisma.archivo.count({ where: { estado: "pendiente
         <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5 text-red-500"
+            class="w-5 h-5 text-dent-accent"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            ><path d="m12 14 4-4 4 4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path></svg
           >
-          Prioridad <span class="text-red-500 italic">Urgente</span>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+            ></path><polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          Cola de <span class="text-dent-accent italic">Trabajos</span>
         </h2>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="space-y-8 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
           {
-            trabajosUrgentes.length === 0 ? (
-              <div class="col-span-2 bg-dent-bg/50 border border-dashed border-dent-border p-10 rounded-3xl text-center">
-                <p class="text-slate-500 text-sm">No hay trabajos urgentes hoy. ¡Buen trabajo!</p>
-              </div>
-            ) : (
-              trabajosUrgentes.map((t) => (
-                <a
-                  href={`/dashboard/admin/trabajo/${t.id_archivo}`}
-                  class="flex items-center gap-4 p-4 bg-dent-bg border border-dent-border rounded-2xl hover:border-red-500/40 transition-all group relative overflow-hidden"
-                >
-                  <div class="absolute top-0 right-0 w-1 h-full bg-red-500/50" />
-                  <div class="p-3 bg-red-500/10 rounded-xl text-red-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-6 h-6"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
+            urgentes.length > 0 && (
+              <div>
+                <p class="text-[10px] uppercase tracking-[0.2em] text-red-500 font-black mb-3 flex items-center gap-2">
+                  <span class="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                  Prioridad Máxima
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {urgentes.map((t) => (
+                    <a
+                      href={`/dashboard/admin/trabajo/${t.id_archivo}`}
+                      class="flex items-center gap-4 p-3 bg-red-500/5 border border-red-500/20 rounded-2xl hover:bg-red-500/10 transition-all group shadow-lg shadow-red-900/5"
                     >
-                      <>
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                        <polyline points="14 2 14 8 20 8" />
-                      </>
-                    </svg>
-                  </div>
-                  <div class="min-w-0">
-                    <p class="text-sm font-bold truncate">{t.nombre_archivo}</p>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                      {t.usuario.name}
-                    </p>
-                  </div>
-                </a>
-              ))
+                      <div class="p-2 bg-red-500/20 rounded-xl text-red-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <p class="text-sm font-bold truncate">{t.nombre_archivo}</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase">
+                          {t.usuario.name}
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
             )
           }
-        </div>
 
-        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <button
-            class="flex flex-col items-center justify-center p-4 bg-dent-bg border border-dent-border rounded-2xl hover:bg-dent-accent hover:text-dent-dark transition-all group"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 mb-2"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle
-                cx="9"
-                cy="7"
-                r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path
-                d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg
+          <div>
+            <p
+              class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black mb-3 flex items-center gap-2"
             >
-            <span class="text-[9px] font-black uppercase">Usuarios</span>
-          </button>
-          <button
-            class="flex flex-col items-center justify-center p-4 bg-dent-bg border border-dent-border rounded-2xl hover:bg-dent-accent hover:text-dent-dark transition-all group"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 mb-2"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline
-                points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"
-              ></line></svg
+              <span class="flex h-2 w-2 rounded-full bg-slate-500"></span>
+              Estándar
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {
+                normales.length === 0 && urgentes.length === 0 ? (
+                  <p class="col-span-2 text-center py-10 text-slate-500 italic text-sm border border-dashed border-dent-border rounded-2xl">
+                    Todo al día.
+                  </p>
+                ) : (
+                  normales.map((t) => (
+                    <a
+                      href={`/dashboard/admin/trabajo/${t.id_archivo}`}
+                      class="flex items-center gap-4 p-3 bg-dent-bg border border-dent-border rounded-2xl hover:border-dent-accent/50 transition-all group"
+                    >
+                      <div class="p-2 bg-slate-800 rounded-xl text-slate-400 group-hover:text-dent-accent transition-colors">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <p class="text-sm font-semibold truncate text-slate-200">
+                          {t.nombre_archivo}
+                        </p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase">
+                          {t.usuario.name}
+                        </p>
+                      </div>
+                    </a>
+                  ))
+                )
+              }
+            </div>
+          </div>
+
+          <div class="mt-8 border-t border-dent-border pt-6">
+            <p
+              class="text-[10px] uppercase tracking-[0.2em] text-cyan-500 font-black mb-3 flex items-center gap-2"
             >
-            <span class="text-[9px] font-black uppercase">Informes</span>
-          </button>
+              <span class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.5)]"
+              ></span>
+              En Fabricación / Proceso
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {
+                enCurso.length === 0 ? (
+                  <p class="col-span-2 text-center py-6 text-slate-600 text-xs italic">
+                    No hay trabajos en el horno actualmente.
+                  </p>
+                ) : (
+                  enCurso.map((t) => (
+                    <a
+                      href={`/dashboard/admin/trabajo/${t.id_archivo}`}
+                      class="flex items-center gap-4 p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl hover:bg-cyan-500/10 transition-all group"
+                    >
+                      <div class="p-2 bg-cyan-500/20 rounded-xl text-cyan-500 animate-pulse">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                        </svg>
+                      </div>
+                      <div class="min-w-0">
+                        <p class="text-sm font-bold truncate text-slate-100">{t.nombre_archivo}</p>
+                        <p class="text-[9px] text-cyan-400 font-bold uppercase">{t.usuario.name}</p>
+                      </div>
+                    </a>
+                  ))
+                )
+              }
+            </div>
+          </div>
         </div>
       </section>
 
@@ -277,10 +351,10 @@ const totalPendientes = await prisma.archivo.count({ where: { estado: "pendiente
           class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm focus:ring-1 focus:ring-dent-accent outline-none"
           placeholder="Escribe aquí la respuesta que se enviará por email..."></textarea>
 
-        <div class="flex flex-col sm:flex-row gap-3 mt-4">
+        <div class="flex flex-col sm:flex-row gap-3 mt-6">
           <button
             type="submit"
-            class="flex-[2] bg-dent-accent text-dent-dark font-bold py-3 rounded-2xl hover:brightness-110 transition-all"
+            class="flex-[2] bg-dent-accent text-dent-dark font-bold py-3 px-6 rounded-full hover:brightness-110 transition-all shadow-md text-sm"
           >
             Enviar Respuesta y Archivar
           </button>
@@ -288,7 +362,7 @@ const totalPendientes = await prisma.archivo.count({ where: { estado: "pendiente
           <button
             type="button"
             id="btn-solo-archivar"
-            class="flex-1 border border-slate-700 text-slate-400 font-bold py-3 rounded-2xl hover:bg-slate-800 hover:text-white transition-all"
+            class="flex-1 border border-slate-700 text-slate-400 font-bold py-3 px-6 rounded-full hover:bg-slate-800 hover:text-white transition-all text-sm"
           >
             Solo Archivar
           </button>
