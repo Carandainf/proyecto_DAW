@@ -7,106 +7,225 @@ import { prisma } from "@/lib/prisma";
 const { shouldRedirect, url, user } = await protectRoute(Astro.request, "admin");
 if (shouldRedirect) return Astro.redirect(url);
 
-// Traemos los trabajos que tienen al menos un mensaje, ordenados por el último mensaje enviado
-const trabajosConMensajes = await prisma.archivo.findMany({
+// Traemos los trabajos que tienen mensajes y que NO están completados
+const trabajos = await prisma.archivo.findMany({
   where: {
-    mensajes: { some: {} }, // Solo archivos que tengan mensajes
+    mensajes: { some: {} }, // Que tengan mensajes
+    NOT: {
+      estado: "completado", // EXCLUIMOS los que ya terminamos
+    },
   },
   include: {
     usuario: true,
     mensajes: {
       orderBy: { fecha_envio: "desc" },
-      take: 1, // Para mostrar el último mensaje en la lista
+      include: { emisor: true },
     },
   },
-  orderBy: {
-    // Esto es un truco de Prisma para ordenar por la fecha del último mensaje
-    fecha_subida: "desc",
-  },
+});
+
+// Ordenar por el mensaje más reciente de cada hilo
+const trabajosOrdenados = trabajos.sort((a, b) => {
+  return b.mensajes[0].fecha_envio.getTime() - a.mensajes[0].fecha_envio.getTime();
 });
 ---
 
 <Layout title="Centro de Mensajes | Admin" darkMode={true}>
   <Navbar />
   <main class="max-w-6xl mx-auto p-6 md:p-8">
-    <div class="mb-6">
-      <button
-        onclick="history.back()"
-        class="inline-flex items-center gap-2 text-slate-500 hover:text-dent-accent transition-colors text-sm font-medium group cursor-pointer"
+    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <button
+          onclick="history.back()"
+          class="inline-flex items-center gap-2 text-slate-500 hover:text-dent-accent transition-colors text-sm font-medium mb-4 group cursor-pointer"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="group-hover:-translate-x-1 transition-transform"
+            ><path d="m15 18-6-6 6-6"></path></svg
+          >
+          Volver al panel
+        </button>
+        <h1 class="text-3xl font-bold text-white italic leading-tight">
+          Centro de <span class="text-dent-accent">Conversaciones</span>
+        </h1>
+        <p class="text-slate-400 text-sm">
+          Gestiona la comunicación de los trabajos <span
+            class="text-slate-200 font-bold underline decoration-dent-accent/30">activos</span
+          >.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+        <div class="relative group">
+          <span
+            class="absolute inset-y-0 left-4 flex items-center text-slate-500 group-focus-within:text-dent-accent transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              ><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg
+            >
+          </span>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Buscar doctor o trabajo..."
+            class="bg-dent-card border border-dent-border rounded-2xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-dent-accent/50 w-full sm:w-64 transition-all"
+          />
+        </div>
+
+        <select
+          id="filter-status"
+          class="bg-dent-card border border-dent-border rounded-2xl px-4 py-3 text-sm text-white outline-none focus:border-dent-accent/50 cursor-pointer"
+        >
+          <option value="all">Todos los hilos</option>
+          <option value="pending">Necesita respuesta</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="conversations-list" class="grid gap-4">
+      {
+        trabajosOrdenados.map((t) => {
+          const necesitaRespuesta = t.mensajes[0].emisor.role === "user";
+
+          return (
+            <div
+              class="conversation-item bg-dent-card border border-dent-border p-5 rounded-2xl hover:border-dent-accent/50 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-4"
+              data-search={`${t.usuario.name} ${t.nombre_archivo}`.toLowerCase()}
+              data-pending={necesitaRespuesta ? "true" : "false"}
+            >
+              <div class="flex items-center gap-4">
+                <div class="relative">
+                  <div class="w-12 h-12 rounded-xl bg-dent-accent/10 flex items-center justify-center text-dent-accent font-bold border border-dent-accent/20">
+                    {t.usuario.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  {necesitaRespuesta && (
+                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-dent-accent rounded-full border-2 border-dent-card flex items-center justify-center">
+                      <span class="w-1.5 h-1.5 bg-dent-dark rounded-full animate-pulse" />
+                    </span>
+                  )}
+                </div>
+                <div class="min-w-0">
+                  <h3 class="text-slate-100 font-bold group-hover:text-dent-accent transition-colors truncate">
+                    {t.nombre_archivo}
+                  </h3>
+                  <p class="text-[11px] text-slate-500 uppercase font-black tracking-wider">
+                    Dr/a. <span class="text-slate-300">{t.usuario.name}</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex-1 md:px-10">
+                <div class="flex items-center gap-2 mb-1">
+                  <span
+                    class={`text-[9px] px-2 py-0.5 rounded uppercase font-bold ${necesitaRespuesta ? "bg-dent-accent text-dent-dark" : "bg-slate-800 text-slate-400"}`}
+                  >
+                    {necesitaRespuesta ? "Pendiente" : "Respondido"}
+                  </span>
+                  <span class="text-[10px] text-slate-500 font-mono">
+                    {new Date(t.mensajes[0].fecha_envio).toLocaleString("es-ES", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+                <p class="text-sm text-slate-400 line-clamp-1 italic">
+                  "{t.mensajes[0].contenido}"
+                </p>
+              </div>
+
+              <a
+                href={`/dashboard/admin/trabajo/${t.id_archivo}`}
+                class="flex items-center justify-center gap-2 bg-slate-900 border border-white/5 group-hover:border-dent-accent/40 group-hover:bg-dent-accent group-hover:text-dent-dark text-slate-300 font-bold py-3 px-6 rounded-xl text-[10px] uppercase tracking-widest transition-all"
+              >
+                Abrir Conversación
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </a>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <div id="no-results" class="hidden py-20 text-center">
+      <div
+        class="bg-dent-card w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-dent-border"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
+          class="w-10 h-10 text-slate-600"
           fill="none"
+          viewBox="0 0 24 24"
           stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="group-hover:-translate-x-1 transition-transform"
-          ><path d="m15 18-6-6 6-6"></path></svg
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          ></path></svg
         >
-        Volver al panel
-      </button>
-    </div>
-
-    <header class="mb-10">
-      <h1 class="text-3xl font-bold text-white italic">
-        Centro de <span class="text-dent-accent">Conversaciones</span>
-      </h1>
-      <p class="text-slate-400 text-sm mt-1">Gestiona la comunicación técnica con los doctores.</p>
-    </header>
-
-    <div class="grid gap-4">
-      {
-        trabajosConMensajes.map((t) => (
-          <a
-            href={`/dashboard/admin/trabajo/${t.id_archivo}`}
-            class="bg-dent-card border border-dent-border p-5 rounded-2xl hover:border-dent-accent/50 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-4"
-          >
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-full bg-dent-accent/10 flex items-center justify-center text-dent-accent font-bold">
-                {t.usuario.name.substring(0, 2).toUpperCase()}
-              </div>
-              <div>
-                <h3 class="text-slate-100 font-bold group-hover:text-dent-accent transition-colors">
-                  {t.nombre_archivo}
-                </h3>
-                <p class="text-xs text-slate-500">
-                  Doctor: <span class="text-slate-300 font-medium">{t.usuario.name}</span>
-                </p>
-              </div>
-            </div>
-
-            <div class="flex-1 md:px-10">
-              <p class="text-sm text-slate-400 line-clamp-1 italic">
-                "{t.mensajes[0]?.contenido || "Sin mensajes"}"
-              </p>
-              <span class="text-[10px] text-slate-600 font-mono">
-                Último contacto: {new Date(t.mensajes[0]?.fecha_envio).toLocaleString()}
-              </span>
-            </div>
-
-            <div class="flex items-center gap-2 text-dent-accent font-bold text-xs uppercase tracking-widest">
-              Ir al chat
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </div>
-          </a>
-        ))
-      }
+      </div>
+      <p class="text-slate-500 italic">No se encontraron conversaciones con esos filtros.</p>
     </div>
   </main>
 </Layout>
+
+<script>
+  const searchInput = document.getElementById("search-input") as HTMLInputElement;
+  const filterStatus = document.getElementById("filter-status") as HTMLSelectElement;
+  const items = document.querySelectorAll(".conversation-item");
+  const noResults = document.getElementById("no-results");
+
+  function filter() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const statusTerm = filterStatus.value;
+    let visibleCount = 0;
+
+    items.forEach((item: any) => {
+      const text = item.getAttribute("data-search");
+      const isPending = item.getAttribute("data-pending") === "true";
+
+      const matchesSearch = text.includes(searchTerm);
+      const matchesStatus = statusTerm === "all" || (statusTerm === "pending" && isPending);
+
+      if (matchesSearch && matchesStatus) {
+        item.style.display = "flex";
+        visibleCount++;
+      } else {
+        item.style.display = "none";
+      }
+    });
+
+    noResults?.classList.toggle("hidden", visibleCount > 0);
+  }
+
+  searchInput?.addEventListener("input", filter);
+  filterStatus?.addEventListener("change", filter);
+</script>

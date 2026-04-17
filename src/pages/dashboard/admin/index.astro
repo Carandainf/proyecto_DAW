@@ -31,16 +31,26 @@ const normales = trabajosActivos.filter(
   (t) => t.prioridad !== "urgente" && t.estado === "pendiente"
 );
 
-// Consultamos los últimos mensajes para el widget de conversaciones
-const actividadReciente = await prisma.mensaje.findMany({
-  take: 6, // Mostramos 6 para que queden bien en la cuadrícula de 3 columnas
-  orderBy: { fecha_envio: "desc" },
-  include: {
-    archivo: {
-      include: { usuario: true }, // Incluimos al doctor dueño del archivo
-    },
-    emisor: true,
+// --- NUEVA LÓGICA DE MENSAJES AGRUPADOS ---
+const trabajosConMensajes = await prisma.archivo.findMany({
+  where: {
+    mensajes: { some: {} },
   },
+  include: {
+    usuario: true,
+    mensajes: {
+      orderBy: { fecha_envio: "desc" },
+      take: 1,
+      include: { emisor: true },
+    },
+  },
+  take: 6,
+});
+
+const actividadAgrupada = trabajosConMensajes.sort((a, b) => {
+  const fechaA = a.mensajes[0]?.fecha_envio.getTime() || 0;
+  const fechaB = b.mensajes[0]?.fecha_envio.getTime() || 0;
+  return fechaB - fechaA;
 });
 
 const totalTrabajosActivos = trabajosActivos.length;
@@ -95,7 +105,9 @@ const totalTrabajosActivos = trabajosActivos.length;
         class={`bg-dent-card border-2 rounded-3xl p-6 shadow-xl transition-all ${contactosPendientes.length > 0 ? "border-amber-500/50 shadow-amber-900/10" : "border-dent-border"}`}
       >
         <div class="flex justify-between items-center mb-6">
-          <h2 class="font-bold flex items-center gap-2">
+          <h2
+            class="font-bold flex items-center gap-2 uppercase tracking-tighter text-sm text-slate-200"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="w-5 h-5 text-amber-500"
@@ -150,7 +162,7 @@ const totalTrabajosActivos = trabajosActivos.length;
       <section
         class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl p-6 shadow-xl"
       >
-        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2 uppercase tracking-tighter">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-5 h-5 text-dent-accent"
@@ -169,8 +181,8 @@ const totalTrabajosActivos = trabajosActivos.length;
             urgentes.length > 0 && (
               <div>
                 <p class="text-[10px] uppercase tracking-[0.2em] text-red-500 font-black mb-3 flex items-center gap-2">
-                  <span class="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-                  Prioridad Máxima
+                  <span class="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" /> Prioridad
+                  Máxima
                 </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {urgentes.map((t) => (
@@ -207,8 +219,7 @@ const totalTrabajosActivos = trabajosActivos.length;
             <p
               class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black mb-3 flex items-center gap-2"
             >
-              <span class="flex h-2 w-2 rounded-full bg-slate-500"></span>
-              Estándar
+              <span class="flex h-2 w-2 rounded-full bg-slate-500"></span> Estándar
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {
@@ -254,8 +265,7 @@ const totalTrabajosActivos = trabajosActivos.length;
               class="text-[10px] uppercase tracking-[0.2em] text-cyan-500 font-black mb-3 flex items-center gap-2"
             >
               <span class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.5)]"
-              ></span>
-              En Fabricación / Proceso
+              ></span> En Fabricación / Proceso
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {
@@ -301,64 +311,95 @@ const totalTrabajosActivos = trabajosActivos.length;
           <h2
             class="text-md font-bold text-white flex items-center gap-2 uppercase tracking-widest"
           >
-            <span class="w-2 h-2 bg-dent-accent rounded-full"></span>
-            Mensajes <span class="text-dent-accent italic">Recientes</span>
+            <span class="w-2 h-2 bg-dent-accent rounded-full animate-pulse"></span>
+            Bandeja de <span class="text-dent-accent italic">Mensajes por Cliente</span>
           </h2>
           <a
             href="/dashboard/admin/conversaciones"
-            class="text-[10px] font-black text-slate-500 hover:text-dent-accent transition-colors uppercase tracking-widest border-b border-transparent hover:border-dent-accent"
+            class="text-[10px] font-black text-slate-500 hover:text-dent-accent transition-all uppercase tracking-widest flex items-center gap-2 group"
           >
-            Ver centro de mensajes →
+            Ver todas las conversaciones
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              class="group-hover:translate-x-1 transition-transform"
+              ><path d="m9 18 6-6-6-6"></path></svg
+            >
           </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {
-            actividadReciente.map((m) => (
-              <a
-                href={`/dashboard/admin/trabajo/${m.archivo.id_archivo}`}
-                class="p-4 bg-dent-bg border border-dent-border hover:border-dent-accent/40 rounded-2xl transition-all group"
-              >
-                <div class="flex justify-between items-center mb-2">
-                  <span class="text-[10px] font-bold text-dent-accent truncate w-2/3 uppercase tracking-tight">
-                    {m.archivo.nombre_archivo}
-                  </span>
-                  <span class="text-[9px] text-slate-500 font-mono">
-                    {new Date(m.fecha_envio).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-
-                <p class="text-xs italic text-slate-200 line-clamp-2 group-hover:text-white transition-colors">
-                  "{m.contenido}"
+            actividadAgrupada.length === 0 ? (
+              <div class="col-span-full py-12 text-center border border-dashed border-dent-border rounded-2xl">
+                <p class="text-slate-500 text-sm italic">
+                  No hay conversaciones activas actualmente.
                 </p>
-
-                <div class="mt-3 flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <div class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[8px] font-bold text-white border border-white/10">
-                      {m.emisor.name?.charAt(0).toUpperCase()}
+              </div>
+            ) : (
+              actividadAgrupada.map((t) => (
+                <a
+                  href={`/dashboard/admin/trabajo/${t.id_archivo}`}
+                  class="group p-4 bg-dent-bg border border-dent-border hover:border-dent-accent/40 rounded-2xl transition-all flex flex-col justify-between shadow-lg hover:shadow-dent-accent/5"
+                >
+                  <div>
+                    <div class="flex justify-between items-start mb-3">
+                      <div class="flex items-center gap-2 overflow-hidden">
+                        <div class="w-8 h-8 rounded-lg bg-dent-accent/10 flex-shrink-0 flex items-center justify-center text-dent-accent font-bold text-xs border border-dent-accent/20">
+                          {t.usuario.name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div class="min-w-0">
+                          <p class="text-[10px] font-black text-white uppercase truncate">
+                            {t.usuario.name}
+                          </p>
+                          <p class="text-[9px] text-dent-accent font-medium truncate italic">
+                            {t.nombre_archivo}
+                          </p>
+                        </div>
+                      </div>
+                      <span class="text-[9px] text-slate-500 font-mono bg-slate-900 px-2 py-1 rounded border border-white/5 flex-shrink-0">
+                        {new Date(t.mensajes[0].fecha_envio).toLocaleDateString([], {
+                          day: "2-digit",
+                          month: "2-digit",
+                        })}
+                      </span>
                     </div>
-                    <span class="text-[9px] text-slate-400">
-                      Por <span class="text-slate-200 font-bold">{m.emisor.name}</span>
-                    </span>
+
+                    <div class="bg-slate-900/50 p-3 rounded-xl border border-white/5 group-hover:border-dent-accent/20 transition-colors">
+                      <p class="text-xs italic text-slate-300 line-clamp-2 leading-relaxed">
+                        "{t.mensajes[0].contenido}"
+                      </p>
+                    </div>
                   </div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    class="text-slate-600 group-hover:text-dent-accent transition-colors"
-                  >
-                    <path d="m9 18 6-6-6-6" />
-                  </svg>
-                </div>
-              </a>
-            ))
+
+                  <div class="mt-4 flex items-center justify-between border-t border-white/5 pt-3">
+                    <span class="text-[9px] text-slate-500 uppercase font-bold tracking-tighter">
+                      Última actividad:{" "}
+                      <span class="text-slate-300">{t.mensajes[0].emisor.name.split(" ")[0]}</span>
+                    </span>
+                    <div class="flex items-center gap-1 text-dent-accent text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                      RESPONDER{" "}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      >
+                        <path d="m9 18 6-6-6-6" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              ))
+            )
           }
         </div>
       </section>
@@ -411,14 +452,14 @@ const totalTrabajosActivos = trabajosActivos.length;
 </Layout>
 
 <script>
-  // Tu script original de manejo de modales y fetch se mantiene exactamente igual
+  // script para el modal de contacto
   const modal = document.getElementById("modal-contacto");
   const formRespuesta = document.getElementById("form-respuesta") as HTMLFormElement;
   const btnArchivar = document.getElementById("btn-solo-archivar");
 
   btnArchivar?.addEventListener("click", async () => {
     const id = (document.getElementById("modal-id") as HTMLInputElement).value;
-    if (!id) return;
+    if (!id) return; // si no hay id, no se puede archivar
     btnArchivar.textContent = "Archivando...";
     btnArchivar.classList.add("pointer-events-none", "opacity-50");
     try {
