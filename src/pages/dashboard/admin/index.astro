@@ -100,6 +100,40 @@ const totalTrabajosActivos = trabajosActivos.length;
       </div>
     </header>
 
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <a
+        href="/dashboard/admin/clientes"
+        class="group bg-dent-card border border-dent-border p-4 rounded-3xl hover:border-dent-accent/50 transition-all shadow-lg"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="p-3 bg-dent-accent/10 rounded-2xl text-dent-accent group-hover:scale-110 transition-transform"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle
+                cx="9"
+                cy="7"
+                r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path
+                d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg
+            >
+          </div>
+          <div>
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest">Gestión</p>
+            <p class="text-white font-black italic">CLIENTES</p>
+          </div>
+        </div>
+      </a>
+    </section>
+
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <section
         class={`bg-dent-card border-2 rounded-3xl p-6 shadow-xl transition-all ${contactosPendientes.length > 0 ? "border-amber-500/50 shadow-amber-900/10" : "border-dent-border"}`}
