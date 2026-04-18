@@ -1,0 +1,113 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Navbar from "@/components/Navbar.astro";
+import { protectRoute } from "@/lib/auth";
+
+await protectRoute(Astro.request, "admin");
+---
+
+<Layout title="Registrar Cliente | Admin">
+  <Navbar />
+  <main class="max-w-2xl mx-auto p-6 md:p-12">
+    <div class="bg-dent-card border border-dent-border p-8 rounded-[2rem] shadow-2xl">
+      <h1 class="text-2xl font-bold text-white mb-2 italic">
+        Nuevo <span class="text-dent-accent">Registro</span>
+      </h1>
+      <p class="text-slate-400 text-sm mb-8">
+        Crea una cuenta de acceso para un nuevo doctor o clínica.
+      </p>
+
+      <form id="createClientForm" class="space-y-5">
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 ml-1"
+            >Nombre de la Clínica / Doctor</label
+          >
+          <input
+            name="name"
+            type="text"
+            placeholder="Ej: Clínica Dental Rosales"
+            required
+            class="w-full bg-slate-900 border border-slate-800 text-white p-4 rounded-2xl outline-none focus:border-dent-accent transition-all"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 ml-1"
+            >Email de Acceso</label
+          >
+          <input
+            name="email"
+            type="email"
+            placeholder="doctor@ejemplo.com"
+            required
+            class="w-full bg-slate-900 border border-slate-800 text-white p-4 rounded-2xl outline-none focus:border-dent-accent transition-all"
+          />
+        </div>
+
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 ml-1"
+            >Contraseña Temporal</label
+          >
+          <input
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            required
+            class="w-full bg-slate-900 border border-slate-800 text-white p-4 rounded-2xl outline-none focus:border-dent-accent transition-all"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="submitBtn"
+          class="w-full bg-dent-accent text-dent-dark font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] shadow-lg hover:brightness-110 transition-all mt-4"
+        >
+          CREAR CUENTA DE CLIENTE
+        </button>
+
+        <p id="feedback" class="hidden text-center text-xs font-bold uppercase mt-4"></p>
+      </form>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  const form = document.getElementById("createClientForm") as HTMLFormElement;
+  const btn = document.getElementById("submitBtn") as HTMLButtonElement;
+  const feedback = document.getElementById("feedback");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.innerText = "PROCESANDO...";
+
+    const fd = new FormData(form);
+    const data = Object.fromEntries(fd);
+
+    try {
+      const res = await fetch("/api/auth/sign-up/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          role: "user", // Forzamos que sea cliente
+        }),
+      });
+
+      if (res.ok) {
+        feedback!.textContent = "¡Cliente creado con éxito! Redirigiendo...";
+        feedback!.className = "text-center text-xs font-bold uppercase mt-4 text-dent-accent";
+        feedback!.classList.remove("hidden");
+        setTimeout(() => (window.location.href = "/dashboard/admin/clientes"), 1500);
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      feedback!.textContent = "Error: El email ya existe o los datos son inválidos";
+      feedback!.className = "text-center text-xs font-bold uppercase mt-4 text-red-500";
+      feedback!.classList.remove("hidden");
+      btn.disabled = false;
+      btn.innerText = "CREAR CUENTA DE CLIENTE";
+    }
+  });
+</script>
