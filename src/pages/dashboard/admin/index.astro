@@ -31,7 +31,7 @@ const normales = trabajosActivos.filter(
   (t) => t.prioridad !== "urgente" && t.estado === "pendiente"
 );
 
-// --- NUEVA LÓGICA DE MENSAJES AGRUPADOS ---
+// --- MENSAJES AGRUPADOS ---
 const trabajosConMensajes = await prisma.archivo.findMany({
   where: {
     mensajes: { some: {} },

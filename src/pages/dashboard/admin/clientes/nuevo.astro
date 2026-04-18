@@ -6,20 +6,47 @@ import { protectRoute } from "@/lib/auth";
 await protectRoute(Astro.request, "admin");
 ---
 
-<Layout title="Registrar Cliente | Admin">
+<Layout title="Registrar Cliente | Admin" darkMode={true}>
   <Navbar />
-  <main class="max-w-2xl mx-auto p-6 md:p-12">
-    <div class="bg-dent-card border border-dent-border p-8 rounded-[2rem] shadow-2xl">
-      <h1 class="text-2xl font-bold text-white mb-2 italic">
-        Nuevo <span class="text-dent-accent">Registro</span>
-      </h1>
-      <p class="text-slate-400 text-sm mb-8">
-        Crea una cuenta de acceso para un nuevo doctor o clínica.
-      </p>
+  <main class="max-w-2xl mx-auto p-4 md:p-12">
+    <a
+      href="/dashboard/admin/clientes"
+      class="inline-flex items-center gap-2 text-slate-500 hover:text-dent-accent text-[10px] font-black uppercase tracking-[0.2em] mb-8 transition-colors"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg
+      >
+      Volver al directorio
+    </a>
 
-      <form id="createClientForm" class="space-y-5">
-        <div>
-          <label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 ml-1"
+    <div
+      class="bg-dent-card border border-dent-border p-10 rounded-[3rem] shadow-2xl relative overflow-hidden"
+    >
+      <div
+        class="absolute top-0 right-0 w-32 h-32 bg-dent-accent/5 rounded-full -mr-16 -mt-16 blur-3xl"
+      >
+      </div>
+
+      <header class="mb-10">
+        <h1 class="text-4xl font-black italic tracking-tighter text-white">
+          Nuevo <span class="text-dent-accent">Registro</span>
+        </h1>
+        <p class="text-slate-500 text-[10px] uppercase tracking-[0.2em] font-bold mt-2">
+          Crea una cuenta de acceso para un doctor
+        </p>
+      </header>
+
+      <form id="createClientForm" class="space-y-6">
+        <div class="space-y-2">
+          <label class="block text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest"
             >Nombre de la Clínica / Doctor</label
           >
           <input
@@ -27,12 +54,12 @@ await protectRoute(Astro.request, "admin");
             type="text"
             placeholder="Ej: Clínica Dental Rosales"
             required
-            class="w-full bg-slate-900 border border-slate-800 text-white p-4 rounded-2xl outline-none focus:border-dent-accent transition-all"
+            class="w-full bg-slate-900/50 border border-white/5 text-white p-5 rounded-2xl outline-none focus:border-dent-accent/50 focus:ring-4 focus:ring-dent-accent/5 transition-all font-medium placeholder:text-slate-700"
           />
         </div>
 
-        <div>
-          <label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 ml-1"
+        <div class="space-y-2">
+          <label class="block text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest"
             >Email de Acceso</label
           >
           <input
@@ -40,12 +67,12 @@ await protectRoute(Astro.request, "admin");
             type="email"
             placeholder="doctor@ejemplo.com"
             required
-            class="w-full bg-slate-900 border border-slate-800 text-white p-4 rounded-2xl outline-none focus:border-dent-accent transition-all"
+            class="w-full bg-slate-900/50 border border-white/5 text-white p-5 rounded-2xl outline-none focus:border-dent-accent/50 focus:ring-4 focus:ring-dent-accent/5 transition-all font-medium placeholder:text-slate-700"
           />
         </div>
 
-        <div>
-          <label class="block text-[10px] uppercase font-bold text-slate-500 mb-2 ml-1"
+        <div class="space-y-2">
+          <label class="block text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest"
             >Contraseña Temporal</label
           >
           <input
@@ -53,19 +80,23 @@ await protectRoute(Astro.request, "admin");
             type="password"
             placeholder="••••••••"
             required
-            class="w-full bg-slate-900 border border-slate-800 text-white p-4 rounded-2xl outline-none focus:border-dent-accent transition-all"
+            class="w-full bg-slate-900/50 border border-white/5 text-white p-5 rounded-2xl outline-none focus:border-dent-accent/50 focus:ring-4 focus:ring-dent-accent/5 transition-all font-medium placeholder:text-slate-700"
           />
         </div>
 
         <button
           type="submit"
           id="submitBtn"
-          class="w-full bg-dent-accent text-dent-dark font-black py-4 rounded-2xl uppercase text-xs tracking-[0.2em] shadow-lg hover:brightness-110 transition-all mt-4"
+          class="w-full bg-dent-accent text-dent-dark font-black py-5 rounded-2xl uppercase text-xs tracking-[0.3em] shadow-xl shadow-dent-accent/10 hover:scale-[1.02] active:scale-95 transition-all mt-4"
         >
-          CREAR CUENTA DE CLIENTE
+          Crear cuenta de cliente
         </button>
 
-        <p id="feedback" class="hidden text-center text-xs font-bold uppercase mt-4"></p>
+        <p
+          id="feedback"
+          class="hidden text-center text-[10px] font-black uppercase mt-6 tracking-widest px-4 py-3 rounded-xl bg-white/5"
+        >
+        </p>
       </form>
     </div>
   </main>
@@ -85,13 +116,10 @@ await protectRoute(Astro.request, "admin");
     const data = Object.fromEntries(fd);
 
     try {
-      const res = await fetch("/api/auth/sign-up/email", {
+      const res = await fetch("/api/admin/clientes/crear", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...data,
-          role: "user", // Forzamos que sea cliente
-        }),
+        body: JSON.stringify(data), // Solo enviamos name, email y password
       });
 
       if (res.ok) {
