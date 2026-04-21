@@ -1,99 +1,119 @@
 ---
+/**
+ * COMPONENTE FOOTER
+ * @description Yo del futuro: Este pie de página usa un grid que se rompe
+ * de 4 columnas a 1 en móvil. Ojo con los emails largos en la columna de contacto.
+ */
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="mt-12 pb-8 px-4 md:px-8">
-  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
+<footer class="mt-20 pb-12 px-4 md:px-8 bg-dent-bg transition-all">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
     <div
-      class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col justify-between"
+      class="md:col-span-2 bg-dent-card border border-dent-border rounded-[2rem] p-8 md:p-10 flex flex-col justify-between shadow-sm"
     >
       <div>
-        <div class="flex items-center gap-2 mb-4">
+        <div class="flex items-center gap-3 mb-6">
           <div
-            class="w-8 h-8 bg-dent-accent rounded-lg flex items-center justify-center font-black text-dent-dark"
+            class="w-10 h-10 bg-dent-accent rounded-xl flex items-center justify-center font-black text-dent-dark shadow-lg shadow-dent-accent/20"
           >
             L
           </div>
-          <span class="text-xl font-black text-dent-dark tracking-tighter uppercase"
+          <span class="text-2xl font-black text-dent-dark tracking-tighter uppercase italic"
             >Laboratorio <span class="text-dent-accent">Dental</span></span
           >
         </div>
-        <p class="text-slate-500 text-xs leading-relaxed max-w-md">
-          Líderes en prótesis fija, removible y flujos digitales. Combinamos la artesanía dental
-          tradicional con la tecnología CAD/CAM más avanzada para ofrecer precisión absoluta a
-          clínicas profesionales.
+        <p class="text-slate-500 text-xs leading-relaxed max-w-md italic font-medium">
+          Líderes en prótesis fija, removible y flujos digitales. Combinamos la artesanía
+          tradicional con tecnología CAD/CAM para ofrecer precisión absoluta.
         </p>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 mt-6">
-        <ul class="text-[10px] text-slate-400 space-y-1 uppercase font-bold tracking-widest">
-          <li>• Prótesis sobre implantes</li>
-          <li>• Coronas Zirconio/Disilicato</li>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8 pt-8 border-t border-slate-100">
+        <ul class="text-[10px] text-slate-400 space-y-2 uppercase font-black tracking-widest">
+          <li class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-dent-accent"></span>
+            Prótesis sobre implantes
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-dent-accent"></span>
+            Coronas Zirconio
+          </li>
         </ul>
-        <ul class="text-[10px] text-slate-400 space-y-1 uppercase font-bold tracking-widest">
-          <li>• Ortodoncia Invisible</li>
-          <li>• Estética Dental Avanzada</li>
+        <ul class="text-[10px] text-slate-400 space-y-2 uppercase font-black tracking-widest">
+          <li class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-dent-accent"></span>
+            Ortodoncia Invisible
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-dent-accent"></span>
+            Estética Avanzada
+          </li>
         </ul>
       </div>
     </div>
 
-    <div class="bg-dent-card border border-dent-border rounded-3xl p-8">
-      <h4 class="text-xs font-black text-dent-dark uppercase tracking-[0.2em] mb-4">Contacto</h4>
+    <div
+      class="bg-dent-card border border-dent-border rounded-[2rem] p-8 shadow-sm flex flex-col justify-center"
+    >
+      <h4 class="text-[10px] font-black text-dent-dark uppercase tracking-[0.3em] mb-6 opacity-50">
+        Contacto
+      </h4>
+      <div class="space-y-6">
+        <div>
+          <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1">
+            Email Directo
+          </p>
+          <p class="text-xs text-dent-dark font-bold italic break-all leading-tight">
+            contacto@tulaboratorio.com
+          </p>
+        </div>
+        <div>
+          <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1">
+            Horario Entrega
+          </p>
+          <p class="text-xs text-dent-dark font-bold italic leading-tight uppercase">
+            L - V: 09:00 - 19:00
+          </p>
+        </div>
+        <div class="flex gap-2 pt-2">
+          {
+            ["IG", "FB", "IN"].map((social) => (
+              <a
+                href="#"
+                class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 hover:bg-dent-accent hover:text-dent-dark hover:border-dent-accent transition-all active:scale-90"
+              >
+                {social}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="bg-slate-900 text-white rounded-[2rem] p-8 flex flex-col justify-between border border-white/5 shadow-xl"
+    >
       <div class="space-y-4">
-        <div>
-          <p class="text-[10px] text-slate-400 uppercase font-bold">Email Directo</p>
-          <p class="text-xs text-dent-dark font-medium">contacto@tulaboratorio.com</p>
-        </div>
-        <div>
-          <p class="text-[10px] text-slate-400 uppercase font-bold">Horario de Entrega</p>
-          <p class="text-xs text-dent-dark font-medium">L - V: 09:00 - 14:00 | 16:00 - 19:00</p>
-        </div>
-        <div class="flex gap-3 pt-2">
-          <a
-            href="#"
-            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-dent-accent hover:text-dent-dark transition-all"
-            >IG</a
-          >
-          <a
-            href="#"
-            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-dent-accent hover:text-dent-dark transition-all"
-            >FB</a
-          >
-          <a
-            href="#"
-            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-dent-accent hover:text-dent-dark transition-all"
-            >IN</a
-          >
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-dent-dark text-white rounded-3xl p-8 flex flex-col justify-between">
-      <div class="space-y-3">
-        <h4 class="text-xs font-black text-dent-accent uppercase tracking-[0.2em]">Legal</h4>
-        <nav class="flex flex-col gap-2">
-          <a
-            href="/privacidad"
-            class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-bold"
-            >Privacidad</a
-          >
-          <a
-            href="/aviso-legal"
-            class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-bold"
-            >Aviso Legal</a
-          >
-          <a
-            href="/cookies"
-            class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-widest font-bold"
-            >Cookies</a
-          >
+        <h4 class="text-[10px] font-black text-dent-accent uppercase tracking-[0.3em]">Legal</h4>
+        <nav class="flex flex-col gap-3">
+          {
+            ["Privacidad", "Aviso Legal", "Cookies"].map((item) => (
+              <a
+                href={`/${item.toLowerCase().replace(" ", "-")}`}
+                class="text-[10px] text-slate-400 hover:text-white transition-colors uppercase tracking-[0.2em] font-black"
+              >
+                {item}
+              </a>
+            ))
+          }
         </nav>
       </div>
 
-      <div class="mt-8">
-        <p class="text-[9px] text-slate-500 font-medium">
-          © {currentYear} Laboratorio Dental Digital.<br />
-          <span class="text-dent-accent/50">Proyecto DAW - Créditos: Carlos</span>
+      <div class="mt-10 pt-6 border-t border-white/5">
+        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+          © {currentYear} Laboratorio Dental.<br />
+          <span class="text-dent-accent/40 italic">Créditos: Carlos - Proyecto DAW</span>
         </p>
       </div>
     </div>

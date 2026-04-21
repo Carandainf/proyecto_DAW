@@ -1,44 +1,80 @@
 ---
+/**
+ * LAYOUT PRINCIPAL
+ * @description Yo del futuro: Este es el marco global.
+ * Incluye la Navbar flotante y el Footer condicional.
+ */
 import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
 
-const { bodyClass = "p-6", title = "Proyecto DAW", darkMode = false } = Astro.props;
+const { title = "DentalLab - Precisión Digital", darkMode = false } = Astro.props;
 
-// Detecto si estamos en una página legal para no mostrar el footer
-const isLegalPage =
-  Astro.url.pathname === "/privacidad" ||
-  Astro.url.pathname === "/aviso-legal" ||
-  Astro.url.pathname === "/cookies";
+// Detectamos la ruta actual
+const { pathname } = Astro.url;
+
+// Páginas donde no queremos mostrar el Footer (pero sí la Navbar)
+const isLegalPage = ["/privacidad", "/aviso-legal", "/cookies"].includes(pathname);
 ---
 
-<html lang="es">
+<html lang="es" class={darkMode ? "dark" : ""}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body
-    class={`flex flex-col min-h-screen ${bodyClass} ${darkMode ? "dark bg-dent-bg text-dent-dark" : ""}`}
+    class="bg-dent-bg text-slate-900 antialiased min-h-screen flex flex-col transition-colors duration-300"
   >
-    <div class="grow">
+    <Navbar />
+
+    <div class="grow w-full">
       <slot />
     </div>
 
     {!isLegalPage && <Footer />}
+
+    <style is:global>
+      :root {
+        --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+      }
+      html {
+        font-family: var(--font-sans);
+        scroll-behavior: smooth;
+      }
+      /* Ocultar barra de scroll en navegadores modernos pero permitir scroll */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
   </body>
 </html>
 
-<!-- Problemas con el refresco de la información en el dashboard, de momento lo soluciono de esta manera -->
-<!-- <script is:inline>
-  // Solo activar en el dashboard
-  if (window.location.pathname.includes("/dashboard")) {
+<script>
+  const isDashboard = window.location.pathname.includes("/dashboard");
+
+  if (isDashboard) {
+    // Nota: En 2026 podrías usar WebSockets o Server-Sent Events,
+    // pero mantenemos tu lógica de refresco controlada por si acaso.
+    /*
     setInterval(() => {
-      // Si el usuario no tiene el foco en un textarea o input, recarga
-      const elementoActivo = document.activeElement.tagName;
-      if (elementoActivo !== "TEXTAREA" && elementoActivo !== "INPUT") {
+      const isTyping = ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "");
+      if (!isTyping) {
         window.location.reload();
       }
-    }, 60000); // Lo he puesto a 1 minuto de momento, ya veremos si lo cambio
+    }, 60000); 
+    */
   }
-</script> -->
+</script>

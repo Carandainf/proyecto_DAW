@@ -1,7 +1,13 @@
 ---
+/**
+ * PÁGINA: index.astro
+ * @description Se integra la Navbar flotante y se ajusta el padding superior
+ * para que el diseño respire debajo de la cápsula.
+ */
 import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro"; // Importamos la nueva Navbar
 import LoginForm from "../components/LoginForm.astro";
-import ContactForm from "../components/ContactForm.astro"; // Importamos
+import ContactForm from "../components/ContactForm.astro";
 import { protectRoute } from "@/lib/auth";
 
 const auth = await protectRoute(Astro.request);
@@ -10,62 +16,91 @@ if (auth.user) {
 }
 ---
 
-<Layout title="Laboratorio Dental - Acceso">
-  <main class="min-h-screen p-4 md:p-8 flex items-center justify-center">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl w-full">
+<Layout title="Laboratorio Dental - Acceso" darkMode={false}>
+  <main
+    class="min-h-screen pt-24 pb-12 px-4 sm:p-6 lg:p-8 flex items-center justify-center bg-dent-bg transition-all"
+  >
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 max-w-7xl w-full">
       <section
-        class="md:col-span-3 bg-dent-card border border-dent-border rounded-3xl p-8 flex flex-col justify-end min-h-[300px] relative overflow-hidden shadow-sm"
+        class="md:col-span-3 bg-dent-card border border-dent-border rounded-[2.5rem] p-6 sm:p-10 lg:p-16 flex flex-col justify-end min-h-[350px] md:min-h-[450px] relative overflow-hidden shadow-sm group"
       >
-        <div class="absolute inset-0 bg-linear-to-br from-dent-accent/5 to-transparent"></div>
-        <h1 class="text-4xl md:text-6xl font-black text-dent-dark relative z-10 leading-tight">
-          Precisión Digital <br />
-          <span class="text-dent-accent">en cada pieza.</span>
-        </h1>
-        <p class="text-slate-500 mt-4 max-w-md relative z-10 font-medium italic">
-          Tu portal exclusivo para la gestión de trabajos protésicos y comunicación directa.
-        </p>
-      </section>
+        <div class="absolute inset-0 bg-linear-to-br from-dent-accent/10 to-transparent"></div>
 
-      <section
-        class="bg-dent-card border border-slate-100 rounded-3xl p-8 shadow-2xl shadow-blue-900/10 flex flex-col justify-center border-t-4 border-t-dent-accent"
-      >
-        <h2 class="text-2xl font-extrabold text-dent-dark mb-6 tracking-tight">Acceso Clientes</h2>
-        <LoginForm />
-        <div class="mt-6 text-center">
-          <a
-            href="/forgot-password"
-            class="text-[10px] font-bold text-slate-400 hover:text-dent-accent transition-colors uppercase tracking-widest"
+        <div class="relative z-10">
+          <h1
+            class="text-4xl sm:text-5xl lg:text-7xl font-black text-dent-dark leading-[1] md:leading-[0.9] italic tracking-tighter"
           >
-            ¿Has olvidado tu contraseña?
-          </a>
-        </div>
-      </section>
-
-      <section class="md:col-span-2 bg-slate-900 rounded-3xl p-8 shadow-xl">
-        <div class="mb-6">
-          <h3 class="text-white font-bold text-xl uppercase tracking-tighter">¿Hablamos?</h3>
-          <p class="text-slate-400 text-xs">
-            Solicita tu acceso profesional o resuelve dudas técnicas.
+            Precisión <span class="text-dent-accent">Digital</span>
+            <br />
+            en cada pieza.
+          </h1>
+          <p
+            class="text-slate-500 mt-6 max-w-lg text-base lg:text-lg font-medium italic leading-relaxed"
+          >
+            Portal exclusivo para la gestión de trabajos protésicos y comunicación directa con el
+            laboratorio.
           </p>
         </div>
+      </section>
+
+      <section
+        id="login-section"
+        class="scroll-mt-32 bg-dent-card border border-dent-border rounded-[2.5rem] p-8 shadow-2xl shadow-blue-900/5 flex flex-col justify-center relative overflow-hidden"
+      >
+        <div
+          class="absolute top-0 left-0 w-full h-2 bg-dent-accent shadow-[0_2px_10px_rgba(0,255,255,0.2)]"
+        >
+        </div>
+
+        <header class="mb-8">
+          <h2
+            class="text-2xl font-black text-dent-dark italic tracking-tighter uppercase leading-none"
+          >
+            Acceso <br /><span class="text-dent-accent">Clientes</span>
+          </h2>
+          <div class="w-10 h-1 bg-slate-100 mt-4 rounded-full"></div>
+        </header>
+
+        <LoginForm />
+      </section>
+
+      <section
+        class="md:col-span-2 bg-slate-900 rounded-[2.5rem] p-6 sm:p-10 shadow-xl border border-white/5 overflow-hidden relative"
+      >
+        <div class="absolute -top-10 -right-10 w-32 h-32 bg-dent-accent/5 rounded-full blur-3xl">
+        </div>
+
+        <div class="mb-8 relative z-10">
+          <h3 class="text-white font-black text-xl lg:text-2xl italic uppercase tracking-tighter">
+            ¿Hablamos?
+          </h3>
+          <p
+            class="text-slate-500 text-[10px] mt-2 uppercase tracking-widest font-black opacity-80"
+          >
+            Solicita acceso: <span class="text-dent-accent">soporte@laboratoriodental.com</span>
+          </p>
+        </div>
+
         <ContactForm />
       </section>
 
       <section
-        class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl overflow-hidden min-h-[300px] relative group"
+        class="md:col-span-2 bg-dent-card border border-dent-border rounded-[2.5rem] overflow-hidden min-h-[300px] md:min-h-[350px] relative group"
       >
         <div
-          class="absolute top-4 left-4 z-10 bg-dent-dark/80 backdrop-blur-md p-3 rounded-2xl border border-white/10"
+          class="absolute top-6 left-6 z-10 bg-dent-dark/90 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-2xl transition-transform group-hover:scale-105"
         >
-          <p class="text-white text-[10px] font-bold uppercase tracking-widest">Sede Central</p>
-          <p class="text-dent-accent text-xs font-medium">
-            Av de Sor Teresa Prat, 15, Carretera de Cádiz, 29003 Málaga
+          <p class="text-white text-[10px] font-black uppercase tracking-[0.2em] mb-1">
+            Sede Central
+          </p>
+          <p class="text-dent-accent text-[11px] font-bold italic">
+            Av de Sor Teresa Prat, 15, Málaga
           </p>
         </div>
 
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.9846855879027!2d-4.439174599999999!3d36.6989059!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd72f77fe30405e5%3A0xb44f7091e40acc9e!2sPolo%20Digital%20M%C3%A1laga!5e0!3m2!1ses!2ses!4v1775838133322!5m2!1ses!2ses"
-          class="w-full h-full grayscale hover:grayscale-0 transition-all duration-700 opacity-60 group-hover:opacity-100"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.818274195743!2d-4.4449836!3d36.70295!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd72f79600000001%3A0x6335136868512270!2sAv.%20de%20Sor%20Teresa%20Prat%2C%2015%2C%2029003%20M%C3%A1laga!5e0!3m2!1ses!2ses!4v1710000000000!5m2!1ses!2ses"
+          class="w-full h-full grayscale hover:grayscale-0 transition-all duration-1000 opacity-40 group-hover:opacity-100"
           style="border:0;"
           allowfullscreen=""
           loading="lazy"
@@ -74,17 +109,24 @@ if (auth.user) {
       </section>
 
       <section
-        class="md:col-span-4 bg-dent-card border border-dent-border rounded-3xl p-4 flex items-center justify-center gap-6 shadow-sm"
+        class="md:col-span-4 bg-dent-card border border-dent-border rounded-[2.5rem] md:rounded-full p-5 flex flex-wrap md:flex-row items-center justify-center gap-4 md:gap-8 shadow-sm"
       >
-        <div class="flex gap-2 items-center">
-          <div class="w-2 h-2 rounded-full bg-status-success animate-pulse"></div>
-          <div class="text-[10px] text-status-success font-black uppercase tracking-widest">
+        <div class="flex gap-3 items-center">
+          <div
+            class="w-2.5 h-2.5 rounded-full bg-status-success animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+          >
+          </div>
+          <div class="text-[10px] text-status-success font-black uppercase tracking-[0.3em]">
             Servicio Activo
           </div>
         </div>
-        <div class="h-4 w-px bg-dent-border"></div>
-        <p class="text-slate-500 text-[10px] italic font-medium">
-          Soporte técnico de 09:00 a 19:00 | +34 900 000 000
+
+        <div class="hidden lg:block h-4 w-px bg-dent-border"></div>
+
+        <p
+          class="text-slate-400 text-[10px] italic font-bold uppercase tracking-widest text-center"
+        >
+          Soporte técnico: 09:00 - 19:00 | <span class="text-dent-dark">+34 900 000 000</span>
         </p>
       </section>
     </div>

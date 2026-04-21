@@ -1,21 +1,26 @@
 ---
-// src/components/Navbar.astro
+/**
+ * COMPONENTE: Navbar.astro
+ * RESTAURACIÓN: Se recupera el logo "DentalLab" y el icono cuadrado.
+ */
 import { getUserRole } from "@/lib/auth";
 const { loggedIn, role } = await getUserRole(Astro.request);
 
-// Obtenemos la ruta actual para saber qué enlace resaltar
 const pathname = new URL(Astro.request.url).pathname;
+const isAdmin = role === "admin";
 ---
 
-<nav class="bg-dent-card/80 backdrop-blur-md border-b border-dent-border sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
-    <a href="/" class="flex items-center gap-2 group transition-transform active:scale-95">
+<header class="fixed top-4 inset-x-0 z-[100] flex justify-center px-4 pointer-events-none">
+  <nav
+    class="pointer-events-auto bg-slate-950/80 backdrop-blur-xl border border-white/10 px-5 sm:px-8 h-14 rounded-full flex items-center gap-6 sm:gap-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-500"
+  >
+    <a href="/" class="flex items-center gap-3 group transition-transform active:scale-95">
       <div
         class="w-8 h-8 bg-dent-accent rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:rotate-3 transition-transform"
       >
         <span class="text-dent-dark font-black text-xl">D</span>
       </div>
-      <span class="text-slate-100 font-bold tracking-tight italic hidden sm:block">
+      <span class="text-slate-100 font-bold tracking-tighter italic text-base hidden sm:block">
         Dental<span class="text-dent-accent">Lab</span>
       </span>
     </a>
@@ -24,7 +29,7 @@ const pathname = new URL(Astro.request.url).pathname;
       <li>
         <a
           href="/"
-          class={`text-sm font-medium transition-colors ${pathname === "/" ? "text-dent-accent" : "text-slate-400 hover:text-dent-accent"}`}
+          class={`text-[10px] uppercase font-black tracking-[0.15em] transition-all hover:text-dent-accent ${pathname === "/" ? "text-dent-accent" : "text-slate-400"}`}
         >
           Inicio
         </a>
@@ -33,33 +38,24 @@ const pathname = new URL(Astro.request.url).pathname;
       {
         loggedIn ? (
           <>
-            {role === "admin" && (
-              <li>
-                <a
-                  href="/dashboard/admin"
-                  class={`text-sm font-medium transition-colors ${pathname.startsWith("/dashboard/admin") ? "text-red-400" : "text-slate-400 hover:text-red-300"}`}
-                >
-                  Panel Admin
-                </a>
-              </li>
-            )}
-            {role === "user" && (
-              <li>
-                <a
-                  href="/dashboard/cliente"
-                  class={`text-sm font-medium transition-colors ${pathname.startsWith("/dashboard/cliente") ? "text-dent-accent" : "text-slate-400 hover:text-cyan-300"}`}
-                >
-                  Mis Pedidos
-                </a>
-              </li>
-            )}
+            <li>
+              <a
+                href={isAdmin ? "/dashboard/admin" : "/dashboard/cliente"}
+                class={`text-[10px] uppercase font-black tracking-[0.15em] transition-all flex items-center gap-2 ${pathname.includes("/dashboard") ? (isAdmin ? "text-red-400" : "text-dent-accent") : "text-slate-400 hover:text-white"}`}
+              >
+                <span
+                  class={`w-1.5 h-1.5 rounded-full animate-pulse ${isAdmin ? "bg-red-500" : "bg-dent-accent"}`}
+                />
+                {isAdmin ? "Admin" : "Panel"}
+              </a>
+            </li>
 
-            <div class="w-px h-4 bg-dent-border hidden sm:block" />
+            <div class="w-px h-4 bg-white/10" />
 
             <li>
               <button
                 id="logout-nav"
-                class="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-red-400 transition-all uppercase tracking-widest cursor-pointer"
+                class="group flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-red-400 transition-all uppercase tracking-widest cursor-pointer"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -68,53 +64,48 @@ const pathname = new URL(Astro.request.url).pathname;
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="2.5"
+                  stroke-width="3"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  class="group-hover:translate-x-0.5 transition-transform"
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
+                  <>
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </>
                 </svg>
-                Salir
+                <span class="hidden md:inline">Salir</span>
               </button>
             </li>
           </>
         ) : (
           <li>
             <a
-              href="/login"
-              class="bg-dent-accent text-dent-dark px-4 py-2 rounded-xl text-xs font-bold hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-900/20 active:scale-95"
+              href="/#login-section"
+              class="bg-dent-accent text-dent-dark px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cyan-500/20"
             >
-              ENTRAR
+              Entrar
             </a>
           </li>
         )
       }
     </ul>
-  </div>
-</nav>
+  </nav>
+</header>
 
 <script>
-  // Vamos hacer un Logouth
+  // Lógica de Logout (se mantiene igual)
   document.getElementById("logout-nav")?.addEventListener("click", async (e) => {
     e.preventDefault();
-
     try {
-      // Enviamos un POST con un body vacío '{}' para que Better-Auth lo acepte
       const res = await fetch("/api/auth/sign-out", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
         credentials: "include",
       });
-
-      if (res.ok) {
-        // En lugar de un reload, redirigimos a la home para asegurarnos que sale del dashboard
-        window.location.href = "/";
-      } else {
-        console.error("Error en la respuesta del servidor:", res.status);
-      }
+      if (res.ok) window.location.href = "/";
     } catch (err) {
       console.error("Error al cerrar sesión:", err);
     }

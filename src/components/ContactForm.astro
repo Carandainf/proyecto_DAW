@@ -1,75 +1,91 @@
 ---
-// src/components/ContactForm.astro
+/**
+ * COMPONENTE: ContactForm.astro
+ * @description Yo del futuro: Este formulario incluye protección básica contra bots (honeypot).
+ * Los estilos usan 'dent-dark' para el fondo de los inputs para contrastar con el 'dent-card'.
+ */
 ---
 
-<form id="contactForm" class="space-y-4">
+<form id="contactForm" class="space-y-5 relative">
   <div class="hidden" aria-hidden="true">
     <input type="text" name="website_url" tabindex="-1" autocomplete="off" />
   </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[10px] uppercase tracking-widest text-slate-400 font-bold ml-1"
-        >Nombre</label
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div class="flex flex-col gap-2 group">
+      <label
+        class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black ml-1 group-focus-within:text-dent-accent transition-colors"
       >
+        Nombre de la Clínica
+      </label>
       <input
         name="nombre"
         type="text"
         placeholder="Ej. Clínica Dental Sol"
         required
-        class="w-full bg-dent-dark border border-dent-border text-slate-200 p-3 rounded-xl text-xs outline-none focus:border-dent-accent focus:ring-1 focus:ring-dent-accent/30 transition-all shadow-inner"
+        class="w-full bg-dent-dark/50 border border-dent-border/50 text-slate-200 p-4 rounded-2xl text-xs outline-none focus:border-dent-accent focus:bg-dent-dark transition-all shadow-inner placeholder:text-slate-700"
       />
     </div>
-    <div class="flex flex-col gap-1.5">
-      <label class="text-[10px] uppercase tracking-widest text-slate-400 font-bold ml-1"
-        >Email</label
+    <div class="flex flex-col gap-2 group">
+      <label
+        class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black ml-1 group-focus-within:text-dent-accent transition-colors"
       >
+        Email Profesional
+      </label>
       <input
         name="email"
         type="email"
         placeholder="doctor@ejemplo.com"
         required
-        class="w-full bg-dent-dark border border-dent-border text-slate-200 p-3 rounded-xl text-xs outline-none focus:border-dent-accent focus:ring-1 focus:ring-dent-accent/30 transition-all shadow-inner"
+        class="w-full bg-dent-dark/50 border border-dent-border/50 text-slate-200 p-4 rounded-2xl text-xs outline-none focus:border-dent-accent focus:bg-dent-dark transition-all shadow-inner placeholder:text-slate-700"
       />
     </div>
   </div>
 
-  <div class="flex flex-col gap-1.5">
-    <label class="text-[10px] uppercase tracking-widest text-slate-400 font-bold ml-1">Asunto</label
+  <div class="flex flex-col gap-2 group">
+    <label
+      class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black ml-1 group-focus-within:text-dent-accent transition-colors"
     >
+      Asunto
+    </label>
     <input
       name="asunto"
       type="text"
       placeholder="¿En qué podemos ayudarte?"
       required
-      class="w-full bg-dent-dark border border-dent-border text-slate-200 p-3 rounded-xl text-xs outline-none focus:border-dent-accent focus:ring-1 focus:ring-dent-accent/30 transition-all shadow-inner"
+      class="w-full bg-dent-dark/50 border border-dent-border/50 text-slate-200 p-4 rounded-2xl text-xs outline-none focus:border-dent-accent focus:bg-dent-dark transition-all shadow-inner placeholder:text-slate-700"
     />
   </div>
 
-  <div class="flex flex-col gap-1.5">
-    <label class="text-[10px] uppercase tracking-widest text-slate-400 font-bold ml-1"
-      >Mensaje</label
+  <div class="flex flex-col gap-2 group">
+    <label
+      class="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-black ml-1 group-focus-within:text-dent-accent transition-colors"
     >
+      Mensaje detallado
+    </label>
     <textarea
       name="mensaje"
       rows="4"
-      placeholder="Describe tu consulta detalladamente..."
+      placeholder="Describe tu consulta o caso clínico..."
       required
-      class="w-full bg-dent-dark border border-dent-border text-slate-200 p-3 rounded-xl text-xs outline-none focus:border-dent-accent focus:ring-1 focus:ring-dent-accent/30 transition-all shadow-inner resize-none"
+      class="w-full bg-dent-dark/50 border border-dent-border/50 text-slate-200 p-4 rounded-2xl text-xs outline-none focus:border-dent-accent focus:bg-dent-dark transition-all shadow-inner resize-none placeholder:text-slate-700"
     ></textarea>
   </div>
 
-  <div class="bg-dent-dark/50 p-3 rounded-xl border border-dent-border/50">
+  <div class="bg-dent-dark/30 p-4 rounded-2xl border border-white/5 shadow-inner">
     <div class="flex items-start gap-3">
-      <input
-        type="checkbox"
-        id="privacy"
-        required
-        class="mt-1 w-4 h-4 rounded border-dent-border bg-dent-dark text-dent-accent focus:ring-dent-accent"
-      />
-      <label for="privacy" class="text-[10px] text-slate-400 leading-relaxed">
-        Acepto que mis datos sean tratados para gestionar esta consulta. He leído la
-        <a href="/privacidad" class="text-dent-accent hover:underline font-bold"
+      <div class="relative flex items-center h-5">
+        <input
+          type="checkbox"
+          id="privacy"
+          required
+          class="w-4 h-4 rounded border-dent-border bg-dent-dark text-dent-accent focus:ring-dent-accent focus:ring-offset-dent-dark"
+        />
+      </div>
+      <label for="privacy" class="text-[10px] text-slate-500 leading-normal">
+        Acepto que mis datos sean tratados para gestionar esta consulta profesional. He leído la <a
+          href="/privacidad"
+          class="text-dent-accent hover:text-white transition-colors font-bold underline decoration-dent-accent/30"
           >Política de Privacidad</a
         >.
       </label>
@@ -79,50 +95,59 @@
   <button
     type="submit"
     id="submitBtn"
-    class="w-full py-4 bg-dent-accent text-dent-dark font-black rounded-xl text-xs uppercase tracking-[0.2em] hover:bg-cyan-400 active:scale-[0.98] transition-all shadow-lg shadow-dent-accent/20 flex justify-center items-center gap-2"
+    class="group w-full py-4 bg-dent-accent text-dent-dark font-black rounded-2xl text-xs uppercase tracking-[0.3em] hover:bg-cyan-400 active:scale-[0.98] transition-all shadow-xl shadow-dent-accent/10 flex justify-center items-center gap-3"
   >
     <span>Enviar Mensaje</span>
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="w-4 h-4"
+      class="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       stroke-width="3"
       stroke-linecap="round"
       stroke-linejoin="round"
-      ><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg
     >
+      <path d="m22 2-7 20-4-9-9-4Z"></path>
+      <path d="M22 2 11 13"></path>
+    </svg>
   </button>
 
   <div
     id="formStatus"
-    class="hidden p-3 rounded-xl text-[10px] font-bold uppercase tracking-widest text-center"
+    class="hidden p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-center transition-all duration-300"
   >
   </div>
 </form>
 
 <script>
+  /**
+   * LÓGICA DE ENVÍO
+   * @description Maneja la validación del honeypot y el feedback del servidor.
+   */
   const form = document.getElementById("contactForm") as HTMLFormElement;
   const status = document.getElementById("formStatus");
   const btn = document.getElementById("submitBtn") as HTMLButtonElement;
-
-  // Asegurarnos de que el mensaje esté oculto al cargar la página (por si acaso)
-  if (status) status.classList.add("hidden");
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const formData = new FormData(form);
 
+    // Verificación Honeypot
     if (formData.get("website_url")) {
       console.warn("Spam detectado.");
       return;
     }
 
+    // Bloqueo de UI
     btn.disabled = true;
-    const originalText = btn.innerHTML;
-    btn.textContent = "Enviando...";
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = `<span class="animate-pulse">ENVIANDO...</span>`;
+
+    if (status) {
+      status.classList.add("hidden");
+    }
 
     const data = Object.fromEntries(formData);
 
@@ -134,29 +159,49 @@
       });
 
       if (res.ok) {
-        // Mostramos el mensaje de éxito
-        status!.textContent = "✓ Mensaje enviado correctamente";
-        status!.className =
-          "p-3 rounded-xl text-[10px] font-bold uppercase tracking-widest text-center bg-emerald-500/10 text-emerald-500 block animate-fade-in"; // Añadida una pequeña animación si la tienes en tailwind
-        form.reset();
+        if (status) {
+          status.textContent = "✓ Mensaje enviado correctamente";
+          status.className =
+            "p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-center bg-emerald-500/10 text-emerald-500 block border border-emerald-500/20 shadow-lg shadow-emerald-500/5 animate-fade-in";
+          form.reset();
 
-        // --- AUTO-BORRADO a los 5 segundos---
-        setTimeout(() => {
-          status!.classList.replace("block", "hidden");
-        }, 5000);
-        // ---------------------------------
+          // Auto-ocultar después de 5 segundos
+          setTimeout(() => {
+            status.classList.add("opacity-0");
+            setTimeout(() => {
+              status.classList.replace("block", "hidden");
+              status.classList.remove("opacity-0");
+            }, 300);
+          }, 5000);
+        }
       } else {
         throw new Error();
       }
     } catch (e) {
-      status!.textContent = "✕ Error al enviar el mensaje";
-      status!.className =
-        "p-3 rounded-xl text-[10px] font-bold uppercase tracking-widest text-center bg-red-500/10 text-red-500 block";
-
-      // mostramos los errores
+      if (status) {
+        status.textContent = "✕ Error al procesar el envío";
+        status.className =
+          "p-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-center bg-red-500/10 text-red-500 block border border-red-500/20 shadow-lg shadow-red-500/5";
+      }
     } finally {
       btn.disabled = false;
-      btn.innerHTML = originalText;
+      btn.innerHTML = originalContent;
     }
   });
 </script>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

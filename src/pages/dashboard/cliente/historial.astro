@@ -1,125 +1,164 @@
 ---
+/**
+ * HISTORIAL DE TRABAJOS
+ * @description Yo del futuro: He ajustado el max-w para que respire mejor
+ * y he pulido los estilos de la tabla para que parezca una app moderna.
+ */
 import Layout from "@/layouts/Layout.astro";
-import Navbar from "@/components/Navbar.astro";
 import { protectRoute } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// Protegemos la ruta específicamente para el rol "user"
 const { shouldRedirect, url, user } = await protectRoute(Astro.request, "user");
 if (shouldRedirect) return Astro.redirect(url);
 
-// Traemos TODOS los trabajos de la base de datos
 const todosLosTrabajos = await prisma.archivo.findMany({
   where: { id_usuario: user?.id },
   orderBy: { fecha_subida: "desc" },
 });
 ---
 
-<Layout title="Historial de Trabajos | DentalLab" darkMode={true}>
-  <Navbar />
-  <main class="max-w-300 mx-auto p-6">
+<Layout title="Historial | DentalLab" darkMode={true}>
+  <main
+    class="min-h-screen pt-28 md:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto transition-all"
+  >
     <header
-      class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
+      class="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 mb-12 relative"
     >
-      <div>
-        <h1 class="text-3xl font-bold text-slate-100 italic">
-          Historial de <span class="text-dent-accent">Trabajos</span>
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-2">
+          <span
+            class="px-3 py-1 bg-dent-accent/10 text-dent-accent text-[10px] font-black uppercase tracking-[0.2em] rounded-full border border-dent-accent/20"
+          >
+            Registros Oficiales
+          </span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">
+          Historial <span class="text-dent-accent">Digital</span>
         </h1>
-        <p class="text-slate-400 text-sm">
-          Consulta y gestiona todos tus archivos enviados al laboratorio.
+        <p class="text-slate-500 font-medium mt-2 max-w-md">
+          Gestión integral de archivos, estados de producción y comunicación con el laboratorio.
         </p>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3 relative z-10">
         <button
           id="downloadPDF"
-          class="bg-dent-accent text-dent-dark px-4 py-2 rounded-xl font-bold text-xs hover:bg-cyan-400 transition-all shadow-lg shadow-cyan-900/20 flex items-center gap-2"
+          class="bg-dent-accent hover:bg-white text-dent-dark px-6 py-3 rounded-full font-black text-[10px] tracking-widest transition-all shadow-xl shadow-cyan-500/10 flex items-center gap-2 uppercase group"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            stroke-width="2.5"
+            class="group-hover:translate-y-0.5 transition-transform"
+            ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline
+              points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg
           >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          DESCARGAR INFORME
+          Exportar PDF
         </button>
 
         <a
           href="/dashboard/cliente"
-          class="text-xs bg-dent-card border border-dent-border text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-800 transition-all"
+          class="text-[10px] tracking-widest font-black bg-dent-dark/50 border border-dent-border text-slate-400 px-6 py-3 rounded-full hover:bg-dent-border hover:text-white transition-all uppercase"
         >
-          ← VOLVER
+          Volver
         </a>
+      </div>
+
+      <div
+        class="absolute -top-10 -left-10 w-40 h-40 bg-dent-accent/5 rounded-full blur-3xl pointer-events-none"
+      >
       </div>
     </header>
 
-    <div class="bg-dent-card border border-dent-border rounded-3xl overflow-hidden shadow-2xl">
-      <div class="overflow-x-auto">
+    <div
+      class="bg-dent-card border border-dent-border rounded-[2rem] overflow-hidden shadow-2xl relative"
+    >
+      <div class="overflow-x-auto no-scrollbar">
         <table class="w-full text-left border-collapse">
-          <thead class="bg-dent-dark/80 border-b border-dent-border">
-            <tr>
-              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider">Fecha</th>
-              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider">Archivo</th>
-              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider text-center"
+          <thead>
+            <tr class="bg-dent-dark/50 border-b border-dent-border/50">
+              <th class="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]"
+                >Fecha</th
+              >
+              <th class="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]"
+                >Nombre del Trabajo</th
+              >
+              <th
+                class="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-center"
                 >Estado</th
               >
-              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider text-right"
-                >Descargas</th
-              >
-              <th class="p-4 text-xs font-bold text-slate-200 uppercase tracking-wider text-right"
-                >Notas</th
+              <th
+                class="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right"
+                >Acciones</th
               >
             </tr>
           </thead>
-          <tbody class="divide-y divide-dent-border/50">
+          <tbody class="divide-y divide-dent-border/30">
             {
               todosLosTrabajos.length === 0 ? (
                 <tr>
-                  <td colspan="5" class="p-12 text-center text-slate-500 italic text-sm">
-                    No hay registros de trabajos en tu cuenta.
+                  <td colspan="4" class="p-20 text-center">
+                    <div class="flex flex-col items-center opacity-30">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1"
+                        class="mb-4"
+                      >
+                        <>
+                          <rect width="18" height="18" x="3" y="3" rx="2" />
+                          <path d="M3 9h18" />
+                          <path d="M9 21V9" />
+                        </>
+                      </svg>
+                      <p class="text-sm font-black uppercase tracking-widest">
+                        Sin registros disponibles
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 todosLosTrabajos.map((trabajo) => (
-                  <tr class="hover:bg-slate-800/30 transition-colors group">
-                    <td class="p-4 text-sm text-slate-400">
-                      {new Date(trabajo.fecha_subida).toLocaleDateString("es-ES")}
+                  <tr class="hover:bg-white/[0.02] transition-colors group">
+                    <td class="p-6">
+                      <span class="text-xs font-bold text-slate-400 font-mono">
+                        {new Date(trabajo.fecha_subida).toLocaleDateString("es-ES")}
+                      </span>
                     </td>
-                    <td class="p-4">
-                      <div class="flex items-center gap-3">
-                        <div class="p-2 bg-dent-accent/10 rounded-lg text-dent-accent">
+                    <td class="p-6">
+                      <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-dent-dark rounded-xl flex items-center justify-center border border-white/5 text-slate-500 group-hover:text-dent-accent group-hover:border-dent-accent/30 transition-all">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
+                            width="20"
+                            height="20"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
                             stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
                           >
-                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                            <polyline points="14 2 14 8 20 8" />
+                            <>
+                              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                              <polyline points="14 2 14 8 20 8" />
+                            </>
                           </svg>
                         </div>
-                        <span class="text-sm text-slate-200 font-medium">
+                        <span class="text-sm text-slate-200 font-bold group-hover:text-white transition-colors">
                           {trabajo.nombre_archivo}
                         </span>
                       </div>
                     </td>
-                    <td class="p-4 text-center">
+                    <td class="p-6 text-center">
                       <span
-                        class={`inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase border ${
+                        class={`inline-block px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
                           trabajo.estado === "pendiente"
                             ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
                             : trabajo.estado === "recibido"
@@ -130,49 +169,47 @@ const todosLosTrabajos = await prisma.archivo.findMany({
                         {trabajo.estado}
                       </span>
                     </td>
-                    <td class="p-4 text-right">
-                      <a
-                        href={`/api/download/${trabajo.id_archivo}`}
-                        class="p-2 text-slate-500 hover:text-dent-accent transition-all inline-block"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                    <td class="p-6">
+                      <div class="flex justify-end items-center gap-2">
+                        <a
+                          href={`/api/download/${trabajo.id_archivo}`}
+                          title="Descargar STL"
+                          class="p-2.5 text-slate-500 hover:text-dent-accent hover:bg-dent-accent/10 rounded-xl transition-all"
                         >
-                          <>
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
-                          </>
-                        </svg>
-                      </a>
-                    </td>
-                    <td class="p-4 text-right">
-                      <a
-                        href={`/dashboard/cliente/trabajo/${trabajo.id_archivo}`}
-                        class="p-2 text-slate-400 hover:text-dent-accent transition-all inline-block"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                          >
+                            <>
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" y1="15" x2="12" y2="3" />
+                            </>
+                          </svg>
+                        </a>
+                        <a
+                          href={`/dashboard/cliente/trabajo/${trabajo.id_archivo}`}
+                          title="Ver chat y detalles"
+                          class="p-2.5 text-slate-500 hover:text-dent-accent hover:bg-dent-accent/10 rounded-xl transition-all"
                         >
-                          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                        </svg>
-                      </a>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                          >
+                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                          </svg>
+                        </a>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -199,60 +236,52 @@ const todosLosTrabajos = await prisma.archivo.findMany({
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // 1. Cabecera del documento
+    // Estética del PDF (Personalizado para DentalLab)
+    doc.setFillColor(2, 6, 23); // Fondo oscuro para cabecera
+    doc.rect(0, 0, 210, 40, "F");
+
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.setTextColor(6, 182, 212); // Color dent-accent
-    doc.text("DENTAL LAB", 14, 20);
-
-    doc.setFontSize(12);
-    doc.setTextColor(100);
-    doc.setFont("helvetica", "normal");
-    doc.text("Informe Detallado de Trabajos Enviados", 14, 28);
-
-    doc.setDrawColor(6, 182, 212);
-    doc.line(14, 32, 196, 32);
+    doc.setFontSize(24);
+    doc.setTextColor(6, 182, 212); // dent-accent
+    doc.text("DENTAL LAB", 15, 25);
 
     doc.setFontSize(10);
-    doc.text(`Fecha de emisión: ${new Date().toLocaleDateString("es-ES")}`, 14, 40);
+    doc.setTextColor(150);
+    doc.text("INFORME DE PRODUCCIÓN DIGITAL", 15, 33);
 
-    // 2. Preparar los datos
+    doc.setTextColor(100);
+    doc.setFontSize(9);
+    doc.text(`Generado el: ${new Date().toLocaleString("es-ES")}`, 140, 25);
+
     const rows = todosLosTrabajos.map((trabajo) => [
       new Date(trabajo.fecha_subida).toLocaleDateString("es-ES"),
       trabajo.nombre_archivo,
       trabajo.estado.toUpperCase(),
     ]);
 
-    // 3. Generar tabla
     doc.autoTable({
-      startY: 45,
-      head: [["Fecha de Envío", "Nombre del Archivo", "Estado Actual"]],
+      startY: 50,
+      head: [["FECHA", "ARCHIVO / REFERENCIA", "ESTADO"]],
       body: rows,
-      theme: "striped",
+      theme: "grid",
       headStyles: {
-        fillColor: [2, 6, 23], // dent-dark
-        textColor: [255, 255, 255],
-        fontSize: 11,
+        fillColor: [6, 182, 212],
+        textColor: [2, 6, 23],
+        fontSize: 10,
+        fontStyle: "bold",
         halign: "center",
       },
       styles: {
-        cellPadding: 5,
-        fontSize: 10,
-        valign: "middle",
+        font: "helvetica",
+        fontSize: 9,
+        cellPadding: 4,
       },
       columnStyles: {
+        0: { halign: "center", cellWidth: 30 },
         2: { halign: "center", fontStyle: "bold" },
       },
     });
 
-    // 4. Pie de página
-    const pageCount = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i);
-      doc.setFontSize(8);
-      doc.text(`Página ${i} de ${pageCount}`, 196, 285, { align: "right" });
-    }
-
-    doc.save(`historial_dental_${new Date().getTime()}.pdf`);
+    doc.save(`DentalLab_Historial_${new Date().toISOString().split("T")[0]}.pdf`);
   });
 </script>
