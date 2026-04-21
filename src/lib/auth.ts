@@ -2,101 +2,110 @@ import "dotenv/config";
 import { prisma } from "@/lib/prisma";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth";
+import nodemailer from "nodemailer";
 
-// --- INSTANCIA DE BETTER-AUTH ---
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, { provider: "sqlite" }),
+  database: prismaAdapter(prisma, { provider: "sqlite" }),
 
-    // Configuramos el inicio de sesión con email
-    emailAndPassword: { enabled: true },
-
-    // IMPORTANTE: Mapeo la columna "role" de la base de datos
-    // para que Better-Auth y TypeScript la reconozcan, sino me da error
-    user: {
-        additionalFields: {
-            role: {
-                type: "string",
-                required: false,
-                defaultValue: "user",
-                input: true,
-            },
+  emailAndPassword: {
+    enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT),
+        secure: true,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
         },
-    },
+      });
 
-    session: {
-        expiresIn: 60 * 60 * 24 * 7 // 1 semana
+      await transporter.sendMail({
+        from: `"Laboratorio Dental" <${process.env.SMTP_USER}>`,
+        to: user.email,
+        subject: "Configura tu acceso - Laboratorio Dental",
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background-color: #0f172a; color: white; padding: 40px; border-radius: 20px; border: 1px solid #1e293b;">
+            <h2 style="color: #00f2ff; font-style: italic; font-size: 24px;">¡Bienvenido, Dr/a. ${user.name}!</h2>
+            <p style="color: #94a3b8; line-height: 1.6;">Se ha creado su cuenta para el portal de gestión. Por motivos de seguridad, debe configurar su contraseña personal haciendo clic en el botón inferior.</p>
+            
+            <div style="text-align: center; margin: 35px 0;">
+              <a href="${url}" style="display: inline-block; background-color: #00f2ff; color: #0f172a; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">
+                Configurar mi Contraseña
+              </a>
+            </div>
+            
+            <p style="font-size: 11px; color: #475569; margin-top: 40px; border-top: 1px solid #1e293b; padding-top: 20px;">
+              Este enlace es de un solo uso y caducará en 1 hora. Si el enlace expira, contacte con soporte.
+            </p>
+          </div>
+        `,
+      });
     },
+  },
 
-    secret: process.env.BETTER_AUTH_SECRET!,
-    baseUrl: process.env.BETTER_AUTH_URL ?? "http://localhost:4321",
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "user",
+        input: true,
+      },
+    },
+  },
+
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+  },
+
+  secret: process.env.BETTER_AUTH_SECRET!,
+  baseUrl: process.env.BETTER_AUTH_URL ?? "http://localhost:4321",
 });
 
-/**
- * HELPER: Obtener el usuario y su rol en el servidor (Astro)
- * Se usa en los archivos .astro para proteger rutas.
- */
 export async function getUserRole(request: Request) {
-    // Usamos la API interna pasando los headers de la petición original.
-    // Esto extrae la cookie de sesión automáticamente.
-    const session = await auth.api.getSession({
-        headers: request.headers
-    });
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-    // Si no hay sesión válida
-    if (!session || !session.user) {
-        return {
-            loggedIn: false,
-            role: null,
-            user: null
-        };
-    }
-
-    // Si hay sesión, devolvemos los datos
+  if (!session || !session.user) {
     return {
-        loggedIn: true,
-        role: session.user.role || "user",
-        user: session.user,
+      loggedIn: false,
+      role: null,
+      user: null,
     };
+  }
+
+  return {
+    loggedIn: true,
+    role: session.user.role || "user",
+    user: session.user,
+  };
 }
 
-/**
- * HELPER: Proteger rutas según el rol del usuario
- * Verifica la sesión y redirige si el usuario no tiene permisos.
- */
 export async function protectRoute(request: Request, requiredRole?: string) {
-    // Reutilizamos la lógica de getUserRole para obtener el estado actual
-    const { loggedIn, role, user } = await getUserRole(request);
+  const { loggedIn, role, user } = await getUserRole(request);
 
-    // Si el usuario no ha iniciado sesión
-    if (!loggedIn) {
-        return {
-            shouldRedirect: true,
-            url: "/pruebas/test-auth", // Lo mandamos a la ruta de pruebas o otra que nos interese
-            user: null
-        };
-    }
-
-    // SI EXISTE UN ROL REQUERIDO: Comprobamos si el usuario tiene permiso
-    if (requiredRole && role !== requiredRole) {
-        // Lógica de redirección inteligente: 
-        // Si un user intenta entrar a admin -> va a su panel de cliente.
-        // Si un admin intenta entrar a cliente (opcional) -> va a su panel de admin.
-        const fallback = role === "admin" ? "/dashboard/admin" : "/dashboard/cliente";
-
-        return {
-            shouldRedirect: true,
-            url: fallback,
-            user
-        };
-    }
-
-    // Si todo es correcto (está logueado y tiene el rol), no redirigimos
+  if (!loggedIn) {
     return {
-        shouldRedirect: false,
-        user,
-        role
+      shouldRedirect: true,
+      url: "/pruebas/test-auth",
+      user: null,
     };
+  }
+
+  if (requiredRole && role !== requiredRole) {
+    const fallback = role === "admin" ? "/dashboard/admin" : "/dashboard/cliente";
+    return {
+      shouldRedirect: true,
+      url: fallback,
+      user,
+    };
+  }
+
+  return {
+    shouldRedirect: false,
+    user,
+    role,
+  };
 }
-
-
-
