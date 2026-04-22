@@ -1,7 +1,6 @@
 ---
 // src/pages/dashboard/admin/index.astro
 import Layout from "@/layouts/Layout.astro";
-import Navbar from "@/components/Navbar.astro";
 import { protectRoute } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -57,12 +56,12 @@ const totalTrabajosActivos = trabajosActivos.length;
 ---
 
 <Layout title="Panel de Control Admin" darkMode={true}>
-  <Navbar />
-
-  <main class="max-w-7xl mx-auto p-4 md:p-8">
+  <main
+    class="min-h-screen pt-28 md:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-all"
+  >
     <header class="mb-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
       <div>
-        <h1 class="text-4xl font-black italic tracking-tighter">
+        <h1 class="text-4xl font-black italic tracking-tighter text-white">
           Admin <span class="text-dent-accent">Console</span>
         </h1>
         <p class="text-slate-500 text-xs uppercase tracking-[0.3em] mt-1 ml-1 font-bold">
@@ -73,7 +72,7 @@ const totalTrabajosActivos = trabajosActivos.length;
       <div class="flex flex-wrap items-center gap-3">
         <a
           href="/dashboard/admin/clientes"
-          class="flex items-center gap-3 bg-dent-accent/10 border border-dent-accent/30 px-5 py-3 rounded-2xl text-dent-accent hover:bg-dent-accent hover:text-dent-dark transition-all group"
+          class="btn-secondary !text-dent-accent !border-dent-accent/30 hover:!bg-dent-accent/10 px-5 py-3"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -85,17 +84,16 @@ const totalTrabajosActivos = trabajosActivos.length;
             stroke-width="2.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"
-            ></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path
-              d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg
           >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
           <span class="text-xs font-black uppercase tracking-widest">Gestión Clientes</span>
         </a>
 
-        <a
-          href="/dashboard/admin/historial"
-          class="flex items-center gap-3 bg-dent-card border border-dent-border px-5 py-3 rounded-2xl text-slate-400 hover:text-white hover:border-slate-600 transition-all"
-        >
+        <a href="/dashboard/admin/historial" class="btn-secondary px-5 py-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
@@ -106,8 +104,9 @@ const totalTrabajosActivos = trabajosActivos.length;
             stroke-width="2.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            ><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg
           >
+            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
           <span class="text-xs font-black uppercase tracking-widest">Historial</span>
         </a>
 
@@ -138,10 +137,12 @@ const totalTrabajosActivos = trabajosActivos.length;
               fill="none"
               stroke="currentColor"
               stroke-width="2"
-              ><path
-                d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v1.5"
-              ></path><polyline points="15 7 10 12 5 7"></polyline></svg
             >
+              <path
+                d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v1.5"
+              ></path>
+              <polyline points="15 7 10 12 5 7"></polyline>
+            </svg>
             Contactos Web
           </h2>
           {
@@ -185,7 +186,9 @@ const totalTrabajosActivos = trabajosActivos.length;
       <section
         class="md:col-span-2 bg-dent-card border border-dent-border rounded-3xl p-6 shadow-xl"
       >
-        <h2 class="text-xl font-bold mb-6 flex items-center gap-2 uppercase tracking-tighter">
+        <h2
+          class="text-xl font-bold mb-6 flex items-center gap-2 uppercase tracking-tighter text-white"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-5 h-5 text-dent-accent"
@@ -193,9 +196,10 @@ const totalTrabajosActivos = trabajosActivos.length;
             fill="none"
             stroke="currentColor"
             stroke-width="2"
-            ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-            ></path><polyline points="14 2 14 8 20 8"></polyline></svg
           >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
           Cola de <span class="text-dent-accent italic">Trabajos</span>
         </h2>
 
@@ -226,7 +230,7 @@ const totalTrabajosActivos = trabajosActivos.length;
                         </svg>
                       </div>
                       <div class="min-w-0">
-                        <p class="text-sm font-bold truncate">{t.nombre_archivo}</p>
+                        <p class="text-sm font-bold truncate text-white">{t.nombre_archivo}</p>
                         <p class="text-[9px] text-slate-400 font-bold uppercase">
                           {t.usuario.name}
                         </p>
@@ -285,9 +289,10 @@ const totalTrabajosActivos = trabajosActivos.length;
 
           <div class="mt-8 border-t border-dent-border pt-6">
             <p
-              class="text-[10px] uppercase tracking-[0.2em] text-cyan-500 font-black mb-3 flex items-center gap-2"
+              class="text-[10px] uppercase tracking-[0.2em] text-dent-accent font-black mb-3 flex items-center gap-2"
             >
-              <span class="w-2 h-2 bg-cyan-500 rounded-full shadow-[0_0_8px_rgba(6,182,212,0.5)]"
+              <span
+                class="w-2 h-2 bg-dent-accent rounded-full shadow-[0_0_8px_rgba(14,165,233,0.5)]"
               ></span> En Fabricación / Proceso
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -300,9 +305,9 @@ const totalTrabajosActivos = trabajosActivos.length;
                   enCurso.map((t) => (
                     <a
                       href={`/dashboard/admin/trabajo/${t.id_archivo}`}
-                      class="flex items-center gap-4 p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-2xl hover:bg-cyan-500/10 transition-all group"
+                      class="flex items-center gap-4 p-3 bg-dent-accent/5 border border-dent-accent/20 rounded-2xl hover:bg-dent-accent/10 transition-all group"
                     >
-                      <div class="p-2 bg-cyan-500/20 rounded-xl text-cyan-500 animate-pulse">
+                      <div class="p-2 bg-dent-accent/20 rounded-xl text-dent-accent animate-pulse">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           class="w-5 h-5"
@@ -316,7 +321,9 @@ const totalTrabajosActivos = trabajosActivos.length;
                       </div>
                       <div class="min-w-0">
                         <p class="text-sm font-bold truncate text-slate-100">{t.nombre_archivo}</p>
-                        <p class="text-[9px] text-cyan-400 font-bold uppercase">{t.usuario.name}</p>
+                        <p class="text-[9px] text-dent-accent font-bold uppercase">
+                          {t.usuario.name}
+                        </p>
                       </div>
                     </a>
                   ))
@@ -406,7 +413,7 @@ const totalTrabajosActivos = trabajosActivos.length;
                       <span class="text-slate-300">{t.mensajes[0].emisor.name.split(" ")[0]}</span>
                     </span>
                     <div class="flex items-center gap-1 text-dent-accent text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                      RESPONDER{" "}
+                      RESPONDER
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="10"
@@ -441,33 +448,29 @@ const totalTrabajosActivos = trabajosActivos.length;
           <h3 id="modal-nombre" class="text-xl font-bold text-dent-accent"></h3>
           <p id="modal-email" class="text-xs text-slate-500 font-mono"></p>
         </div>
-        <button id="close-modal" class="text-slate-500 hover:text-white">✕</button>
+        <button id="close-modal" class="text-slate-500 hover:text-white cursor-pointer">✕</button>
       </div>
       <div class="bg-dent-bg p-4 rounded-2xl mb-6 border border-dent-border">
         <p class="text-[10px] uppercase text-slate-500 font-bold mb-1">Mensaje original:</p>
         <p id="modal-mensaje" class="text-sm italic text-slate-300"></p>
       </div>
+
       <form id="form-respuesta">
         <input type="hidden" id="modal-id" name="id_contacto" />
-        <label class="block text-xs font-bold uppercase text-slate-500 mb-2"> Tu respuesta: </label>
+        <label class="block text-xs font-bold uppercase text-slate-500 mb-2">Tu respuesta:</label>
+
         <textarea
           name="respuesta"
           required
           rows="5"
-          class="w-full bg-slate-900 border border-slate-700 rounded-2xl p-4 text-sm focus:ring-1 focus:ring-dent-accent outline-none"
+          class="dent-input resize-none"
           placeholder="Escribe aquí la respuesta..."></textarea>
+
         <div class="flex flex-col sm:flex-row gap-3 mt-6">
-          <button
-            type="submit"
-            class="flex-2 bg-dent-accent text-dent-dark font-bold py-3 px-6 rounded-full hover:brightness-110 transition-all text-sm"
-            >Enviar y Archivar</button
-          >
-          <button
-            type="button"
-            id="btn-solo-archivar"
-            class="flex-1 border border-slate-700 text-slate-400 font-bold py-3 px-6 rounded-full hover:bg-slate-800 transition-all text-sm"
-            >Solo Archivar</button
-          >
+          <button type="submit" class="btn-primary flex-2"> Enviar y Archivar </button>
+          <button type="button" id="btn-solo-archivar" class="btn-secondary flex-1">
+            Solo Archivar
+          </button>
         </div>
       </form>
     </div>
@@ -503,10 +506,12 @@ const totalTrabajosActivos = trabajosActivos.length;
       const nombre = card.querySelector(".font-bold.text-dent-accent")?.textContent;
       const mensaje = card.querySelector(".italic")?.textContent;
       const email = card.getAttribute("data-email");
+
       (document.getElementById("modal-id") as HTMLInputElement).value = id!;
       document.getElementById("modal-nombre")!.textContent = nombre!;
       document.getElementById("modal-mensaje")!.textContent = mensaje!;
       document.getElementById("modal-email")!.textContent = email!;
+
       modal?.classList.replace("hidden", "flex");
     });
   });
@@ -518,9 +523,9 @@ const totalTrabajosActivos = trabajosActivos.length;
   formRespuesta?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(formRespuesta);
-    const btn = formRespuesta.querySelector("button");
-    btn!.disabled = true;
-    btn!.textContent = "Enviando...";
+    const btn = formRespuesta.querySelector("button[type='submit']") as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = "Enviando...";
     try {
       const response = await fetch("/api/admin/contacto-responder", {
         method: "POST",

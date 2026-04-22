@@ -53,10 +53,7 @@ const isAdmin = role === "admin";
             <div class="w-px h-4 bg-white/10" />
 
             <li>
-              <button
-                id="logout-nav"
-                class="group flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-red-400 transition-all uppercase tracking-widest cursor-pointer"
-              >
+              <button class="logout-button-trigger group flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-red-400 transition-all uppercase tracking-widest cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="14"
@@ -95,19 +92,42 @@ const isAdmin = role === "admin";
 </header>
 
 <script>
-  // Lógica de Logout (se mantiene igual)
-  document.getElementById("logout-nav")?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/auth/sign-out", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-        credentials: "include",
+  const setupLogout = () => {
+    // Buscamos todos los botones con esa clase
+    const logoutButtons = document.querySelectorAll(".logout-button-trigger");
+
+    logoutButtons.forEach((btn) => {
+      // Limpiamos listeners previos por si acaso
+      btn.replaceWith(btn.cloneNode(true));
+    });
+
+    // Volvemos a seleccionar tras el clonado para asignar el evento limpio
+    document.querySelectorAll(".logout-button-trigger").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        console.log("Cerrando sesión..."); // Para que veas en consola si dispara
+
+        try {
+          const res = await fetch("/api/auth/sign-out", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({}),
+            credentials: "include",
+          });
+
+          if (res.ok) {
+            // Forzamos la limpieza del estado del cliente
+            window.location.replace("/");
+          }
+        } catch (err) {
+          console.error("Error al cerrar sesión:", err);
+        }
       });
-      if (res.ok) window.location.href = "/";
-    } catch (err) {
-      console.error("Error al cerrar sesión:", err);
-    }
-  });
+    });
+  };
+  // Ejecutar al cargar por primera vez
+  setupLogout();
+
+  // Y se vuelve a ejecutar cada vez que Astro cambia de página "sin recargar"
+  document.addEventListener("astro:page-load", setupLogout);
 </script>

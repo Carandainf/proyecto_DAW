@@ -133,3 +133,19 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 }
+
+/* Corrección para autocompletado y selección en modo oscuro */
+@layer base {
+  input:-webkit-autofill,
+  textarea:-webkit-autofill {
+    -webkit-text-fill-color: white !important;
+    /* Esto simula el fondo de tu .dent-input */
+    -webkit-box-shadow: 0 0 0px 1000px #0f172a inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  ::selection {
+    background-color: var(--color-dent-accent);
+    color: #020617;
+  }
+}
