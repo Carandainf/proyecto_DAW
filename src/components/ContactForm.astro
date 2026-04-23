@@ -1,8 +1,8 @@
 ---
 /**
- * COMPONENTE: ContactForm.astro
- * @description Yo del futuro: Este formulario incluye protección básica contra bots (honeypot).
- * Los estilos usan 'dent-dark' para el fondo de los inputs para contrastar con el 'dent-card'.
+ * @file ContactForm.astro
+ * @description Formulario de contacto profesional con validación de seguridad 'Honeypot'.
+ * Diseñado para integrarse en la landing page, gestionando el envío vía API y feedback visual.
  */
 ---
 
@@ -122,8 +122,8 @@
 
 <script>
   /**
-   * LÓGICA DE ENVÍO
-   * @description Maneja la validación del honeypot y el feedback del servidor.
+   * @description Lógica de cliente para procesar el envío del formulario.
+   * Incluye bloqueo de UI durante la petición y manejo de estados (éxito/error).
    */
   const form = document.getElementById("contactForm") as HTMLFormElement;
   const status = document.getElementById("formStatus");

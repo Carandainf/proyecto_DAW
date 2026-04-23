@@ -1,8 +1,8 @@
 ---
 /**
- * COMPONENTE: LoginForm.astro
- * LIMPIEZA: Se ha eliminado la redundancia del enlace de recuperación.
- * Ahora solo aparece una vez, integrado con el campo de contraseña.
+ * @file LoginForm.astro
+ * @description Formulario de inicio de sesión optimizado para el portal profesional.
+ * Gestiona el flujo de autenticación y redirige dinámicamente según el rol (Admin/Cliente).
  */
 ---
 
@@ -78,6 +78,13 @@
 </div>
 
 <script>
+  /**
+   * @description Procesa el inicio de sesión.
+   * 1. Autentica contra Better-Auth.
+   * 2. Recupera la sesión para verificar el rol del usuario.
+   * 3. Redirige a la ruta correspondiente del dashboard.
+   */
+  // ... lógica de login y redirección por rol ...
   const loginForm = document.getElementById("loginForm") as HTMLFormElement | null;
   const loginError = document.getElementById("loginError");
   const loginBtn = document.getElementById("loginBtn") as HTMLButtonElement;

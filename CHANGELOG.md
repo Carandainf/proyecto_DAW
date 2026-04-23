@@ -6,6 +6,41 @@ El formato está inspirado en Keep a Changelog y versionado semántico.
 
 ---
 
+# [0.9.0] - 2026-04-23
+
+## Añadido
+
+- **Sistema de Notificaciones por Email**:
+  - Integración de Nodemailer con transporte SMTP para envíos profesionales.
+
+    Automatización de correos de confirmación para el formulario de contacto y flujos de registro.
+
+- **Blindaje de Subida de Archivos (STL)**:
+
+        Implementación de validaciones técnicas en servidor: límite de tamaño (20MB), verificación de extensión MIME y sanitización de nombres de archivo.
+
+        Mejora de la seguridad para evitar ataques de Path Traversal y denegación de servicio (DoS).
+
+- **Trazabilidad Completa de Mensajería**:
+
+        Implementación funcional de la tabla Mensaje: vinculación directa entre hilos de conversación y archivos STL específicos.
+
+        Registro de auditoría para administradores (id_admin y fecha_gestion) totalmente operativo en la base de datos.
+
+## Cambiado
+
+- **Refactorización de la Capa de Datos**:
+
+        Actualización del esquema Prisma a la versión final con relaciones de borrado en cascada (onDelete: Cascade) para mantener la integridad de la base de datos.
+
+        Mejora del motor de búsqueda en los Dashboards para filtrar registros por el ID de sesión del usuario autenticado (Aislamiento Multi-inquilino).
+
+## Corregido
+
+    Sincronización de Sesión y Rol: Solucionado el desfase temporal tras el login forzando la recuperación de la sesión mediante authClient.getSession() antes de la redirección al dashboard.
+
+    Persistencia de Metadatos: Corregido el error por el cual los comentarios técnicos no se vinculaban correctamente al ID del archivo en el proceso de subida.
+
 ---
 
 # [0.8.5] - 2026-04-12

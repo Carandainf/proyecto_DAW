@@ -2,7 +2,7 @@
 
 > Arquitectura técnica del proyecto DAW: Sistema de Gestión de Laboratorio Dental.
 
-> Última actualización: `12/04/2026` · Versión actual: `v0.8.5`
+> Última actualización: `23/04/2026` · Versión actual: `v0.8.5`
 
 ---
 
@@ -17,38 +17,45 @@
 | Better Auth  | 1.5.x   | Autenticación, sesión y RBAC              |
 | jsPDF        | Última  | Generación de informes PDF en cliente     |
 | SQLite       | 3.x     | Base de datos relacional ligera           |
+| NodeMailer   | Última  | Motor de notificaciones por email         |
 
 ---
 
-# 1. 🧱 Arquitectura de Capas y Seguridad
+# 1. 🧱 Arquitectura de Capas y Flujos
 
-El sistema utiliza una arquitectura SSR (Server-Side Rendering) para proteger la lógica de negocio y los datos sensibles.
+El sistema se divide en cuatro capas claramente diferenciadas para asegurar la escalabilidad:
 
-## Capas del Sistema
+A. Capa de Presentación (UI)
 
-### UI (Astro + Tailwind 4)
+      Astro Islands: Uso de componentes estáticos para el contenido y componentes hidratados solo donde es necesario.
 
-- Diseño basado en Bento Grid
-- Interfaz adaptativa
-- Soporte nativo para modo oscuro
+      Bento Grid Layout: Estructura visual para el Dashboard de administración.
 
-### Seguridad (Honeypot & Auth)
+B. Capa de Aplicación (Servidor Astro)
 
-- Protección anti-bots mediante campos invisibles (honeypot)
-- Validación de sesión mediante cookies seguras
+      API Routes: Endpoints dedicados para:
 
-### Servidor (Astro Runtime)
+          /api/auth/*: Ciclo de vida de la sesión.
 
-- Endpoints API:
-  - Autenticación
-  - Gestión de archivos
-  - Sistema de contacto
-- Middleware `protectRoute(request, role)` para RBAC
+          /api/upload: Lógica de recepción de archivos STL con validación de metadatos.
 
-### Persistencia (Prisma + SQLite)
+          /api/contacto: Procesamiento de mensajes con integración de email.
 
-- Acceso a datos mediante Prisma
-- Patrón Singleton para optimizar conexiones
+      Middleware: Validación de privilegios antes de renderizar rutas protegidas.
+
+C. Capa de Seguridad (Multi-nivel)
+
+      Frontend: Honeypot invisible en formularios para mitigación de bots.
+
+      Transferencia: Validación en servidor de archivos (máx. 20MB, extensión .stl, sanitización de nombres).
+
+      Acceso: Cookies httpOnly gestionadas por Better Auth.
+
+D. Capa de Datos (Prisma + SQLite)
+
+      Patrón Singleton: Garantiza una única instancia de conexión a la base de datos.
+
+      Esquema Relacional: Trazabilidad completa entre el usuario facultativo y sus archivos/mensajes.
 
 ---
 
@@ -97,47 +104,42 @@ proyecto_DAW/
 
 # 4. 🗄️ Modelo de Datos y Trazabilidad
 
-El sistema utiliza un modelo relacional que permite el seguimiento completo de las interacciones.
+El diseño de la base de datos pone especial énfasis en la trazabilidad clínica:
 
-Tabla Archivo (Pedidos)
-Relación: User (1) → (N) Archivo
-Campos clave:
-estado
-prioridad (normal, urgente)
-Tabla Contacto (Nuevo)
+    Entidad Archivo: No solo almacena la ruta del STL, sino también el estado del proceso (pendiente, recibido, completado) y la prioridad.
 
-Diseñada para entornos multi-empleado:
+    Entidad Mensaje: Incluye campos para la gestión administrativa:
 
-id_admin → Identifica quién gestionó el mensaje
-fecha_gestion → Timestamp de la acción
-leido → Control de estado en dashboard
+        id_admin: Quién ha gestionado la consulta.
+
+        fecha_gestion: Marca de tiempo de la respuesta.
+
+        leido: Flag de control para el flujo de trabajo del laboratorio.
+
 # 5. ⚖️ Cumplimiento Legal (LSSI-CE / RGPD)
 
-La arquitectura incorpora una capa legal completa:
+Cumplimiento normativo integrado en el diseño:
 
-Privacidad
-Información clara sobre tratamiento de datos personales
-Cookies
-Uso exclusivo de cookies técnicas (Better Auth)
-No requiere banner de consentimiento (sin tracking externo)
-Aviso Legal
-Identificación del responsable del servicio
+    RGPD: Implementación de persistencia de datos bajo consentimiento en el registro.
+
+    LSSI-CE: Páginas legales dinámicas que se excluyen del indexado de búsqueda en el Footer si es necesario.
+
+    Cookies: Sistema de identidad basado únicamente en cookies técnicas esenciales.
 
 # 6. 🚀 Estado de la Implementación
-Área	Estado
-Autenticación con Roles	✅ Completado
-Protección Anti-Spam (Honeypot)	✅ Completado
-Páginas legales + Footer dinámico	✅ Completado
-Trazabilidad de administración	✅ Completado
-Dashboard Admin (CRUD pedidos)	🚧 En proceso
-Mensajería interna por pedido	📅 Planificado
-Generación de informes PDF	✅ Completado
+Área	                      Estado	          Detalle
+Autenticación (RBAC)        ✅ Completado     Registro, Login y Roles operativos.
+Dashboards (Admin/User)     ✅ Completado     Paneles funcionales y vinculados a DB.
+Seguridad de Archivos       ✅ Completado     Validación de tamaño, tipo y sanitización.
+Sistema de Contacto         ✅ Completado     Honeypot + Integración Nodemailer.
+Arquitectura Legal          ✅ Completado     Footer condicional y textos legales.
+Refinamiento UI             🚧 En proceso     Pulido estético de la landing page.
+UX de Transferencia         📅 Planificado     Barras de progreso para subida de STL.
 
 # 📎 Resumen Arquitectónico
-Frontend  → Astro (SSR) + Tailwind 4
-Backend   → API Routes (Node.js)
-Auth      → Better Auth + RBAC
-Security  → Honeypot + Middlewares
-Database  → SQLite
-ORM       → Prisma
+Frontend           → Astro (SSR) + Tailwind 4 + TypeScript
+Backend            → API Routes (Node.js) + NodeMailer
+Auth               → Better Auth + RBAC
+Security           → Honeypot + Middlewares
+Persistencia       → Prisma ORM + SQLite
 ```

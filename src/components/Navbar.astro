@@ -1,7 +1,8 @@
 ---
 /**
- * COMPONENTE: Navbar.astro
- * RESTAURACIÓN: Se recupera el logo "DentalLab" y el icono cuadrado.
+ * @file Navbar.astro
+ * @description Barra de navegación persistente con efecto Backdrop Blur.
+ * Implementa renderizado condicional basado en el estado de autenticación y rol del usuario.
  */
 import { getUserRole } from "@/lib/auth";
 const { loggedIn, role } = await getUserRole(Astro.request);
@@ -92,6 +93,11 @@ const isAdmin = role === "admin";
 </header>
 
 <script>
+  /**
+   * @description Gestión del Cierre de Sesión (Logout).
+   * Se utiliza el evento 'astro:page-load' para asegurar la funcionalidad
+   * al navegar entre rutas bajo el sistema de View Transitions de Astro.
+   */
   const setupLogout = () => {
     // Buscamos todos los botones con esa clase
     const logoutButtons = document.querySelectorAll(".logout-button-trigger");
@@ -105,7 +111,7 @@ const isAdmin = role === "admin";
     document.querySelectorAll(".logout-button-trigger").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         e.preventDefault();
-        console.log("Cerrando sesión..."); // Para que veas en consola si dispara
+        console.log("Cerrando sesión..."); // Para que se veas en consola si se dispara
 
         try {
           const res = await fetch("/api/auth/sign-out", {

@@ -2,7 +2,7 @@
 
 > Diseño integral de la base de datos del proyecto DAW: Sistema de Laboratorio Dental.
 >
-> Última actualización: `07/04/2026` · Versión actual: `v0.7.0`
+> Última actualización: `24/04/2026` · Versión actual: `v0.8.5`
 
 ---
 
@@ -19,204 +19,68 @@
 
 # 1. 🧱 Arquitectura del Esquema
 
-La base de datos utiliza un esquema híbrido:
+La base de datos utiliza un esquema híbrido que combina tablas de sistema y tablas de negocio:
 
-- Tablas gestionadas automáticamente por Better Auth.
-- Tablas personalizadas para la lógica del laboratorio dental.
+    Tablas Auth: Gestionadas por Better Auth (User, Session, Account).
 
-```text
-┌────────────────────┐
-│ AUTHENTICATION     │
-├────────────────────┤
-│ User               │
-│ Session            │
-│ Account            │
-│ Verification       │
-└────────────────────┘
-            │
-            ▼
-┌────────────────────┐
-│ BUSINESS LOGIC     │
-├────────────────────┤
-│ Archivo            │
-│ Role               │
-└────────────────────┘
-```
+    Tablas de Negocio: Personalizadas para la operativa dental (Archivo, Contacto).
 
 ---
 
-## 🔐 Bloque de Autenticación
+# 2. 👤 Modelo `User` (Extendido)
 
-Gestionado por Better Auth.
+El sistema implementa un doble control de acceso: un campo rápido role en User para Better Auth y una relación formal con la tabla roles.
+Tabla: usuarios (User)
 
-### Tablas Principales
+    Extensión Admin: Incluye campos para gestión de baneos (banned, banReason, banExpires).
 
-| Tabla          | Función                            |
-| -------------- | ---------------------------------- |
-| `User`         | Perfil del usuario autenticado     |
-| `Session`      | Persistencia de sesión y cookies   |
-| `Account`      | Relación con proveedor de login    |
-| `Verification` | Flujos de verificación y seguridad |
+    Relación de Rol: Vinculado a la tabla roles mediante roleId.
 
-### Característica Crítica
+Tabla: roles (Role)
 
-El campo `role` del usuario está habilitado para enviarse desde el frontend:
-
-```ts
-input: true;
-```
-
-Esto permite registrar usuarios directamente como `admin` o `user` durante pruebas.
+    Almacena las etiquetas de permisos (admin, user) y sus descripciones técnicas.
 
 ---
 
-## 🦷 Bloque de Producción
+# 3. 📂 Entidades de Negocio (Producción)
 
-Gestiona los trabajos STL y la operativa interna del laboratorio.
+Tabla: archivos (Archivo)
 
-### Entidades
+Es la entidad central del flujo de trabajo del laboratorio.
 
-| Entidad   | Función                                             |
-| --------- | --------------------------------------------------- |
-| `Archivo` | Representa un trabajo dental enviado por el usuario |
-| `Role`    | Tabla maestra de permisos base                      |
+    Trazabilidad: Registra fecha_subida y fecha_recepcion.
 
----
+    Estado y Prioridad: Control mediante Strings (pendiente, recibido, completado / normal, urgente).
 
-# 2. 👤 Modelo `User`
+    Integridad: Si un usuario es eliminado, sus archivos se borran en cascada (onDelete: Cascade).
 
-Extiende el modelo estándar de Better Auth para soportar RBAC.
+Tabla: mensajes (Mensaje)
 
-```prisma
-model User {
-  id            String    @id
-  name          String    @map("nombre")
-  email         String    @unique
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
+Permite la comunicación técnica vinculada a un archivo específico.
 
-  role          String?   @default("user")
+    Relación Triple: Une al emisor (User) con un archivo concreto.
 
-  sessions      Session[]
-  accounts      Account[]
-  archivos      Archivo[]
-
-  @@map("user")
-}
-```
-
-## Campos Relevantes
-
-| Campo      | Tipo        | Descripción                        |
-| ---------- | ----------- | ---------------------------------- |
-| `id`       | `String`    | Identificador único del usuario    |
-| `name`     | `String`    | Nombre visible del usuario         |
-| `email`    | `String`    | Correo único de acceso             |
-| `role`     | `String`    | Rol del sistema (`admin`, `user`)  |
-| `archivos` | `Archivo[]` | Relación 1:N con trabajos dentales |
-
-## Reglas de Negocio
-
-- Si no se especifica un rol, se asigna `user`.
-- El rol determina el dashboard y permisos disponibles.
-- Un usuario puede tener múltiples archivos asociados.
-
----
-
-# 3. 📂 Modelo `Archivo`
-
-Entidad principal para el seguimiento de trabajos enviados por clientes.
-
-```prisma
-model Archivo {
-  id              Int       @id @default(autoincrement())
-  id_usuario      String
-  nombre_archivo  String
-  url_path        String
-  estado          String    @default("pendiente")
-  prioridad       String    @default("normal")
-  descripcion     String?
-  fecha_subida    DateTime  @default(now())
-  fecha_recepcion DateTime?
-
-  usuario         User      @relation(fields: [id_usuario], references: [id])
-}
-```
-
-## Campos del Modelo
-
-| Campo             | Tipo        | Descripción                           |
-| ----------------- | ----------- | ------------------------------------- |
-| `id`              | `Int`       | Identificador autoincremental         |
-| `id_usuario`      | `String`    | FK vinculada a `User.id`              |
-| `nombre_archivo`  | `String`    | Nombre original del STL/OBJ           |
-| `url_path`        | `String`    | Ruta física en el servidor            |
-| `estado`          | `String`    | `pendiente`, `recibido`, `completado` |
-| `prioridad`       | `String`    | `normal` o `urgente`                  |
-| `descripcion`     | `String?`   | Observaciones técnicas                |
-| `fecha_subida`    | `DateTime`  | Fecha de carga                        |
-| `fecha_recepcion` | `DateTime?` | Fecha de inicio de procesamiento      |
-
----
-
-## Estados Actuales del Trabajo
-
-| Estado       | Significado                                 |
-| ------------ | ------------------------------------------- |
-| `pendiente`  | Archivo recibido, pendiente de revisión     |
-| `recibido`   | El laboratorio ha iniciado el procesamiento |
-| `completado` | Trabajo finalizado                          |
-
-## Prioridades Disponibles
-
-| Prioridad | Uso                       |
-| --------- | ------------------------- |
-| `normal`  | Flujo estándar            |
-| `urgente` | Procesamiento prioritario |
+    Orden: Historial cronológico mediante fecha_envio.
 
 ---
 
 # 4. 📬 Modelo Contacto (Trazabilidad y Seguridad)
 
-> Modelo clave para cumplimiento RGPD y auditoría interna del laboratorio.
+Diseñada para capturar leads y consultas técnicas desde la landing page.
 
-| Campo         | Tipo      | Descripción                                      |
-| ------------- | --------- | ------------------------------------------------ |
-| id            | Int       | PK autoincremental                               |
-| nombre        | String    | Nombre del remitente                             |
-| email         | String    | Email de contacto                                |
-| mensaje       | String    | Contenido de la consulta                         |
-| leido         | Boolean   | Control de estado (`default: false`)             |
-| id_admin      | String?   | FK: ID del administrador que atendió la consulta |
-| fecha_gestion | DateTime? | Timestamp de cuándo se resolvió la consulta      |
+    Auditoría: Incluye id_admin para saber qué administrador gestionó la consulta.
+
+    Seguridad: El id_admin se mantiene como SetNull si el administrador es eliminado, preservando la integridad del registro del mensaje.
 
 # 5. 🔗 Relaciones entre Tablas
 
 ## Relación Principal
 
-```text
-User (1) ──────────────── (N) Archivo
-```
-
-Un usuario puede tener múltiples trabajos.
-
-Cada `Archivo` pertenece únicamente a un usuario.
-
-## Relación de Auditoría:
-
-// En el modelo Contacto:
-
-```text
-admin_gestor  User?  @relation(fields: [id_admin], references: [id])
-```
-
-## Relación Prisma
-
-```prisma
-usuario User @relation(fields: [id_usuario], references: [id])
-```
+`Relación Tipo Descripción
+User ↔ Role M:1 Un rol puede pertenecer a muchos usuarios.
+User ↔ Archivo 1:N Un doctor (user) puede subir múltiples trabajos STL.
+Archivo ↔ Mensaje 1:N Un trabajo puede tener un hilo de comentarios técnicos.
+User ↔ Contacto 1:N Un administrador gestiona múltiples solicitudes de contacto.
 
 ---
 
@@ -261,11 +125,11 @@ Sin esta validación, un usuario podría acceder a archivos ajenos manipulando e
 
 # 8. 🛡️ Integridad y Seguridad de Datos
 
-    Aislamiento de Usuarios: Las consultas siempre filtran por session.user.id. Ningún usuario puede ver registros de Archivo que no le pertenezcan.
+    Aislamiento de Multi-inquilino: Todas las consultas en los Dashboards incluyen un filtro forzoso where: { id_usuario: session.user.id } para evitar el acceso cruzado a datos.
 
-    Protección Anti-Spam: Aunque no se guarda en DB, la API valida el campo Honeypot antes de realizar el prisma.contacto.create.
+    Validación de Sesión: La integridad referencial asegura que no se puedan subir archivos sin una sesión válida vinculada.
 
-    Tipado Seguro: Se utiliza npx prisma generate para sincronizar los modelos con las interfaces de TypeScript, evitando errores de "campo inexistente" en tiempo de compilación.
+    Honeypot Logic: Aunque el campo Honeypot no se persiste en la DB para ahorrar espacio, la capa de datos rechaza cualquier creación (prisma.contacto.create) si el middleware de seguridad detecta actividad de bot.
 
 ---
 
@@ -282,6 +146,7 @@ Sin esta validación, un usuario podría acceder a archivos ajenos manipulando e
 | Relación `User → Archivo` funcional             | ✅     |
 | Captura automática de `id_usuario` desde sesión | ✅     |
 | Datos integrados con exportación PDF            | ✅     |
+| Enums Nativos                                   | 🚧     |
 
 ---
 
@@ -297,91 +162,12 @@ Sin esta validación, un usuario podría acceder a archivos ajenos manipulando e
 
 ---
 
-# 10. 📌 Próximos Pasos en la Capa de Datos
+# 10. 🚀 Estado de la Base de Datos
 
-## Modelo `Mensaje`
+    [x] Generador: Cliente generado en ../generated/prisma.
 
-Se añadirá una tabla para permitir comentarios técnicos sobre cada archivo.
+    [x] Mapeo: Nombres de tablas en plural y español (usuarios, sesiones, etc.).
 
-```text
-Archivo (1) ──────────────── (N) Mensaje
-```
+    [x] Cascada: Borrado inteligente implementado en Archivos y Mensajes.
 
-Campos previstos:
-
-| Campo        | Tipo     |
-| ------------ | -------- |
-| `id`         | UUID     |
-| `id_archivo` | FK       |
-| `id_usuario` | FK       |
-| `contenido`  | Text     |
-| `fecha`      | DateTime |
-
----
-
-## Automatización de Estados
-
-Se planea actualizar automáticamente `fecha_recepcion` cuando:
-
-```text
-estado = "recibido"
-```
-
-Opciones previstas:
-
-- Trigger SQL
-- Middleware Prisma
-- Service Layer en backend
-
----
-
-## Mejoras Futuras
-
-- [ ] Sustituir campos `String` por `Enum` en `estado` y `prioridad`.
-- [ ] Añadir índices en `id_usuario` y `estado`.
-- [ ] Añadir borrado lógico (`deletedAt`).
-- [ ] Migrar SQLite a PostgreSQL en producción.
-- [ ] Incorporar auditoría y trazabilidad.
-
----
-
-# 📎 Resumen del Modelo
-
-```text
-User
- ├── id
- ├── email
- ├── role
- └── archivos[]
-
-Archivo
- ├── id_usuario
- ├── nombre_archivo
- ├── estado
- ├── prioridad
- ├── fecha_subida
- └── fecha_recepcion
-```
-
-```text
-Tecnologías:
-- SQLite
-- Prisma
-- Better Auth
-- Prisma Studio
-```
-
-# 📎 Resumen Técnico
-
-```text
-    Motor: SQLite (Desarrollo) / Preparado para PostgreSQL.
-
-    ORM: Prisma 7.x.
-
-    Relaciones:
-
-        User (1) ── (N) Archivo (Trabajos dentales)
-
-        User (1) ── (N) Contacto (Auditoría de gestión de mensajes)
-
-```
+    [x] Auditoría: Trazabilidad de gestión en Contactos finalizada.

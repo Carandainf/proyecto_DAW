@@ -2,7 +2,7 @@
 
 > Proyecto de Ciclo Formativo de Grado Superior (DAW) desarrollado con arquitectura moderna SSR, tipado estricto y control de acceso por roles.
 
-> Última actualización: `07/04/2026` · Versión actual: `v0.7.0`
+> Última actualización: `23/04/2026` · Versión actual: `v0.8.5`
 
 ---
 
@@ -17,30 +17,33 @@
 | SQLite       | Última  | Base de datos relacional ligera                             |
 | Better Auth  | 1.5.x   | Autenticación + RBAC                                        |
 | Node.js      | >=20.19 | Runtime de ejecución                                        |
+| NodeMailer   | Última  | Motor de notificaciones por email                           |
 
 ---
 
 # 🧱 Arquitectura General
 
 ```text
-CLIENTE (Astro + Tailwind)
+CLIENTE (Astro + Tailwind 4)
 │
-├── UI dinámica (Bento Grid)
-├── Formularios (Contacto + Auth)
-└── Generación PDF (jsPDF)
+├── UI Semántica (Layouts + Slots)
+├── Gestión de Sesión (Better-Auth React SDK)
+├── Validación de Archivos (Frontend-side validation)
+└── Interfaz Dinámica (Bento Grids & Dashboard)
 │
 ▼
-SERVIDOR (Astro SSR)
+SERVIDOR (Astro SSR en Node.js)
 │
 ├── API Routes (/auth, /upload, /contacto)
-├── Middleware (RBAC con protectRoute)
-└── Prisma Client (Singleton)
+├── Middleware de Seguridad (RBAC con protectRoute)
+├── Gestión de Archivos (fs/promises + Path validation)
+└── Prisma Client (Patrón Singleton para evitar colisiones)
 │
 ▼
-DATOS
+DATOS Y PERSISTENCIA
 │
-├── SQLite (prisma/dev.db)
-└── Storage (/public/uploads)
+├── SQLite (Persistencia relacional)
+└── Local Storage (/public/uploads con sanitización de nombres)
 ```
 
 # 📂 Estructura del Proyecto
@@ -48,43 +51,41 @@ DATOS
 ```text
 /
 ├── prisma/
-│   ├── schema.prisma
-│   └── dev.db
+│   ├── schema.prisma   # Esquema relacional (User, Session, Archivo, Mensaje)
+│   └── dev.db          # Base de datos local
 │
 ├── public/
-│   └── uploads/
+│   └── uploads/        # Directorio de almacenamiento de archivos STL
 │
 ├── src/
 │   ├── components/
-│   │   ├── Navbar.astro
-│   │   ├── ContactForm.astro     # Formulario con Honeypot
-│   │   └── Footer.astro          # Footer corporativo
+│   │   ├── Navbar.astro        # Navegación dinámica por rol
+│   │   ├── ContactForm.astro   # Formulario con Honeypot anti-spam
+│   │   ├── LoginForm.astro     # Lógica de acceso con feedback animado
+│   │   └── Footer.astro        # Pie de página corporativo
 │   │
 │   ├── layouts/
-│   │   └── Layout.astro
+│   │   └── Layout.astro        # Marco global (SEO, Fuentes, Semántica)
 │   │
 │   ├── lib/
-│   │   ├── prisma.ts
-│   │   └── auth.ts
+│   │   ├── prisma.ts   # Singleton de Prisma para optimizar conexiones
+│   │   ├── auth.ts     # Configuración Servidor de Better-Auth
+│   │   └── auth-client.ts # Cliente de autenticación para el frontend
 │   │
 │   ├── pages/
 │   │   ├── api/
-│   │   │   ├── auth/[...all].ts
-│   │   │   └── contacto/
-│   │   │       └── enviar.ts
+│   │   │   ├── auth/[...all].ts   # Endpoint central de identidad
+│   │   │   ├── upload.ts          # Gestión segura de archivos STL
+│   │   │   └── contacto/enviar.ts # Procesamiento de mensajes
 │   │   │
 │   │   ├── dashboard/
-│   │   │   ├── admin/
-│   │   │   └── cliente/
+│   │   │   ├── admin/      # Vistas de gestión de laboratorio
+│   │   │   └── cliente/    # Vistas de seguimiento de trabajos
 │   │   │
-│   │   ├── privacidad.astro
-│   │   ├── aviso-legal.astro
-│   │   ├── cookies.astro
-│   │   ├── test-auth.astro
-│   │   └── index.astro
+│   │   └── index.astro     # Landing page principal
 │   │
 │   └── styles/
-│       └── global.css
+│       └── global.css      # Tailwind 4 + Configuración de Inter Variable
 │
 ├── astro.config.mjs
 ├── package.json
@@ -95,16 +96,13 @@ DATOS
 
 Sistema basado en Better Auth con validación en servidor.
 
-Funcionalidades
-Registro y login con validación segura
-Gestión de roles (admin, user)
-Middleware protectRoute(request, role)
-Redirecciones automáticas tras login
-Navbar dinámico según sesión
-Flujo
-
-Login → Validación sesión → Validación rol
-→ /dashboard/admin | /dashboard/cliente
+- Registro/Login: Validación segura y hashing de contraseñas.
+- Roles: Diferenciación entre admin y user (cliente).
+- Middleware: Función protectRoute para blindar rutas del Dashboard.
+- Honeypot Anti-Bot: Protección invisible en formularios de contacto.
+- Seguridad de Archivos: Validación de peso (20MB), extensión (.stl) y sanitización de nombres en servidor.
+- Redirecciones automáticas tras login
+- Navbar dinámico según sesión
 
 # Endpoints de Autenticación
 
@@ -117,28 +115,39 @@ Login → Validación sesión → Validación rol
 
 # 🛡️ Seguridad y Protección de Datos
 
-El sistema implementa medidas avanzadas orientadas a seguridad y cumplimiento legal:
+Se han implementado medidas específicas para garantizar la integridad del servidor:
 
-Honeypot Anti-Bot: Protección invisible en formularios sin CAPTCHA
-Prevención SQL Injection: Uso de Prisma (queries parametrizadas)
-RBAC en servidor: Validación de sesión y rol en cada request
-Cumplimiento RGPD/LSSI:
-Página de privacidad
-Aviso legal
-Política de cookies técnicas
+    Protección en Subida de Archivos:
+
+        Límite de tamaño: Máximo 20MB por archivo para evitar ataques de agotamiento de disco.
+
+        Límite de cantidad: Máximo 10 archivos por operación.
+
+        Validación de Tipo: Filtro estricto de extensiones .stl mediante metadatos del archivo.
+
+        Sanitización: Renombrado automático con Date.now() para evitar colisiones y ataques de sobrescritura.
+
+    Seguridad en Formularios:
+
+        Honeypot Anti-Bot: Campo invisible que invalida peticiones automáticas de SPAM.
+
+        Feedback de UI: Animaciones de "Shake" en errores y bloqueos de botón de envío para evitar double-submit.
+
+    Base de Datos:
+
+        Prevención de SQL Injection: Uso intrínseco de Prisma con consultas parametrizadas.
+
+        Optimización de Conexiones: Patrón Singleton en la instancia de Prisma para entornos de desarrollo con Hot Reload.
 
 # 📊 Base de Datos y Trazabilidad
 
-El sistema utiliza Prisma sobre SQLite con modelo orientado a trazabilidad.
+El esquema de base de datos permite un seguimiento completo del flujo de trabajo dental:
 
-Características
-Relación User → Archivo (1:N)
-Persistencia de trabajos STL/OBJ
-Control de estado (pendiente, recibido, completado)
-Sistema de Contacto
-Registro de usuario que envía el mensaje
-Identificación del administrador que lo gestiona (id_admin)
-Registro temporal de gestión (fecha_gestion)
+    Usuario: Almacena credenciales, roles y perfil profesional.
+
+    Archivo: Vincula archivos físicos en disco con registros en BD, incluyendo metadatos de prioridad, estado (pendiente/recibido/completado) y descripción clínica.
+
+    Trazabilidad: Cada archivo y mensaje queda vinculado de forma unívoca a un id_usuario.
 
 # 🛠 Instalación y Puesta en Marcha
 
@@ -149,8 +158,13 @@ Registro temporal de gestión (fecha_gestion)
    npm install
 3. Variables de entorno
    DATABASE_URL="file:./prisma/dev.db"
-   BETTER_AUTH_SECRET="tu_secreto"
+   BETTER_AUTH_SECRET="un_secreto_aleatorio_muy_largo"
    BETTER_AUTH_URL="http://localhost:4321"
+   # Configuración SMTP para bienvenida de correos
+   SMTP_HOST="tu_servidor_smtp"
+   SMTP_PORT=465
+   SMTP_USER="usuario@correo.com"
+   SMTP_PASS="password"
 4. Base de datos
    npx prisma db push
    npx prisma generate
@@ -175,46 +189,72 @@ Configuración CSS-first sin plugins adicionales en Astro:
 
 # 🚀 Estado del Desarrollo
 
-Funcionalidades completadas
-SSR con Astro 5
-Prisma + SQLite
-Autenticación con roles (RBAC)
-Middleware de protección de rutas
-Navbar dinámico
-Sistema de subida de archivos STL
-Sistema de contacto con Honeypot
-Arquitectura legal (RGPD / LSSI)
-Trazabilidad de mensajes (admin + timestamp)
+✅ Funcionalidades Completadas
+
+    [x] Arquitectura SSR con Astro 5: Generación dinámica en servidor para optimización de carga y SEO.
+
+    [x] Persistencia con Prisma + SQLite: Modelado relacional de datos con tipado estricto.
+
+    [x] Configuración Tailwind 4 (CSS-first): Estilos modernos sin dependencias de configuración en JS.
+
+    [x] Sistema de Autenticación y Roles (RBAC): Gestión completa de sesiones y permisos (Admin / Cliente).
+
+    [x] Middleware de Protección de Rutas: Validación de acceso en servidor mediante protectRoute.
+
+    [x] Navbar Dinámico Inteligente: Interfaz adaptativa según el estado de la sesión y el rol del usuario.
+
+    [x] Seguridad Avanzada en Subida de STL: Control de tamaño (20MB), tipo de archivo y cantidad máxima por subida.
+
+    [x] Registro de Trabajos en BD: Vinculación directa entre archivos físicos y metadatos clínicos.
+
+    [x] Landing Page con Honeypot: Formulario de contacto protegido contra SPAM de forma invisible.
+
+    [x] Sistema de Mensajería con Trazabilidad: Registro de contacto con identificación de administrador y marca de tiempo (timestamp).
+
+    [x] Arquitectura Legal: Cumplimiento normativo RGPD / LSSI (Privacidad, Cookies, Aviso Legal).
+
+    [x] Notificaciones por Email: Configuración de Nodemailer para envíos profesionales de configuración de cuenta.
 
 # En progreso
 
-Diseño final del dashboard
-CRUD completo de trabajos dentales
-Exportación PDF avanzada
+[ ] Diseño Visual de la Web: Refinamiento estético del Hero y secciones informativas para el usuario ocasional.
 
-# 🔮 Roadmap Técnico
+[ ] Optimización UX en Transferencias: Estudio e implementación de indicadores de progreso (barras de carga) para subida y descarga de archivos pesados (STL).
 
-API segura de descarga de archivos
-Sistema de mensajería por archivo
-Filtros y buscador en dashboard
-Migración a PostgreSQL
-Storage externo (S3 / R2)
-Auditoría y logs de actividad
+[ ] Mejora de Reactividad: Investigación de alternativas ligeras para la actualización de mensajes sin recarga completa de página (evitando sobreingeniería).
+
+# 🔮 Roadmap Técnico (Estudio futuro)
+
+    [ ] API de Descarga Protegida: Capa de seguridad extra para el acceso a archivos en /uploads.
+
+    [ ] Notificaciones de Estado: Avisos visuales rápidos sobre cambios en el proceso de la prótesis.
+
+    [ ] Escalabilidad de Almacenamiento: Migración potencial a servicios S3 o Cloudflare R2 para grandes volúmenes de datos.
 
 # 📎 Documentación Técnica
 
-DEV_NOTES.md → Historial técnico
-PROJECT_ARCHITECTURE.md → Arquitectura
-DATABASE_DESIGN.md → Base de datos
+Para profundizar en los detalles de implementación y diseño, consulta los siguientes archivos:
 
-# 🧠 Resumen
+    CHANGELOG.md → Registro detallado de cambios, hitos y evolución de versiones.
 
-Frontend → Astro + Tailwind + TypeScript
-Backend → Astro SSR + API Routes
-Auth → Better Auth + RBAC
-ORM → Prisma
-DB → SQLite
-Storage → /public/uploads
-Security → protectRoute + Honeypot
+    DEV_NOTES.md → Diario técnico con las decisiones de desarrollo y resolución de problemas.
+
+    PROJECT_ARCHITECTURE.md → Diagramas de flujo y arquitectura de la solución SSR.
+
+    DATABASE_DESIGN.md → Diccionario de datos y diseño del esquema relacional (Prisma).
+
+# 🧠 Resumen Técnico (TL;DR)
+
+    Frontend: Astro 5 + Tailwind 4 + TypeScript + Inter Variable.
+
+    Backend: Astro SSR (Node.js) + API Routes + Nodemailer (SMTP).
+
+    Auth: Better Auth + RBAC (Roles) + Middleware.
+
+    ORM/DB: Prisma 7 + SQLite (better-sqlite3).
+
+    Storage: File System local con sanitización y validación de metadatos.
+
+    Seguridad: protectRoute (Servidor) + Honeypot (Cliente) + CSRF Protection.
 
 ---
