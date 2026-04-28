@@ -1,0 +1,112 @@
+---
+/**
+ * @file ServiciosBento.astro
+ * @description Catálogo visual de servicios con copywriting de marketing dental.
+ * Optimizado para legibilidad extrema y diseño responsivo.
+ */
+
+const servicios = [
+  {
+    title: "Prótesis Fija",
+    desc: "Zirconio y Disilicato e.max con acabado artesanal.",
+    img: "/servicios/corona dental de circonio en estudio minimalista.webp",
+    size: "md:col-span-2 md:row-span-2",
+  },
+  {
+    title: "Rehabilitación sobre Implantes",
+    desc: "Estructuras de titanio fresado de alta pasividad.",
+    img: "/servicios/modelo de puente dental con implantes.webp",
+    size: "md:col-span-2",
+  },
+  {
+    title: "Estética Avanzada",
+    desc: "Carillas ultrafinas y diseño de sonrisa digital.",
+    img: "/servicios/modelo dental veneers y sonrisa natural.webp",
+    size: "md:col-span-1",
+  },
+  {
+    title: "Flujo Digital 3D",
+    desc: "Férulas de descarga y guías quirúrgicas impresas.",
+    img: "/servicios/impresión 3D de alineador dental.webp",
+    size: "md:col-span-1",
+  },
+];
+---
+
+<section id="servicios" class="scroll-mt-24 mt-20">
+  <header class="max-w-3xl mb-12">
+    <div class="flex gap-3 items-center mb-4">
+      <div class="w-1.5 h-6 bg-dent-accent rounded-full"></div>
+      <h2
+        class="text-3xl md:text-5xl font-black text-dent-dark italic tracking-tighter leading-none"
+      >
+        Vanguardia en <br /><span class="text-dent-accent">Prótesis Digital</span>
+      </h2>
+    </div>
+    <p class="text-slate-500 mt-6 text-base lg:text-lg font-medium italic leading-relaxed">
+      Combinamos la precisión del flujo digital con los materiales más avanzados del mercado para
+      ofrecer soluciones que garantizan el ajuste perfecto y la estética natural que sus pacientes
+      exigen.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[250px]">
+    {
+      servicios.map((s) => (
+        <div
+          class={`group relative overflow-hidden rounded-[2.5rem] border border-dent-border bg-dent-card shadow-sm hover:shadow-xl hover:shadow-dent-accent/5 transition-all duration-500 ${s.size}`}
+        >
+          {/* CAPA DE IMAGEN Y FILTROS */}
+          <div class="absolute inset-0 z-0">
+            <img
+              src={s.img}
+              alt={s.title}
+              class="h-full w-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+            />
+
+            {/* Baño de color cian muy sutil al hover */}
+            <div class="absolute inset-0 bg-dent-accent/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+            {/* Degradado inferior optimizado para lectura */}
+            <div class="absolute inset-0 bg-linear-to-t from-dent-dark/95 via-dent-dark/20 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500" />
+          </div>
+
+          {/* CONTENIDO TEXTUAL CON LEGIBILIDAD REFORZADA */}
+          <div class="absolute inset-0 p-7 md:p-9 flex flex-col justify-end z-20">
+            <div class="relative mb-2">
+              {/* Barra lateral de acento (Aparece en Hover) */}
+              <div class="absolute -left-4 top-0 bottom-0 w-1 bg-dent-accent scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-bottom shadow-[0_0_10px_rgba(14,165,233,0.5)]" />
+
+              <h3 class="text-xl md:text-2xl font-black text-white italic uppercase tracking-tighter leading-[0.95] drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] transition-colors">
+                {s.title}
+              </h3>
+            </div>
+
+            <p class="text-slate-200 text-[10px] md:text-xs font-bold italic max-w-[220px] leading-tight drop-shadow-md opacity-90">
+              {s.desc}
+            </p>
+          </div>
+
+          {/* ICONO DE ACCIÓN (Esquina superior derecha) */}
+          <div class="absolute top-7 right-7 text-white/30 group-hover:text-dent-accent group-hover:scale-110 transition-all duration-300 z-20">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="drop-shadow-lg"
+            >
+              <path d="M7 7h10v10" />
+              <path d="M7 17L17 7" />
+            </svg>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
