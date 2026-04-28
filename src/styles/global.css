@@ -149,3 +149,31 @@
     color: #020617;
   }
 }
+
+/* Animación para que el modal "flote" al aparecer */
+dialog[open] {
+  animation: modalShow 0.4s ease-out forwards;
+}
+
+/* Animación para el oscurecimiento del fondo (backdrop) */
+dialog::backdrop {
+  background: rgba(15, 23, 42, 0);
+  backdrop-filter: blur(0px);
+  transition: all 0.4s ease-out;
+}
+
+dialog[open]::backdrop {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+}
+
+@keyframes modalShow {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}

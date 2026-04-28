@@ -1,103 +1,126 @@
 ---
 /**
- * @file TeamBento.astro (Versión Responsive Optimizada)
- * @description Presentación del equipo con contenedores de imagen adaptativos
- * para evitar recortes en resoluciones intermedias (1024px - 1366px).
+ * @file TeamBento.astro (Versión Evolucionada)
+ * @description Presentación del equipo con estética Tech-Artesanal.
+ * Implementa Glassmorphism y micro-interacciones de alto nivel.
  */
+import type { TeamMember } from "../types/dentallab"; // Asumiendo que añades la interfaz
 
 const team = [
   {
     name: "Alejandro Ruiz",
-    role: "Especialista CAD/CAM & Fresado Digital",
-    bio: "Experto en el flujo digital completo, transforma escaneos intraorales en estructuras de circonio con precisión micrométrica.",
+    role: "CAD/CAM Specialist",
+    bio: "Experto en flujo digital completo, transforma escaneos intraorales en estructuras de precisión micrométrica.",
     image: "/team/alejandro.webp",
     gridSpan: "md:col-span-2",
+    accent: "from-blue-500/20",
   },
   {
     name: "Carmen García",
-    role: "Maestra Ceramista & Estética",
-    bio: "Domina la estratificación de cerámica sobre disilicato, garantizando sonrisas naturales y personalizadas.",
+    role: "Maestra Ceramista",
+    bio: "Domina la estratificación manual sobre disilicato para acabados naturales.",
     image: "/team/carmen.webp",
+    accent: "from-cyan-500/20",
   },
   {
     name: "Manuel Jiménez",
-    role: "Técnico Senior Removible",
-    bio: "Especialista en casos complejos de edentulismo y modernos sistemas de anclaje sobre implantes.",
+    role: "Senior Removible",
+    bio: "Especialista en casos complejos de edentulismo y anclajes sobre implantes.",
     image: "/team/manuel.webp",
+    accent: "from-indigo-500/20",
   },
   {
     name: "Rocío Morales",
-    role: "Diseño Digital & Férulas 3D",
-    bio: "Planifica rehabilitaciones complejas mediante software exocad e impresión 3D de alta resolución.",
+    role: "Diseño Exocad",
+    bio: "Planifica rehabilitaciones complejas mediante software e impresión 3D de alta resolución.",
     image: "/team/rocio.webp",
     gridSpan: "md:col-span-2",
+    accent: "from-sky-500/20",
   },
   {
     name: "Javier López",
-    role: "Experto en Modelos Maestros",
-    bio: "Asegura la fidelidad absoluta de los modelos maestros y la preparación crítica de troqueles.",
+    role: "Modelos Maestros",
+    bio: "Asegura la fidelidad absoluta y la preparación crítica de troqueles.",
     image: "/team/javier.webp",
+    accent: "from-blue-400/20",
   },
   {
     name: "María Flores",
-    role: "Dirección de Administración",
-    bio: "Gestiona la logística de envíos y asegura una comunicación fluida con cada clínica dental.",
+    role: "Administración",
+    bio: "Gestiona la logística y asegura la comunicación fluida con cada clínica.",
     image: "/team/maria.webp",
+    accent: "from-slate-400/20",
   },
 ];
 ---
 
-<section id="equipo" class="scroll-mt-24 mt-20 md:mt-28 w-full">
-  <header class="max-w-3xl mb-10 sm:mb-16">
+<section id="equipo" class="scroll-mt-24 mt-20 md:mt-32 w-full">
+  <header class="max-w-3xl mb-12 relative">
     <div class="flex gap-3 items-center mb-4">
-      <div class="w-1.5 h-6 bg-dent-accent rounded-full"></div>
+      <div class="w-1.5 h-6 bg-dent-accent rounded-full animate-pulse"></div>
       <h2
-        class="text-3xl sm:text-4xl md:text-5xl font-black text-dent-dark italic tracking-tighter leading-none"
+        class="text-3xl sm:text-5xl font-black text-dent-dark italic tracking-tighter uppercase leading-none"
       >
-        Artesanos de la <br /><span class="text-dent-accent">Tecnología</span> Dental
+        Factor <span class="text-dent-accent">Humano</span>
+        <br /> Digital
       </h2>
     </div>
-    <p
-      class="text-slate-500 mt-6 text-sm md:text-base lg:text-lg font-medium italic leading-relaxed"
-    >
-      En DentalLab, fusionamos la precisión digital con la maestría artesanal. Nuestro equipo
-      malagueño está comprometido con la excelencia en cada prótesis.
+    <p class="text-slate-500 text-sm md:text-lg font-medium italic leading-relaxed max-w-xl">
+      Detrás de cada fresado digital hay un maestro artesano supervisando la perfección.
     </p>
   </header>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
     {
-      team.map((member) => (
+      team.map((m) => (
         <article
-          class={`bg-dent-card border border-dent-border rounded-[2.5rem] p-6 md:p-8 flex flex-col group transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-950/5 relative overflow-hidden ${member.gridSpan ?? ""}`}
+          class={`group relative overflow-hidden rounded-[2.5rem] border border-dent-border bg-dent-card transition-all duration-500 hover:border-dent-accent/30 hover:shadow-2xl hover:shadow-dent-accent/10 ${m.gridSpan ?? ""}`}
         >
-          <div class="absolute inset-0 bg-linear-to-br from-dent-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* Fondo de acento dinámico en hover */}
+          <div
+            class={`absolute inset-0 bg-linear-to-br ${m.accent} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700`}
+          />
 
-          <div class="flex justify-center mb-6 md:mb-8 relative z-10">
-            <div class="relative w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44">
-              <div class="absolute inset-0 bg-dent-accent rounded-full scale-0 group-hover:scale-105 transition-transform duration-500 opacity-20" />
-
-              <div class="absolute inset-1.5 bg-white rounded-full p-1 border-4 border-slate-100 group-hover:border-dent-accent transition-colors duration-500 overflow-hidden shadow-inner flex items-center justify-center">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  class="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
-                />
+          <div class="p-8 relative z-10 flex flex-col h-full">
+            <div class="flex items-start justify-between mb-8">
+              <div class="relative">
+                {/* Contenedor imagen con "Frame" tecnológico */}
+                <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl overflow-hidden border-2 border-slate-100 group-hover:border-dent-accent transition-all duration-500 rotate-3 group-hover:rotate-0 shadow-lg">
+                  <img
+                    src={m.image}
+                    alt={m.name}
+                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                  />
+                </div>
+                {/* Indicador de "Online/Activo" estilo lab */}
+                <div class="absolute -top-1 -right-1 w-4 h-4 bg-status-success rounded-full border-4 border-white animate-pulse" />
               </div>
 
-              <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-dent-accent text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider text-center shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-100 w-max max-w-[120%] z-20 leading-tight">
-                {member.role}
+              <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-dent-accent transition-colors">
+                Staff_0{team.indexOf(m) + 1}
+              </span>
+            </div>
+
+            <div class="mt-auto">
+              <p class="text-dent-accent text-[10px] font-black uppercase tracking-widest mb-1">
+                {m.role}
+              </p>
+              <h4 class="text-xl md:text-2xl font-black text-dent-dark italic uppercase tracking-tighter leading-none mb-3">
+                {m.name}
+              </h4>
+
+              {/* Bio con Glassmorphism en hover */}
+              <div class="overflow-hidden max-h-0 group-hover:max-h-32 transition-all duration-700 ease-in-out">
+                <p class="text-slate-500 text-xs font-medium leading-relaxed italic pt-2 border-t border-dent-border/50">
+                  {m.bio}
+                </p>
               </div>
             </div>
           </div>
 
-          <div class="flex-grow flex flex-col justify-end relative z-10 text-center sm:text-left">
-            <h4 class="text-lg md:text-xl font-black text-dent-dark italic tracking-tighter uppercase leading-tight mb-2 group-hover:text-dent-accent transition-colors">
-              {member.name}
-            </h4>
-            <p class="text-slate-500 text-[11px] md:text-xs font-medium leading-relaxed italic opacity-90">
-              {member.bio}
-            </p>
+          {/* Decoración geométrica de fondo */}
+          <div class="absolute -bottom-6 -right-6 text-slate-100/50 text-8xl font-black italic select-none pointer-events-none group-hover:text-dent-accent/5 transition-colors">
+            {m.name.split(" ")[0][0]}
           </div>
         </article>
       ))
