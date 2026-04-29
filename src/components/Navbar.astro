@@ -17,7 +17,9 @@ const isLanding = pathname === "/";
 >
   <nav
     id="nav-inner"
-    class={`pointer-events-auto backdrop-blur-xl border px-6 h-12 rounded-full flex items-center gap-8 transition-all duration-500 ${
+    class={`pointer-events-auto backdrop-blur-xl border px-6 h-12 rounded-full flex items-center transition-all duration-500 ${
+      isLanding ? "justify-between w-full max-w-5xl" : "justify-center gap-8 w-auto px-8"
+    } ${
       isLanding
         ? "bg-slate-900/80 border-white/20 shadow-[0_0_15px_rgba(14,165,233,0.1)]"
         : "bg-slate-800/90 border-white/20 shadow-[0_0_25px_rgba(14,165,233,0.15)]"
@@ -34,24 +36,48 @@ const isLanding = pathname === "/";
       </span>
     </a>
 
-    <ul class="flex items-center gap-6">
+    <ul class="flex items-center gap-4 md:gap-6">
       {
         isLanding && (
           <>
-            <li class="hidden md:block">
+            <li class="hidden xl:block">
               <a
                 href="#servicios"
-                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all duration-300"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all"
               >
                 Servicios
               </a>
             </li>
-            <li class="hidden md:block">
+            <li class="hidden xl:block">
+              <a
+                href="#tecnologia"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all"
+              >
+                Tecnología
+              </a>
+            </li>
+            <li class="hidden lg:block">
               <a
                 href="#equipo"
-                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all duration-300"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all"
               >
                 Equipo
+              </a>
+            </li>
+            <li class="hidden lg:block">
+              <a
+                href="#faq"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all"
+              >
+                FAQ
+              </a>
+            </li>
+            <li class="hidden sm:block">
+              <a
+                href="#contacto"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all"
+              >
+                Contacto
               </a>
             </li>
           </>
@@ -98,7 +124,7 @@ const isLanding = pathname === "/";
           <li>
             <a
               href="/#login-section"
-              class="bg-dent-accent text-dent-dark px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-lg shadow-cyan-500/20"
+              class="bg-dent-accent text-dent-dark px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-lg shadow-cyan-500/20"
             >
               Entrar
             </a>
@@ -112,27 +138,23 @@ const isLanding = pathname === "/";
 <script>
   /**
    * @description Gestión del Cierre de Sesión (Logout).
-   * Se utiliza un selector global para asegurar que funcione tanto en Landing como en Dashboard.
    */
   const setupLogout = () => {
-    // Buscamos todos los botones de logout (por si hay más de uno)
     const logoutButtons = document.querySelectorAll(".logout-button-trigger");
 
     logoutButtons.forEach((btn) => {
-      // TRUCO MAESTRO: Clonamos el botón para eliminar cualquier event listener previo
-      // y evitar que se acumulen o dejen de funcionar tras navegar.
       const newBtn = btn.cloneNode(true);
       btn.parentNode?.replaceChild(newBtn, btn);
 
       newBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-        console.log("Cerrando sesión..."); // Para que verifiques en la consola del navegador
+        console.log("Cerrando sesión...");
 
         try {
           const res = await fetch("/api/auth/sign-out", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}), // Cuerpo vacío obligatorio para Better Auth
+            body: JSON.stringify({}),
           });
 
           if (res.ok) {
@@ -169,15 +191,12 @@ const isLanding = pathname === "/";
     }
   };
 
-  // 1. Registro del evento de scroll (permanente)
   window.addEventListener("scroll", handleScroll);
 
-  // 2. Ejecución cada vez que Astro carga una página (necesario para View Transitions)
   document.addEventListener("astro:page-load", () => {
     setupLogout();
     handleScroll();
   });
 
-  // 3. Ejecución inicial de seguridad
   setupLogout();
 </script>

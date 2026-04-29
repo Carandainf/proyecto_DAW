@@ -5,9 +5,9 @@
 
 @theme {
   /* --- PALETA DE COLORES (Estilo 404) --- */
-  --color-dent-bg: #f8fafc;
+  --color-dent-bg: #f1f5f9;
   --color-dent-card: #ffffff;
-  --color-dent-border: #e2e8f0;
+  --color-dent-border: #d1d5db;
   --color-dent-accent: #0ea5e9;
   --color-dent-dark: #0f172a;
 
@@ -124,6 +124,16 @@
 
   .text-gradient {
     @apply bg-clip-text text-transparent bg-linear-to-r from-white to-slate-500;
+  }
+
+  /* utilidad para divisiones internas con más "carácter" */
+  .inner-divider {
+    @apply border-t border-slate-200 dark:border-slate-800;
+  }
+
+  /* Efecto de relieve suave para los Bento claros */
+  .bento-shadow {
+    @apply shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-slate-300/50;
   }
 
   /* Efecto de cristal para tarjetas si lo necesitas */

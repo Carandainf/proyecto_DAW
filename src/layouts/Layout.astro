@@ -2,7 +2,7 @@
 /**
  * @file Layout.astro
  * @description Estructura base corregida.
- * Se elimina la carga de Google Fonts ya que se utiliza Inter Variable de forma local vía CSS.
+ * Se elimina la carga de Google Fonts ya que utilizo Inter Variable de forma local vía CSS.
  */
 import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
@@ -11,6 +11,8 @@ import Footer from "../components/Footer.astro";
 const { title = "DentalLab - Precisión Digital", darkMode = false } = Astro.props;
 const { pathname } = Astro.url;
 const isLegalPage = ["/privacidad", "/aviso-legal", "/cookies"].includes(pathname);
+// Detectamos si estamos en cualquier ruta del dashboard
+const isDashboard = pathname.includes("/dashboard");
 ---
 
 <html lang="es" class={darkMode ? "dark" : ""}>
@@ -22,11 +24,11 @@ const isLegalPage = ["/privacidad", "/aviso-legal", "/cookies"].includes(pathnam
   </head>
 
   <body
-    class="bg-dent-bg text-dent-dark antialiased min-h-screen flex flex-col transition-colors duration-300"
+    class="bg-dent-bg text-dent-dark antialiased min-h-screen flex flex-col transition-colors duration-300 relative"
   >
     <Navbar />
 
-    <div class="grow w-full">
+    <div class={`grow w-full ${isDashboard ? "pt-0" : "pt-24"}`}>
       <slot />
     </div>
 

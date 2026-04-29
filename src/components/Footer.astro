@@ -29,7 +29,7 @@ const currentYear = new Date().getFullYear();
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8 pt-8 border-t border-slate-100">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8 pt-8 border-t border-slate-200">
         <ul class="text-[10px] text-slate-400 space-y-2 uppercase font-black tracking-widest">
           <li class="flex items-center gap-2">
             <span class="w-1.5 h-1.5 rounded-full bg-dent-accent"></span>
@@ -68,6 +68,9 @@ const currentYear = new Date().getFullYear();
             contacto@tulaboratorio.com
           </p>
         </div>
+
+        <div class="w-full h-px bg-slate-100"></div>
+
         <div>
           <p class="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1">
             Horario Entrega
@@ -76,12 +79,13 @@ const currentYear = new Date().getFullYear();
             L - V: 09:00 - 19:00
           </p>
         </div>
+
         <div class="flex gap-2 pt-2">
           {
             ["IG", "FB", "IN"].map((social) => (
               <a
                 href="#"
-                class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400 hover:bg-dent-accent hover:text-dent-dark hover:border-dent-accent transition-all active:scale-90"
+                class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-400 hover:bg-dent-accent hover:text-dent-dark hover:border-dent-accent transition-all active:scale-90"
               >
                 {social}
               </a>
@@ -110,7 +114,7 @@ const currentYear = new Date().getFullYear();
         </nav>
       </div>
 
-      <div class="mt-10 pt-6 border-t border-white/5">
+      <div class="mt-10 pt-6 border-t border-white/10">
         <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
           © {currentYear} Laboratorio Dental.<br />
           <span class="text-dent-accent/40 italic">Créditos: Carlos - Proyecto DAW</span>
