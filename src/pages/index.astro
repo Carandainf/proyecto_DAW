@@ -15,11 +15,9 @@ import LoginForm from "../components/LoginForm.astro";
 import ContactForm from "../components/ContactForm.astro";
 import TeamBento from "../components/TeamBento.astro";
 import ServiciosBento from "../components/ServiciosBento.astro";
+import Hero from "../components/Hero.astro"; // Importamos el nuevo Hero
 import { protectRoute } from "@/lib/auth";
 
-/**
- * @description Redirección SSR: Si hay sesión, el usuario no debe ver la landing.
- */
 const auth = await protectRoute(Astro.request);
 if (auth.user) {
   return Astro.redirect(auth.user.role === "admin" ? "/dashboard/admin" : "/dashboard/cliente");
@@ -28,37 +26,18 @@ if (auth.user) {
 
 <Layout title="DentalLab - Laboratorio de Prótesis Dental Digital" darkMode={false}>
   <main
-    class="min-h-screen pt-24 pb-12 px-4 sm:p-6 lg:p-8 flex flex-col items-center bg-dent-bg transition-all"
+    class="min-h-screen pt-36 pb-12 px-4 sm:p-6 lg:p-8 flex flex-col items-center bg-dent-bg transition-all"
   >
     <div class="max-w-7xl w-full space-y-12 md:space-y-24">
       <section class="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 w-full">
-        <div
-          class="md:col-span-3 bg-dent-card border border-dent-border rounded-[2.5rem] p-6 sm:p-10 lg:p-16 flex flex-col justify-end min-h-[350px] md:min-h-[500px] relative overflow-hidden shadow-sm group"
-        >
-          <div class="absolute inset-0 bg-linear-to-br from-dent-accent/10 to-transparent"></div>
-          <div class="relative z-10">
-            <h1
-              class="text-4xl sm:text-5xl lg:text-7xl font-black text-dent-dark leading-[1] md:leading-[0.9] italic tracking-tighter"
-            >
-              Precisión <span class="text-dent-accent">Digital</span>
-              <br />
-              en cada pieza.
-            </h1>
-            <p
-              class="text-slate-500 mt-6 max-w-lg text-base lg:text-lg font-medium italic leading-relaxed"
-            >
-              Elevamos el estándar de la prótesis dental mediante flujos digitales avanzados y
-              materiales de última generación en el corazón de Málaga.
-            </p>
-          </div>
-        </div>
+        <Hero />
 
         <div
           id="login-section"
-          class="scroll-mt-32 bg-dent-card border border-dent-border rounded-[2.5rem] p-8 shadow-2xl shadow-blue-900/5 flex flex-col justify-center relative overflow-hidden"
+          class="scroll-mt-40 bg-dent-card border border-dent-border rounded-[2.5rem] p-8 shadow-2xl shadow-blue-900/5 flex flex-col justify-center relative overflow-hidden group"
         >
           <div
-            class="absolute top-0 left-0 w-full h-2 bg-dent-accent shadow-[0_2px_10px_rgba(0,255,255,0.2)]"
+            class="absolute top-0 left-0 w-full h-2 bg-dent-accent shadow-[0_2px_10px_rgba(0,165,233,0.3)] transition-all group-hover:h-3"
           >
           </div>
           <header class="mb-8">
@@ -111,7 +90,7 @@ if (auth.user) {
             </p>
           </div>
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3199.167812117142!2d-4.444747223455177!3d36.700547773539!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd72f790209c35f9%3A0x705973347f300c0a!2sAv.%20de%20Sor%20Teresa%20Prat%2C%2015%2C%2029003%20M%C3%A1laga!5e0!3m2!1ses!2ses!4v1713210000000!5m2!1ses!2ses"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3198.8354714457497!2d-4.449635723467651!3d36.70258167362002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd72f79029e2f47b%3A0x6b44766f7f2b879d!2sAv.%20de%20Sor%20Teresa%20Prat%2C%2015%2C%2029003%20M%C3%A1laga!5e0!3m2!1ses!2ses!4v1700000000000"
             class="w-full h-full grayscale hover:grayscale-0 transition-all duration-1000 opacity-40 group-hover:opacity-100"
             style="border:0;"
             allowfullscreen=""

@@ -1,40 +1,62 @@
 ---
 /**
  * @file Navbar.astro
- * @description Barra de navegación persistente con efecto Backdrop Blur.
- * Implementa renderizado condicional basado en el estado de autenticación y rol del usuario.
+ * @description Barra de navegación optimizada con renderizado condicional.
  */
 import { getUserRole } from "@/lib/auth";
-const { loggedIn, role } = await getUserRole(Astro.request);
 
+const { loggedIn, role } = await getUserRole(Astro.request);
 const pathname = new URL(Astro.request.url).pathname;
 const isAdmin = role === "admin";
+const isLanding = pathname === "/";
 ---
 
-<header class="fixed top-4 inset-x-0 z-[100] flex justify-center px-4 pointer-events-none">
+<header
+  id="main-nav"
+  class="fixed top-4 inset-x-0 z-[100] flex justify-center px-4 pointer-events-none transition-all duration-500"
+>
   <nav
-    class="pointer-events-auto bg-slate-950/80 backdrop-blur-xl border border-white/10 px-5 sm:px-8 h-14 rounded-full flex items-center gap-6 sm:gap-10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition-all duration-500"
+    id="nav-inner"
+    class={`pointer-events-auto backdrop-blur-xl border px-6 h-12 rounded-full flex items-center gap-8 transition-all duration-500 ${
+      isLanding
+        ? "bg-slate-900/80 border-white/20 shadow-[0_0_15px_rgba(14,165,233,0.1)]"
+        : "bg-slate-800/90 border-white/20 shadow-[0_0_25px_rgba(14,165,233,0.15)]"
+    }`}
   >
     <a href="/" class="flex items-center gap-3 group transition-transform active:scale-95">
       <div
-        class="w-8 h-8 bg-dent-accent rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:rotate-3 transition-transform"
+        class="w-7 h-7 bg-dent-accent rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:rotate-3 transition-transform"
       >
-        <span class="text-dent-dark font-black text-xl">D</span>
+        <span class="text-dent-dark font-black text-lg">D</span>
       </div>
-      <span class="text-slate-100 font-bold tracking-tighter italic text-base hidden sm:block">
+      <span class="text-slate-100 font-bold tracking-tighter italic text-sm hidden sm:block">
         Dental<span class="text-dent-accent">Lab</span>
       </span>
     </a>
 
     <ul class="flex items-center gap-6">
-      <li>
-        <a
-          href="/"
-          class={`text-[10px] uppercase font-black tracking-[0.15em] transition-all hover:text-dent-accent ${pathname === "/" ? "text-dent-accent" : "text-slate-400"}`}
-        >
-          Inicio
-        </a>
-      </li>
+      {
+        isLanding && (
+          <>
+            <li class="hidden md:block">
+              <a
+                href="#servicios"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all duration-300"
+              >
+                Servicios
+              </a>
+            </li>
+            <li class="hidden md:block">
+              <a
+                href="#equipo"
+                class="text-[10px] uppercase font-bold tracking-[0.15em] text-slate-200 hover:text-dent-accent transition-all duration-300"
+              >
+                Equipo
+              </a>
+            </li>
+          </>
+        )
+      }
 
       {
         loggedIn ? (
@@ -42,36 +64,31 @@ const isAdmin = role === "admin";
             <li>
               <a
                 href={isAdmin ? "/dashboard/admin" : "/dashboard/cliente"}
-                class={`text-[10px] uppercase font-black tracking-[0.15em] transition-all flex items-center gap-2 ${pathname.includes("/dashboard") ? (isAdmin ? "text-red-400" : "text-dent-accent") : "text-slate-400 hover:text-white"}`}
+                class={`text-[9px] uppercase font-black tracking-[0.2em] transition-all flex items-center gap-2 ${pathname.includes("/dashboard") ? (isAdmin ? "text-red-400" : "text-dent-accent") : "text-slate-400 hover:text-white"}`}
               >
                 <span
-                  class={`w-1.5 h-1.5 rounded-full animate-pulse ${isAdmin ? "bg-red-500" : "bg-dent-accent"}`}
+                  class={`w-1 h-1 rounded-full animate-pulse ${isAdmin ? "bg-red-500" : "bg-dent-accent"}`}
                 />
                 {isAdmin ? "Admin" : "Panel"}
               </a>
             </li>
-
-            <div class="w-px h-4 bg-white/10" />
-
+            <div class="w-px h-3 bg-white/10" />
             <li>
-              <button class="logout-button-trigger group flex items-center gap-2 text-[10px] font-black text-slate-500 hover:text-red-400 transition-all uppercase tracking-widest cursor-pointer">
+              <button class="logout-button-trigger group flex items-center gap-2 text-[9px] font-black text-slate-500 hover:text-red-400 transition-all uppercase tracking-[0.2em] cursor-pointer">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
+                  width="12"
+                  height="12"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="3"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="group-hover:translate-x-0.5 transition-transform"
                 >
-                  <>
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </>
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
                 <span class="hidden md:inline">Salir</span>
               </button>
@@ -81,7 +98,7 @@ const isAdmin = role === "admin";
           <li>
             <a
               href="/#login-section"
-              class="bg-dent-accent text-dent-dark px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white hover:scale-105 active:scale-95 transition-all shadow-lg shadow-cyan-500/20"
+              class="bg-dent-accent text-dent-dark px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-lg shadow-cyan-500/20"
             >
               Entrar
             </a>
@@ -95,45 +112,72 @@ const isAdmin = role === "admin";
 <script>
   /**
    * @description Gestión del Cierre de Sesión (Logout).
-   * Se utiliza el evento 'astro:page-load' para asegurar la funcionalidad
-   * al navegar entre rutas bajo el sistema de View Transitions de Astro.
+   * Se utiliza un selector global para asegurar que funcione tanto en Landing como en Dashboard.
    */
   const setupLogout = () => {
-    // Buscamos todos los botones con esa clase
+    // Buscamos todos los botones de logout (por si hay más de uno)
     const logoutButtons = document.querySelectorAll(".logout-button-trigger");
 
     logoutButtons.forEach((btn) => {
-      // Limpiamos listeners previos por si acaso
-      btn.replaceWith(btn.cloneNode(true));
-    });
+      // TRUCO MAESTRO: Clonamos el botón para eliminar cualquier event listener previo
+      // y evitar que se acumulen o dejen de funcionar tras navegar.
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode?.replaceChild(newBtn, btn);
 
-    // Volvemos a seleccionar tras el clonado para asignar el evento limpio
-    document.querySelectorAll(".logout-button-trigger").forEach((btn) => {
-      btn.addEventListener("click", async (e) => {
+      newBtn.addEventListener("click", async (e) => {
         e.preventDefault();
-        console.log("Cerrando sesión..."); // Para que se veas en consola si se dispara
+        console.log("Cerrando sesión..."); // Para que verifiques en la consola del navegador
 
         try {
           const res = await fetch("/api/auth/sign-out", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({}),
-            credentials: "include",
+            body: JSON.stringify({}), // Cuerpo vacío obligatorio para Better Auth
           });
 
           if (res.ok) {
-            // Forzamos la limpieza del estado del cliente
             window.location.replace("/");
+          } else {
+            console.error("Error en la respuesta del servidor");
           }
         } catch (err) {
-          console.error("Error al cerrar sesión:", err);
+          console.error("Error crítico al cerrar sesión:", err);
         }
       });
     });
   };
-  // Ejecutar al cargar por primera vez
-  setupLogout();
 
-  // Y se vuelve a ejecutar cada vez que Astro cambia de página "sin recargar"
-  document.addEventListener("astro:page-load", setupLogout);
+  /**
+   * @description Lógica de Scroll suavizada.
+   */
+  const handleScroll = () => {
+    const nav = document.getElementById("main-nav");
+    const inner = document.getElementById("nav-inner");
+    if (!nav || !inner || window.location.pathname !== "/") return;
+
+    if (window.scrollY > 20) {
+      nav.style.transform = "translateY(-4px)";
+      inner.style.backgroundColor = "rgba(2, 6, 23, 0.95)";
+      inner.style.boxShadow =
+        "0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 0 20px -5px rgba(14, 165, 233, 0.3)";
+      inner.style.borderColor = "rgba(255, 255, 255, 0.15)";
+    } else {
+      nav.style.transform = "translateY(0px)";
+      inner.style.backgroundColor = "rgba(15, 23, 42, 0.7)";
+      inner.style.boxShadow = "0 4px 20px -5px rgba(0, 0, 0, 0.4)";
+      inner.style.borderColor = "rgba(255, 255, 255, 0.25)";
+    }
+  };
+
+  // 1. Registro del evento de scroll (permanente)
+  window.addEventListener("scroll", handleScroll);
+
+  // 2. Ejecución cada vez que Astro carga una página (necesario para View Transitions)
+  document.addEventListener("astro:page-load", () => {
+    setupLogout();
+    handleScroll();
+  });
+
+  // 3. Ejecución inicial de seguridad
+  setupLogout();
 </script>
