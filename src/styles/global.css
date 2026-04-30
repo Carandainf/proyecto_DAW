@@ -207,3 +207,11 @@ dialog[open]::backdrop {
     }
   }
 }
+
+@layer utilities {
+  /* Clase para el contenedor principal de páginas de texto legales */
+  .legal-layout {
+    /* Reducimos el padding top para que no esté tan lejos de la Navbar */
+    @apply pt-12 md:pt-16 pb-12;
+  }
+}

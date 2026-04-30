@@ -1,15 +1,12 @@
 ---
 /**
  * @file ServiciosBento.astro
- * @description Componente de catálogo interactivo utilizando el patrón de diseño Bento Grid.
+ * @description Catálogo Bento Grid con modal de servicios.
  *
- * CARACTERÍSTICAS TÉCNICAS ACTUALIZADAS:
- * - UI/UX Reforzada: Se añade barra lateral de acento dinámica en hover.
- * - Flujo de Conversión: El CTA del modal cierra el diálogo y redirige a la sección de contacto.
- * - Fuente de verdad única: Mantiene la integridad de datos SSR -> Client.
- *
- * @author Carlos - Proyecto DAW
- * @version 1.3.0
+ * CAMBIOS REALIZADOS:
+ * - Eliminada la lógica de cierre por clic externo para evitar conflictos. No funcionaba correctamente.
+ * - Mantenido el sistema de cierre dual: Botón "X" y Botón "Volver".
+ * - Layout responsivo para acciones del modal.
  */
 
 import type { Servicio } from "../types/dentallab";
@@ -89,7 +86,6 @@ const servicios: Servicio[] = [
           <div class="absolute inset-0 p-8 flex flex-col justify-end z-10">
             <div class="relative">
               <div class="absolute -left-4 top-0 bottom-0 w-1 bg-dent-accent scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-bottom shadow-[0_0_10px_rgba(14,165,233,0.5)]" />
-
               <h3 class="text-xl md:text-2xl font-black text-white italic uppercase drop-shadow-lg leading-none mb-1">
                 {s.title}
               </h3>
@@ -121,9 +117,11 @@ const servicios: Servicio[] = [
         </div>
 
         <div class="w-full md:w-1/2 p-10 flex flex-col justify-center">
+          <!-- Botón Cerrar (X) -->
           <button
             id="close-modal"
             class="absolute top-8 right-8 text-white/50 hover:text-dent-accent transition-colors cursor-pointer"
+            aria-label="Cerrar modal"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -149,9 +147,19 @@ const servicios: Servicio[] = [
 
           <ul id="modal-features" class="space-y-3 mb-10"></ul>
 
-          <button id="modal-cta" class="btn-primary w-full md:w-max"
-            >Solicitar Información Técnica</button
-          >
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button id="modal-cta" class="btn-primary w-full sm:w-auto">
+              Solicitar Información Técnica
+            </button>
+
+            <!-- Botón Volver / Salir -->
+            <button
+              id="modal-back"
+              class="px-8 py-4 rounded-2xl border border-white/10 text-white/50 font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/5 hover:text-white transition-all active:scale-95 w-full sm:w-auto"
+            >
+              Volver al catálogo
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -163,13 +171,15 @@ const servicios: Servicio[] = [
 
   const modal = document.getElementById("service-modal") as HTMLDialogElement;
   const closeBtn = document.getElementById("close-modal");
-  const ctaBtn = document.getElementById("modal-cta"); // Referencia al botón CTA
+  const backBtn = document.getElementById("modal-back");
+  const ctaBtn = document.getElementById("modal-cta");
 
   const modalImg = document.getElementById("modal-img") as HTMLImageElement;
   const modalTitle = document.getElementById("modal-title") as HTMLElement;
   const modalDesc = document.getElementById("modal-long-desc") as HTMLElement;
   const modalFeatures = document.getElementById("modal-features") as HTMLElement;
 
+  // Rellenar y abrir modal
   document.querySelectorAll("[data-service]").forEach((button) => {
     button.addEventListener("click", () => {
       const dataRaw = button.getAttribute("data-service");
@@ -187,12 +197,12 @@ const servicios: Servicio[] = [
       if (modalFeatures) {
         modalFeatures.innerHTML = data.features
           .map(
-            (f: string) => `
-          <li class="flex items-center gap-3 text-slate-400 text-sm font-bold italic">
-            <div class="w-1.5 h-1.5 rounded-full bg-dent-accent"></div>
-            ${f}
-          </li>
-        `
+            (f) => `
+            <li class="flex items-center gap-3 text-slate-400 text-sm font-bold italic">
+              <div class="w-1.5 h-1.5 rounded-full bg-dent-accent"></div>
+              ${f}
+            </li>
+          `
           )
           .join("");
       }
@@ -201,38 +211,32 @@ const servicios: Servicio[] = [
     });
   });
 
-  // Cerrar modal al pulsar X
-  closeBtn?.addEventListener("click", () => modal?.close());
+  // Lógica de cierre unificada para X y botón Volver
+  [closeBtn, backBtn].forEach((btn) => {
+    btn?.addEventListener("click", () => modal?.close());
+  });
 
-  // Lógica del botón CTA
+  // Lógica del botón CTA (Scroll a contacto)
   ctaBtn?.addEventListener("click", () => {
     modal?.close();
 
     const target = document.getElementById("contacto");
     if (target) {
-      // Esperamos un pelín (150ms) a que el modal termine de desvanecerse
-      // Esto evita que el navegador intente hacer dos cosas a la vez y de tirones
       setTimeout(() => {
         const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - 100;
         const startPosition = window.pageYOffset;
         const distance = targetPosition - startPosition;
         let startTime: number | null = null;
-
-        // Función de duración dinámica: más distancia = un pelín más de tiempo
-        const duration = 500; // 0,5 segundos para un recorrido suave
+        const duration = 500;
 
         function animation(currentTime: number) {
           if (startTime === null) startTime = currentTime;
           const timeElapsed = currentTime - startTime;
-
-          // Easing function: EaseInOutQuad (empieza lento, acelera, frena suave)
           const run = ease(timeElapsed, startPosition, distance, duration);
           window.scrollTo(0, run);
-
           if (timeElapsed < duration) requestAnimationFrame(animation);
         }
 
-        // La fórmula matemática del "suave"
         function ease(t: number, b: number, c: number, d: number) {
           t /= d / 2;
           if (t < 1) return (c / 2) * t * t + b;
@@ -243,10 +247,5 @@ const servicios: Servicio[] = [
         requestAnimationFrame(animation);
       }, 150);
     }
-  });
-
-  // Cerrar al hacer clic fuera
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) modal.close();
   });
 </script>
