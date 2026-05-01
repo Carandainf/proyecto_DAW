@@ -127,7 +127,7 @@ const ultimasNotificaciones = await prisma.mensaje.findMany({
                   >Prioridad</label
                 >
                 <select
-                  class="w-full bg-dent-dark/50 border border-dent-border rounded-full px-5 py-3 text-sm text-slate-200 outline-none appearance-none cursor-pointer"
+                  class="w-full bg-dent-dark/50 border border-dent-border rounded-full px-5 py-3 text-sm text-slate-200 outline-none appearance-none cursor-pointer [&>option]:bg-slate-900 [&>option]:text-slate-200"
                 >
                   <option value="normal">Estándar (3-5 días)</option>
                   <option value="urgente">Urgente (24-48h)</option>
@@ -317,12 +317,23 @@ const ultimasNotificaciones = await prisma.mensaje.findMany({
   );
 
   fileInput?.addEventListener("change", () => {
-    if (fileInput.files?.length && preview) {
-      preview.innerText =
-        fileInput.files.length === 1
-          ? `📄 ${fileInput.files[0].name}`
-          : `📚 ${fileInput.files.length} archivos .STL`;
-      preview.classList.remove("hidden");
+    if (fileInput.files?.length) {
+      // Verificamos si es STL (por extensión)
+      const file = fileInput.files[0];
+      if (!file.name.toLowerCase().endsWith(".stl")) {
+        alert("Error: Solo se permiten archivos .STL");
+        fileInput.value = ""; // <--- ESTO ES LO QUE NECESITAS: Limpia el input
+        preview?.classList.add("hidden"); // Oculta el preview si existía
+        return;
+      }
+
+      if (preview) {
+        preview.innerText =
+          fileInput.files.length === 1
+            ? `📄 ${file.name}`
+            : `📚 ${fileInput.files.length} archivos .STL`;
+        preview.classList.remove("hidden");
+      }
     }
   });
 

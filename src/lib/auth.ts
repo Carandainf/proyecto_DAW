@@ -106,7 +106,7 @@ export async function protectRoute(request: Request, requiredRole?: string) {
   const { loggedIn, role, user } = await getUserRole(request);
 
   if (!loggedIn) {
-    return { shouldRedirect: true, url: "/pruebas/test-auth", user: null };
+    return { shouldRedirect: true, url: "/", user: null };
   }
 
   // Si requiere un rol específico y el usuario no lo tiene, redirigir a su dashboard correspondiente

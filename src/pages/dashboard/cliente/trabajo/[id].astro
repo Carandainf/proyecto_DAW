@@ -94,7 +94,7 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
         </div>
         <div class="flex items-center gap-4">
           <a
-            href={`/api/download/${trabajo.id_archivo}`}
+            href={`/api/downloads/${trabajo.id_archivo}`}
             class="flex items-center gap-2 px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-black text-white uppercase tracking-widest transition-all"
           >
             <svg
@@ -244,9 +244,6 @@ if (!trabajo || (trabajo.id_usuario !== user.id && user.role !== "admin")) {
     }
   };
 
-  // Autoscroll al cargar
   window.addEventListener("load", scrollToBottom);
-
-  // Pequeño delay para asegurar renderizado de fuentes
   setTimeout(scrollToBottom, 300);
 </script>

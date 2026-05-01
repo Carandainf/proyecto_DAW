@@ -314,10 +314,24 @@ const historialCompleto = await prisma.archivo.findMany({
     doc.setTextColor(150);
     doc.text(`REPORTE DE SISTEMA - ${new Date().toLocaleString()}`, 15, 33);
 
+    // Obtener los datos de la tabla
     const visibleRows = Array.from(rows).filter((r) => r.style.display !== "none");
     const data = visibleRows.map((r) => {
       const cells = r.querySelectorAll("td");
-      return [cells[0].innerText, cells[1].innerText, cells[2].innerText, cells[3].innerText];
+
+      // Clonamos el contenido de la celda de cliente (índice 1) para no modificar la tabla real
+      const clientCell = cells[1].cloneNode(true);
+
+      // Eliminamos el div que contiene la inicial (el icono)
+      const iconDiv = clientCell.querySelector(".w-8.h-8");
+      if (iconDiv) iconDiv.remove();
+
+      return [
+        cells[0].innerText.trim(),
+        clientCell.innerText.trim(), // Aquí ya solo quedará el nombre
+        cells[2].innerText.trim(),
+        cells[3].innerText.trim(),
+      ];
     });
 
     doc.autoTable({

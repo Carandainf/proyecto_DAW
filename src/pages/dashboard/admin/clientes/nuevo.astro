@@ -159,6 +159,14 @@ await protectRoute(Astro.request, "admin");
   /** @type {HTMLElement} */
   const feedback = document.getElementById("feedback") as HTMLElement;
 
+  // Limpiar feedback al empezar a editar cualquier campo
+  form.addEventListener("input", () => {
+    if (feedback.classList.contains("block")) {
+      feedback.classList.remove("block");
+      feedback.classList.add("hidden");
+    }
+  });
+
   /**
    * Procesa el evento submit del formulario.
    * Envia los datos al endpoint de creación de clientes.

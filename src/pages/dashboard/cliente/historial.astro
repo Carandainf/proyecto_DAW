@@ -172,7 +172,7 @@ const todosLosTrabajos = await prisma.archivo.findMany({
                     <td class="p-6">
                       <div class="flex justify-end items-center gap-2">
                         <a
-                          href={`/api/download/${trabajo.id_archivo}`}
+                          href={`/api/downloads/${trabajo.id_archivo}`}
                           title="Descargar STL"
                           class="p-2.5 text-slate-500 hover:text-dent-accent hover:bg-dent-accent/10 rounded-xl transition-all"
                         >
