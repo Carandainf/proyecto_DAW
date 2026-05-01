@@ -1,0 +1,116 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="Centro de Ayuda - Área Cliente">
+  <main class="max-w-4xl mx-auto pt-24 px-6 mb-16">
+    <header class="mb-12 text-center">
+      <h1 class="text-4xl font-black uppercase tracking-tighter text-gradient">Centro de Ayuda</h1>
+      <p class="text-slate-400 mt-3 text-lg font-medium">
+        ¿Cómo podemos ayudarte hoy con tus archivos STL?
+      </p>
+    </header>
+
+    <div class="space-y-4">
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Cómo subo un nuevo trabajo?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4 leading-relaxed">
+          Dirígete al botón <strong>"Nuevo Pedido"</strong> en el menú lateral. Selecciona tu archivo
+          <code>.stl</code> o <code>.zip</code>, añade una descripción detallada de lo que necesitas
+          y pulsa "Enviar". El sistema te notificará cuando el laboratorio comience el proceso.
+        </div>
+      </details>
+
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Qué formatos de archivo aceptáis?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          Actualmente aceptamos principalmente archivos <strong>.STL</strong>. Si tienes varios
+          archivos o modelos complejos, te recomendamos comprimirlos en un archivo <strong
+            >.ZIP</strong
+          > para asegurar que la integridad de la malla 3D se mantenga durante la subida.
+        </div>
+      </details>
+
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Cómo reviso el estado de mi pedido?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          En tu Dashboard principal verás la tabla <strong>"Mis Trabajos"</strong>. El estado se
+          actualizará en tiempo real:
+          <ul class="list-disc ml-5 mt-2 space-y-1">
+            <li><em>Pendiente:</em> Recibido, esperando revisión.</li>
+            <li><em>En Proceso:</em> Estamos trabajando en tu modelo.</li>
+            <li><em>Completado:</em> Trabajo finalizado y listo.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Cómo contacto con el técnico?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          Cada pedido tiene su propio <strong>chat interno</strong>. Entra en el detalle del trabajo
+          y utiliza el cuadro de texto inferior para enviar mensajes directamente al técnico
+          encargado.
+        </div>
+      </details>
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          Seguridad y cierre de sesión
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          Para proteger tu cuenta, ten en cuenta lo siguiente:
+          <ul class="list-disc ml-5 mt-2 space-y-1">
+            <li>
+              <strong>Cierre de sesión:</strong> Si cierras la pestaña o el navegador sin usar el botón
+              <strong>"Salir"</strong>, tu sesión permanecerá activa.
+            </li>
+            <li>
+              <strong>Acceso automático:</strong> Al volver a entrar, el sistema te reconocerá automáticamente
+              sin pedirte usuario y contraseña.
+            </li>
+            <li>
+              <strong>Recomendación:</strong> Siempre utiliza el botón <strong>"Salir"</strong> de la
+              barra de navegación al terminar, especialmente si compartes el equipo.
+            </li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="mt-12 text-center">
+      <a href="/dashboard/cliente" class="btn-primary"> ← Volver al Dashboard </a>
+    </div>
+  </main>
+</Layout>

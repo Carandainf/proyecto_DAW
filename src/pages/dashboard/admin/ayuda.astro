@@ -1,0 +1,121 @@
+---
+import Layout from "@/layouts/Layout.astro";
+---
+
+<Layout title="Ayuda - Panel de Control">
+  <main class="max-w-4xl mx-auto pt-24 px-6 mb-12">
+    <header class="mb-12 text-center">
+      <h1 class="text-4xl font-black uppercase tracking-tighter text-gradient">
+        Centro de Soporte Admin
+      </h1>
+      <p class="text-slate-400 mt-3 text-lg font-medium">
+        Guía operativa para la gestión del laboratorio dental
+      </p>
+    </header>
+
+    <div class="space-y-4">
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Cómo registrar un nuevo usuario / dentista?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4 leading-relaxed">
+          Para dar de alta a un nuevo cliente:
+          <ol class="list-decimal ml-5 mt-2 space-y-1">
+            <li>Accede a la sección <strong>"Gestión Clientes"</strong> desde el Dashboard.</li>
+            <li>Pulsa el botón "Nuevo Registro".</li>
+            <li>Completa el formulario con el email profesional y la licencia.</li>
+            <li>El sistema enviará automáticamente una invitación al usuario.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Cómo cambio el estado de un pedido?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4 leading-relaxed">
+          Localiza el trabajo en la tabla del Dashboard. Haz clic en el selector de estado y elige
+          entre:
+          <ul class="list-disc ml-5 mt-2">
+            <li><strong>Pendiente:</strong> Recibido, esperando revisión técnica.</li>
+            <li><strong>En Proceso:</strong> Archivo enviado a impresión o fresado.</li>
+            <li><strong>Completado:</strong> Trabajo finalizado y listo para entrega.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          Gestión de Mensajes
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          Dentro de cada trabajo, utiliza el icono de chat para comunicarte directamente con el
+          cliente. Es la forma más eficiente de resolver dudas técnicas sobre los archivos .STL sin
+          salir de la plataforma.
+        </div>
+      </details>
+
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          ¿Cómo genero un informe PDF?
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          Accede a la pestaña de <strong>"Historial"</strong>. Verás un botón de <strong
+            >Exportar PDF</strong
+          >. Esto generará un documento con todos los registros filtrados visibles en ese momento.
+        </div>
+      </details>
+      <details
+        class="group bg-dent-card border border-dent-border rounded-xl p-5 hover:border-dent-accent transition-all duration-300"
+      >
+        <summary
+          class="font-bold text-dent-dark text-lg cursor-pointer list-none flex justify-between items-center"
+        >
+          Seguridad y cierre de sesión
+          <span class="transition group-open:rotate-180 text-dent-accent">▼</span>
+        </summary>
+        <div class="text-slate-500 mt-4 border-t border-dent-border pt-4">
+          Para proteger tu cuenta, ten en cuenta lo siguiente:
+          <ul class="list-disc ml-5 mt-2 space-y-1">
+            <li>
+              <strong>Cierre de sesión:</strong> Si cierras la pestaña o el navegador sin usar el botón
+              <strong>"Salir"</strong>, tu sesión permanecerá activa.
+            </li>
+            <li>
+              <strong>Acceso automático:</strong> Al volver a entrar, el sistema te reconocerá automáticamente
+              sin pedirte usuario y contraseña.
+            </li>
+            <li>
+              <strong>Recomendación:</strong> Siempre utiliza el botón <strong>"Salir"</strong> de la
+              barra de navegación al terminar, especialmente si compartes el equipo.
+            </li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="mt-12 text-center">
+      <a href="/dashboard/admin" class="btn-primary"> ← Volver al Dashboard </a>
+    </div>
+  </main>
+</Layout>

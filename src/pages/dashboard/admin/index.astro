@@ -110,6 +110,26 @@ const totalTrabajosActivos = trabajosActivos.length;
           <span class="text-xs font-black uppercase tracking-widest">Historial</span>
         </a>
 
+        <a
+          href="/dashboard/admin/contactos-historial"
+          class="btn-secondary !text-amber-500 !border-amber-500/30 hover:!bg-amber-500/10 px-5 py-3"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+          >
+            <path d="M21 8V21H3V8"></path>
+            <path d="M1 3H23V8H1V3Z"></path>
+            <path d="M10 12H14"></path>
+          </svg>
+          <span class="text-xs font-black uppercase tracking-widest">Archivo Mensajes</span>
+        </a>
+
         <div
           class="bg-dent-card border border-dent-border px-6 py-2 rounded-2xl shadow-xl border-l-4 border-l-dent-accent"
         >
@@ -180,6 +200,26 @@ const totalTrabajosActivos = trabajosActivos.length;
               ))
             )
           }
+        </div>
+        <div class="mt-6 pt-4 border-t border-dent-border/50">
+          <a
+            href="/dashboard/admin/contactos-historial"
+            class="flex items-center justify-center gap-2 text-[10px] font-black text-slate-500 hover:text-amber-500 transition-colors uppercase tracking-[0.2em] group"
+          >
+            Ver mensajes archivados
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              class="group-hover:translate-x-1 transition-transform"
+            >
+              <path d="M5 12h14m-7-7 7 7-7 7"></path>
+            </svg>
+          </a>
         </div>
       </section>
 

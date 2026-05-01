@@ -92,25 +92,30 @@ await protectRoute(Astro.request, "admin");
           />
         </div>
 
-        <div class="group/input space-y-3">
-          <label
-            class="block text-[10px] uppercase font-black text-slate-500 ml-2 tracking-widest group-focus-within/input:text-dent-accent transition-colors"
-          >
-            Contraseña Temporal
-          </label>
-          <input
-            name="password"
-            type="password"
-            placeholder="••••••••••••"
-            required
-            class="w-full bg-slate-900/40 border border-white/5 text-white p-6 rounded-2xl outline-none focus:border-dent-accent/50 focus:ring-8 focus:ring-dent-accent/5 transition-all font-medium placeholder:text-slate-700 shadow-inner"
-          />
-          <p
-            class="text-[9px] text-slate-600 font-bold uppercase tracking-tight ml-2 italic leading-relaxed"
-          >
-            * El cliente recibirá un email con este acceso y podrá restablecerlo <br /> mediante la opción
-            "He olvidado mi contraseña" en el login.
-          </p>
+        <div class="p-5 rounded-2xl bg-dent-accent/5 border border-dent-accent/10 shadow-inner">
+          <div class="flex gap-3 items-start">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="text-dent-accent shrink-0 mt-0.5"
+              ><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path
+                d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg
+            >
+            <p
+              class="text-[10px] text-dent-accent font-bold uppercase tracking-[0.1em] leading-relaxed"
+            >
+              * El sistema asignará una clave cifrada inaccesible por seguridad.<br /><br />
+              El cliente recibirá automáticamente un email con un enlace único (válido por 1 hora) para
+              configurar su propia contraseña y desbloquear su cuenta.
+            </p>
+          </div>
         </div>
 
         <button
