@@ -8,7 +8,6 @@ const { shouldRedirect, url, user: adminUser } = await protectRoute(Astro.reques
 if (shouldRedirect) return Astro.redirect(url);
 
 // 2. Traemos los contactos YA GESTIONADOS (leido: true)
-// Incluimos al admin para saber quién lo marcó como leído
 const contactosArchivados = await prisma.contacto.findMany({
   where: { leido: true },
   include: { admin: true },
@@ -67,13 +66,13 @@ const contactosArchivados = await prisma.contacto.findMany({
             type="text"
             id="searchBox"
             placeholder="BUSCAR POR NOMBRE O ASUNTO..."
-            class="bg-dent-card border border-dent-border rounded-full pl-10 pr-6 py-3 text-[10px] font-black text-white outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all placeholder:text-slate-600 w-full sm:w-[280px] uppercase tracking-widest"
+            class="bg-dent-card border border-dent-border rounded-full pl-10 pr-6 py-3 text-[11px] font-black text-white outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all placeholder:text-slate-600 w-full sm:w-[280px] uppercase tracking-widest"
           />
         </div>
 
         <button
           id="downloadPDF"
-          class="bg-amber-500 hover:bg-amber-400 hover:shadow-amber-500/40 text-black px-8 py-3 rounded-full font-black text-[10px] tracking-widest transition-all shadow-xl shadow-amber-500/10 flex items-center justify-center gap-2 uppercase group w-full sm:w-auto"
+          class="bg-amber-500 hover:bg-amber-400 hover:shadow-amber-500/40 text-black px-8 py-3 rounded-full font-black text-[11px] tracking-widest transition-all shadow-xl shadow-amber-500/10 flex items-center justify-center gap-2 uppercase group w-full sm:w-auto"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -102,23 +101,23 @@ const contactosArchivados = await prisma.contacto.findMany({
           <thead>
             <tr class="bg-slate-950 border-b border-dent-border/50">
               <th
-                class="p-6 text-[11px] font-black text-white uppercase tracking-[0.2em] opacity-90"
+                class="p-6 text-[12px] font-black text-white uppercase tracking-[0.2em] opacity-90 w-[120px]"
                 >Recibido</th
               >
               <th
-                class="p-6 text-[11px] font-black text-white uppercase tracking-[0.2em] opacity-90"
+                class="p-6 text-[12px] font-black text-white uppercase tracking-[0.2em] opacity-90"
                 >Cliente / Email</th
               >
               <th
-                class="p-6 text-[11px] font-black text-white uppercase tracking-[0.2em] opacity-90"
+                class="p-6 text-[12px] font-black text-white uppercase tracking-[0.2em] opacity-90"
                 >Asunto</th
               >
               <th
-                class="p-6 text-[11px] font-black text-white uppercase tracking-[0.2em] opacity-90"
+                class="p-6 text-[12px] font-black text-white uppercase tracking-[0.2em] opacity-90 w-[180px]"
                 >Gestionado por</th
               >
               <th
-                class="p-6 text-[11px] font-black text-white uppercase tracking-[0.2em] text-right opacity-90"
+                class="p-6 text-[12px] font-black text-white uppercase tracking-[0.2em] text-right opacity-90 w-[100px]"
                 >Acciones</th
               >
             </tr>
@@ -139,10 +138,10 @@ const contactosArchivados = await prisma.contacto.findMany({
                   >
                     <td class="p-6">
                       <div class="flex flex-col">
-                        <span class="text-xs font-bold text-slate-400 font-mono">
+                        <span class="text-sm font-bold text-slate-400 font-mono">
                           {new Date(c.fecha_envio).toLocaleDateString("es-ES")}
                         </span>
-                        <span class="text-[9px] text-slate-600 font-bold uppercase tracking-tighter">
+                        <span class="text-[10px] text-slate-600 font-bold uppercase tracking-tighter">
                           {new Date(c.fecha_envio).toLocaleTimeString("es-ES", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -151,33 +150,33 @@ const contactosArchivados = await prisma.contacto.findMany({
                       </div>
                     </td>
                     <td class="p-6">
-                      <div class="flex flex-col">
-                        <span class="text-xs font-black text-white uppercase tracking-tight group-hover:text-amber-500 transition-colors">
+                      <div class="flex flex-col gap-0.5">
+                        <span class="text-sm font-black text-white uppercase tracking-tight group-hover:text-amber-500 transition-colors leading-none">
                           {c.nombre}
                         </span>
-                        <span class="text-[10px] text-slate-500 font-medium lowercase">
+                        <span class="text-[11px] text-slate-500 font-medium lowercase leading-none">
                           {c.email}
                         </span>
                       </div>
                     </td>
                     <td class="p-6">
-                      <p class="text-xs text-slate-200 font-bold max-w-[200px] truncate">
+                      <p class="text-sm text-slate-200 font-bold max-w-[200px] truncate">
                         {c.asunto}
                       </p>
-                      <p class="text-[10px] text-slate-500 italic line-clamp-1">"{c.mensaje}"</p>
+                      <p class="text-[11px] text-slate-500 italic line-clamp-1">"{c.mensaje}"</p>
                     </td>
                     <td class="p-6">
                       {c.admin ? (
-                        <div class="flex items-center gap-2">
-                          <div class="w-5 h-5 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-[8px] text-slate-400">
+                        <div class="flex items-center gap-2 admin-cell-content">
+                          <div class="w-6 h-6 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-[9px] text-slate-400 admin-icon">
                             {c.admin.name?.charAt(0)}
                           </div>
-                          <span class="text-[10px] font-bold text-slate-400 uppercase">
+                          <span class="text-[11px] font-bold text-slate-400 uppercase admin-name">
                             {c.admin.name.split(" ")[0]}
                           </span>
                         </div>
                       ) : (
-                        <span class="text-[9px] text-slate-600 italic">Auto-archivado</span>
+                        <span class="text-[10px] text-slate-600 italic">Auto-archivado</span>
                       )}
                     </td>
                     <td class="p-6">
@@ -197,10 +196,8 @@ const contactosArchivados = await prisma.contacto.findMany({
                             stroke="currentColor"
                             stroke-width="2.5"
                           >
-                            <>
-                              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </>
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                            <circle cx="12" cy="12" r="3" />
                           </svg>
                         </button>
                       </div>
@@ -253,7 +250,11 @@ const contactosArchivados = await prisma.contacto.findMany({
 ></script>
 
 <script>
-  // Lógica de Filtro
+  /**
+   * @description Filtra dinámicamente las filas de la tabla según el input de búsqueda.
+   * @author Gemini
+   * @version 1.1
+   */
   const searchBox = document.getElementById("searchBox");
   const rows = document.querySelectorAll(".contact-row");
 
@@ -265,7 +266,9 @@ const contactosArchivados = await prisma.contacto.findMany({
     });
   });
 
-  // Lógica de Modal
+  /**
+   * @description Gestiona la apertura y cierre del modal de visualización de mensajes.
+   */
   const modal = document.getElementById("viewModal");
   const modalName = document.getElementById("modalName");
   const modalDate = document.getElementById("modalDate");
@@ -284,35 +287,53 @@ const contactosArchivados = await prisma.contacto.findMany({
     modal?.classList.replace("flex", "hidden");
   });
 
-  // Exportar PDF (Especial para Contactos)
+  /**
+   * @description Genera un archivo PDF con los registros visibles de la tabla.
+   * Aplica estilos personalizados para las celdas multi-línea y el esquema de colores corporativo.
+   */
   document.getElementById("downloadPDF")?.addEventListener("click", () => {
     const { jsPDF } = (window as any).jspdf;
     const doc = new jsPDF();
 
+    // Fondo del encabezado PDF
     doc.setFillColor(2, 6, 23);
     doc.rect(0, 0, 210, 40, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
-    doc.setTextColor(245, 158, 11); // Color Amber
+    doc.setTextColor(245, 158, 11);
     doc.text("LOG DE CONTACTOS ARCHIVADOS", 15, 25);
 
     const visibleRows = Array.from(rows).filter((r: any) => r.style.display !== "none");
+
     const data = visibleRows.map((r: any) => {
       const cells = r.querySelectorAll("td");
+
+      // Limpieza de la celda "Gestionado por" para evitar iconos en el texto
+      const managedCell = cells[3].cloneNode(true) as HTMLElement;
+      const iconDiv = managedCell.querySelector(".w-5.h-5, .w-6.h-6");
+      if (iconDiv) iconDiv.remove();
+
       return [
-        cells[0].innerText.replace("\n", " ").trim(),
-        cells[1].innerText.replace("\n", " ").trim(),
-        cells[2].innerText.split("\n")[0].trim(), // Solo el asunto
-        cells[3].innerText.trim(),
+        cells[0].innerText.trim(),
+        cells[1].innerText.trim(), // Nombre y Email en dos líneas
+        cells[2].innerText.split("\n")[0].trim(),
+        managedCell.innerText.trim(),
       ];
     });
 
     (doc as any).autoTable({
       startY: 50,
-      head: [["FECHA", "CLIENTE/EMAIL", "ASUNTO", "GESTIONADO POR"]],
+      head: [["FECHA", "CLIENTE / EMAIL", "ASUNTO", "GESTIONADO POR"]],
       body: data,
       theme: "grid",
-      headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0] },
+      styles: { fontSize: 8, cellPadding: 4 },
+      headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0], fontStyle: "bold" },
+      columnStyles: {
+        0: { cellWidth: 25 },
+        1: { cellWidth: 65 }, // Le damos el ancho mayor a Cliente/Email
+        2: { cellWidth: 60 },
+        3: { cellWidth: 35 },
+      },
     });
 
     doc.save(`Contactos_Archivados_${Date.now()}.pdf`);
