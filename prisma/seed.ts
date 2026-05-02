@@ -71,7 +71,7 @@ async function main() {
       {
         id_usuario: cliente1.id,
         nombre_archivo: "puente_molar_16.stl",
-        url_path: "/uploads/puente_molar_16.stl", // <-- RUTA SIMULADA AÑADIDA AUNQUE EL ARCHIVO NO EXISTA
+        url_path: "/uploads/puente_molar_16.stl", // <-- RUTA SIMULADA AÑADIDA
         estado: "completado",
         prioridad: "normal",
         descripcion: "Caso terminado con éxito",
@@ -79,7 +79,7 @@ async function main() {
       {
         id_usuario: cliente1.id,
         nombre_archivo: "ferula_ajuste.stl",
-        url_path: "/uploads/ferula_ajuste.stl", // <-- RUTA SIMULADA AÑADIDA AUNQUE EL ARCHIVO NO EXISTA
+        url_path: "/uploads/ferula_ajuste.stl", // <-- RUTA SIMULADA AÑADIDA
         estado: "en_proceso",
         prioridad: "urgente",
         descripcion: "Ajustar grosor a 2mm",
@@ -87,7 +87,7 @@ async function main() {
       {
         id_usuario: cliente2.id,
         nombre_archivo: "arcada_completa.stl",
-        url_path: "/uploads/arcada_completa.stl", // <-- RUTA SIMULADA AÑADIDA AUNQUE EL ARCHIVO NO EXISTA
+        url_path: "/uploads/arcada_completa.stl", // <-- RUTA SIMULADA AÑADIDA
         estado: "pendiente",
         prioridad: "urgente",
         descripcion: "Paciente en espera",
@@ -95,21 +95,21 @@ async function main() {
       {
         id_usuario: cliente2.id,
         nombre_archivo: "inlay_molar_36.stl",
-        url_path: "/uploads/inlay_molar_36.stl", // <-- RUTA SIMULADA AÑADIDA AUNQUE EL ARCHIVO NO EXISTA
+        url_path: "/uploads/inlay_molar_36.stl", // <-- RUTA SIMULADA AÑADIDA
         estado: "completado",
         prioridad: "normal",
       },
       {
         id_usuario: cliente3.id,
         nombre_archivo: "protesis_inf.stl",
-        url_path: "/uploads/protesis_inf.stl", // <-- RUTA SIMULADA AÑADIDA AUNQUE EL ARCHIVO NO EXISTA
+        url_path: "/uploads/protesis_inf.stl", // <-- RUTA SIMULADA AÑADIDA
         estado: "en_proceso",
         prioridad: "normal",
       },
       {
         id_usuario: cliente3.id,
         nombre_archivo: "corona_v2.stl",
-        url_path: "/uploads/corona_v2.stl", // <-- RUTA SIMULADA AÑADIDA  AUNQUE EL ARCHIVO NO EXISTA
+        url_path: "/uploads/corona_v2.stl", // <-- RUTA SIMULADA AÑADIDA
         estado: "pendiente",
         prioridad: "normal",
       },
