@@ -8,16 +8,17 @@
 
 # 📦 Stack Tecnológico
 
-| Tecnología   | Versión | Uso                                       |
-| ------------ | ------- | ----------------------------------------- |
-| Astro        | 5.x     | Framework principal con renderizado SSR   |
-| TypeScript   | Última  | Tipado estricto en toda la aplicación     |
-| Tailwind CSS | 4.x     | Sistema de estilos nativo y variables CSS |
-| Prisma       | 7.x     | ORM para acceso a SQLite                  |
-| Better Auth  | 1.5.x   | Autenticación, sesión y RBAC              |
-| jsPDF        | Última  | Generación de informes PDF en cliente     |
-| SQLite       | 3.x     | Base de datos relacional ligera           |
-| NodeMailer   | Última  | Motor de notificaciones por email         |
+| Tecnología   | Versión | Uso                                              |
+| ------------ | ------- | ------------------------------------------------ |
+| Astro        | 5.x     | Framework principal con renderizado SSR          |
+| TypeScript   | Última  | Tipado estricto en toda la aplicación            |
+| Tailwind CSS | 4.x     | Sistema de estilos nativo y variables CSS        |
+| Prisma       | 7.x     | ORM para acceso a SQLite (Local)                 |
+| Better Auth  | 1.5.x   | Autenticación, sesión y RBAC                     |
+| jsPDF        | Última  | Generación de informes PDF en cliente            |
+| SQLite       | 3.x     | Base de datos relacional ligera. En local        |
+| PostgreSQL   | 16.x    | Base de datos relacional. En producción (Vercel) |
+| NodeMailer   | Última  | Motor de notificaciones por email                |
 
 ---
 
@@ -51,11 +52,11 @@ C. Capa de Seguridad (Multi-nivel)
 
       Acceso: Cookies httpOnly gestionadas por Better Auth.
 
-D. Capa de Datos (Prisma + SQLite)
+D. Capa de Datos (Prisma + SQLite) en local y (Prisma + PostgreSQL) en producción.
 
       Patrón Singleton: Garantiza una única instancia de conexión a la base de datos.
 
-      Esquema Relacional: Trazabilidad completa entre el usuario facultativo y sus archivos/mensajes.
+      Esquema Relacional: Trazabilidad completa entre el usuario facultativo y sus archivos y/o mensajes. En producción alojado en Vercel Blob.
 
 ---
 
@@ -63,7 +64,7 @@ D. Capa de Datos (Prisma + SQLite)
 
 El control de acceso se centraliza mediante:
 
-```ts
+````ts
 protectRoute(request, role)
 
 Niveles de validación
@@ -78,29 +79,56 @@ user	/dashboard/cliente	Acceso a sus pedidos
 público	/	Formulario con Honeypot
 
 # 3. 📂 Estructura del Proyecto
-proyecto_DAW/
+
+```text
+/
+├── prisma/
+│   └── schema.prisma       # Esquema relacional (PostgreSQL)
+│
+├── public/
+│   └── uploads/            # Almacenamiento de archivos STL
+│
 ├── src/
 │   ├── components/
 │   │   ├── ContactForm.astro
+│   │   ├── Faq.astro            # Nueva sección de ayuda
 │   │   ├── Footer.astro
-│   │   └── Navbar.astro
+│   │   ├── Hero.astro           # Componente principal de entrada
+│   │   ├── LoginForm.astro
+│   │   ├── Navbar.astro
+│   │   ├── ServiciosBento.astro # Layout tipo Bento para servicios
+│   │   ├── TeamBento.astro      # Layout tipo Bento para el equipo
+│   │   └── TechStack.astro      # Visualización del stack tecnológico
+│   │
+│   ├── layouts/
+│   │   └── Layout.astro
 │   │
 │   ├── lib/
-│   │   ├── auth.ts
-│   │   └── prisma.ts
+│   │   ├── prisma.ts           # Cliente Prisma (PostgreSQL)
+│   │   ├── auth.ts             # Configuración Servidor Better-Auth
+│   │   └── auth-client.ts      # Cliente de autenticación
 │   │
 │   ├── pages/
-│   │   ├── api/
-│   │   │   ├── contacto/enviar.ts
-│   │   │   └── upload.ts
-│   │   │
+│   │   ├── api/                # Endpoints (Auth, Upload, Contacto)
 │   │   ├── dashboard/
-│   │   ├── privacidad.astro
+│   │   │   ├── admin/          # Gestión laboratorio
+│   │   │   └── cliente/        # Área privada dentistas
+│   │   ├── index.astro         # Landing principal
+│   │   ├── 404.astro
 │   │   ├── aviso-legal.astro
-│   │   └── cookies.astro
+│   │   ├── cookies.astro
+│   │   ├── forgot-password.astro
+│   │   ├── privacidad.astro
+│   │   └── reset-password.astro
+│   │
+│   ├── styles/
+│   │   └── global.css
+│   └── types/                  # Definiciones de tipos (TS)
 │
-└── prisma/
-    └── schema.prisma
+├── astro.config.mjs
+├── package.json
+└── README.md
+````
 
 # 4. 🗄️ Modelo de Datos y Trazabilidad
 
@@ -127,19 +155,26 @@ Cumplimiento normativo integrado en el diseño:
     Cookies: Sistema de identidad basado únicamente en cookies técnicas esenciales.
 
 # 6. 🚀 Estado de la Implementación
-Área	                      Estado	          Detalle
-Autenticación (RBAC)        ✅ Completado     Registro, Login y Roles operativos.
-Dashboards (Admin/User)     ✅ Completado     Paneles funcionales y vinculados a DB.
-Seguridad de Archivos       ✅ Completado     Validación de tamaño, tipo y sanitización.
-Sistema de Contacto         ✅ Completado     Honeypot + Integración Nodemailer.
-Arquitectura Legal          ✅ Completado     Footer condicional y textos legales.
-Refinamiento UI             🚧 En proceso     Pulido estético de la landing page.
-UX de Transferencia         📅 Planificado     Barras de progreso para subida de STL.
+
+Área Estado Detalle
+Autenticación (RBAC) ✅ Completado Registro, Login y Roles operativos.
+Dashboards (Admin/User) ✅ Completado Paneles funcionales y vinculados a DB.
+Seguridad de Archivos ✅ Completado Validación de tamaño, tipo y sanitización.
+Sistema de Contacto ✅ Completado Honeypot + Integración Nodemailer.
+Arquitectura Legal ✅ Completado Footer condicional y textos legales.
+Refinamiento UI ✅ Completado Pulido estético de la landing page.
+Base de datos ✅ Completado Conexión a PostgreSQL y Vercel Blob.
+UX de Transferencia 📅 Planificado Barras de progreso para subida de STL.
 
 # 📎 Resumen Arquitectónico
-Frontend           → Astro (SSR) + Tailwind 4 + TypeScript
-Backend            → API Routes (Node.js) + NodeMailer
-Auth               → Better Auth + RBAC
-Security           → Honeypot + Middlewares
-Persistencia       → Prisma ORM + SQLite
+
+Frontend → Astro (SSR) + Tailwind 4 + TypeScript
+Backend → API Routes (Node.js) + NodeMailer
+Auth → Better Auth + RBAC
+Security → Honeypot + Middlewares
+Persistencia → Prisma ORM + SQLite --->Local
+Persistencia → Prisma ORM + PostgreSQL (Vercel Postgres) ---> Producción
+
+```
+
 ```

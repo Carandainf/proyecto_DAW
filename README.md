@@ -18,6 +18,7 @@
 | Better Auth  | 1.5.x   | Autenticación + RBAC                                        |
 | Node.js      | >=20.19 | Runtime de ejecución                                        |
 | NodeMailer   | Última  | Motor de notificaciones por email                           |
+| PostgreSQL   | 16.x    | Base de datos relacional en la nube (Vercel)                |
 
 ---
 
@@ -42,8 +43,10 @@ SERVIDOR (Astro SSR en Node.js)
 ▼
 DATOS Y PERSISTENCIA
 │
-├── SQLite (Persistencia relacional)
-└── Local Storage (/public/uploads con sanitización de nombres)
+├── SQLite (Persistencia relacional. Usada en Local)
+├── PostgreSQL (Base de datos relacional en la nube (Vercel). Usada en producción)
+├── Local Storage (/public/uploads con sanitización de nombres). Usada en Local
+└── Local Storage (Vercel Blob o File System según entorno)
 ```
 
 # 📂 Estructura del Proyecto
@@ -156,20 +159,23 @@ El esquema de base de datos permite un seguimiento completo del flujo de trabajo
    cd proyecto_DAW
 2. Instalar dependencias
    npm install
-3. Variables de entorno
-   DATABASE_URL="file:./prisma/dev.db"
-   BETTER_AUTH_SECRET="un_secreto_aleatorio_muy_largo"
-   BETTER_AUTH_URL="http://localhost:4321"
-   # Configuración SMTP para bienvenida de correos
-   SMTP_HOST="tu_servidor_smtp"
+3. Variables de entorno (Crear archivo .env)
+   DATABASE_URL="tu_url_de_conexion_postgres"
+   BETTER_AUTH_SECRET="tu_secreto_largo"
+   BETTER_AUTH_URL="https://tu-proyecto.vercel.app"
+   # Configuración SMTP
+   SMTP_HOST="..."
    SMTP_PORT=465
-   SMTP_USER="usuario@correo.com"
-   SMTP_PASS="password"
-4. Base de datos
+   SMTP_USER="..."
+   SMTP_PASS="..."
+4. Base de datos (Local)
    npx prisma db push
    npx prisma generate
-5. Desarrollo
-   npm run dev
+5. Despliegue en Vercel
+   - Conectar repositorio a Vercel.
+   - Configurar Vercel Postgres en el dashboard.
+   - Añadir las variables de entorno en "Settings > Environment Variables".
+   - Vercel ejecutará automáticamente `npm run build`.
 
 # ⚡ Comandos de Utilidad
 
@@ -215,11 +221,15 @@ Configuración CSS-first sin plugins adicionales en Astro:
 
     [x] Notificaciones por Email: Configuración de Nodemailer para envíos profesionales de configuración de cuenta.
 
+    [x] Migración a PostgreSQL: Adaptación de esquema y despliegue nativo en Vercel.
+
+    [x] Despliegue en Producción (Vercel): Configuración de entorno Serverless y variables de entorno.
+
 # En progreso
 
-[ ] Diseño Visual de la Web: Refinamiento estético del Hero y secciones informativas para el usuario ocasional.
+[x] Diseño Visual de la Web: Refinamiento estético del Hero y secciones informativas para el usuario ocasional.
 
-[ ] Optimización UX en Transferencias: Estudio e implementación de indicadores de progreso (barras de carga) para subida y descarga de archivos pesados (STL).
+[x] Optimización UX en Transferencias: Estudio e implementación de indicadores de progreso (barras de carga) para subida y descarga de archivos pesados (STL).
 
 [ ] Mejora de Reactividad: Investigación de alternativas ligeras para la actualización de mensajes sin recarga completa de página (evitando sobreingeniería).
 
@@ -251,9 +261,13 @@ Para profundizar en los detalles de implementación y diseño, consulta los sigu
 
     Auth: Better Auth + RBAC (Roles) + Middleware.
 
-    ORM/DB: Prisma 7 + SQLite (better-sqlite3).
+    ORM/DB: Prisma 7 + SQLite (better-sqlite3). En local
 
-    Storage: File System local con sanitización y validación de metadatos.
+    ORM/DB: Prisma 7 + PostgreSQL (Vercel Postgres). En producción
+
+    Storage: File System local con sanitización y validación de metadatos. En local
+
+    Storage: Vercel Blob o File System según entorno. En Vercel
 
     Seguridad: protectRoute (Servidor) + Honeypot (Cliente) + CSRF Protection.
 

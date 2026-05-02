@@ -6,6 +6,49 @@ El formato está inspirado en Keep a Changelog y versionado semántico.
 
 ---
 
+# [0.9.5] - 2026-05-02
+
+## Añadido
+
+- **Infraestructura Cloud (Vercel)**:
+  - Despliegue oficial en Vercel bajo el plan Hobby.
+  - Migración de base de datos de `SQLite` a `PostgreSQL` (Vercel Postgres/Neon).
+  - Configuración de variables de entorno seguras (SMTP, Auth Secret, Database URL).
+- **Control de Versiones para Producción**:
+  - Creación de rama específica `deploy-vercel` para separar el entorno local del entorno de producción.
+- **Auditoría Documental**:
+  - Actualización masiva de `README.md`, `DEV_NOTES.md`, `PROJECT_ARCHITECTURE.md` y `DATABASE_DESIGN.md` para reflejar el stack final de producción.
+
+## Corregido
+
+- **Compatibilidad de Entorno**: Solucionado el conflicto de saltos de línea (CRLF/LF) mediante la configuración de `core.autocrlf` en Git para asegurar builds limpios en Vercel (Linux).
+
+---
+
+# [0.9.2] - 2026-04-30
+
+## Añadido
+
+- **Centro de Ayuda y Soporte**:
+  - Implementación de `Faq.astro` con sistema de acordeones para resolver dudas frecuentes de los dentistas.
+- **Flujo de Recuperación de Identidad**:
+  - Creación de páginas `forgot-password.astro` y `reset-password.astro` para completar el ciclo de seguridad de Better Auth.
+- **Rediseño de Landing Page (UI Avanzada)**:
+  - `Hero.astro`: Nuevo diseño de impacto visual para la cabecera.
+  - `ServiciosBento.astro`: Presentación de servicios del laboratorio mediante rejilla Bento.
+  - `TeamBento.astro`: Sección de equipo con diseño moderno y minimalista.
+  - `TechStack.astro`: Componente informativo que muestra las tecnologías del proyecto (Astro, Prisma, etc.).
+- **Gestión de Errores**:
+  - Creación de página `404.astro` personalizada para redirigir a los usuarios perdidos de vuelta al inicio.
+
+## Cambiado
+
+- **Refinamiento Estético**:
+  - Ajuste de tipografías globales y espaciados en Tailwind 4 para mejorar la legibilidad en resoluciones móviles.
+  - Optimización de carga de fuentes locales ("Inter Variable") para evitar el layout shift.
+
+---
+
 # [0.9.0] - 2026-04-23
 
 ## Añadido

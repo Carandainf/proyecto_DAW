@@ -8,12 +8,13 @@
 
 # 📦 Stack Tecnológico de Datos
 
-| Tecnología      | Versión | Motivo                                                      |
-| --------------- | ------- | ----------------------------------------------------------- |
-| `SQLite`        | Última  | Base de datos relacional ligera y portable para entorno DAW |
-| `Prisma`        | `7.6.x` | ORM con tipado estricto y sincronización con TypeScript     |
-| `Better Auth`   | `1.5.x` | Gestión de identidad con esquema extendido para roles       |
-| `Prisma Studio` | Última  | Inspección y depuración visual de registros                 |
+| Tecnología      | Versión | Motivo                                                        |
+| --------------- | ------- | ------------------------------------------------------------- |
+| `SQLite`        | Última  | Base de datos relacional ligera y portable para entorno DAW   |
+| `Prisma`        | `7.6.x` | ORM con tipado estricto y sincronización con TypeScript       |
+| `Better Auth`   | `1.5.x` | Gestión de identidad con esquema extendido para roles         |
+| `Prisma Studio` | Última  | Inspección y depuración visual de registros                   |
+| `PostgreSQL`    | 16.x    | Base de datos relacional robusta en Vercel (Neon). Producción |
 
 ---
 

@@ -10,15 +10,16 @@
 
 ```text
 
-| Fecha | Versión  | Descripción |
-| ----- | -------- | ----------- |
-|23/04/2026	|v0.8.5|	UX y Comunicaciones. Integración de Nodemailer para envíos SMTP. Refuerzo de seguridad en subida de archivos  (límites   de  20MB y validación de extensiones).|
-|12/04/2026 |v0.8.5|Sºeguridad y Layout. Implementado sistema Honeypot anti-spam. Corrección de arquitectura de Layout (Flexbox Sticky        Footer). Creación de rutas legales dinámicas y condicionales.|
-|10/04/2026 |v0.8.0|"Trazabilidad Admin. Extensión del esquema Prisma para tracking de gestión de mensajes (id_admin, fecha_gestion).|
-|07/04/2026 |v0.7.0| Documentación y DX. Implementada exportación a PDF corporativo con `jsPDF`, configuración avanzada de entorno (`Prettier` + `Astro`) y resolución de conflictos de tipos en formularios. |
-|05/04/2026 |v0.6.0| Gestión de archivos. Implementado endpoint de subida STL, almacenamiento físico en `/public/uploads` y vinculación con ID de usuario. |
-|03/04/2026 |v0.5.0| Middleware y roles. Implementada protección `protectRoute`, navbar dinámico y redirecciones automáticas según rol (`Admin` / `Cliente`). |
-|01/04/2026 |v0.4.0| Bento Grid. Interfaz adaptativa en `/test-auth`, corrección de botones y visualización JSON en tiempo real. |
+| Fecha      | Versión | Descripción                                                           |
+| :---       | :---    | :---------------------------------------------------------------------|
+| 02/05/2026 | v0.9.0  | Despliegue en Producción.** Migración de SQLite a PostgreSQL (Vercel  Postgres). Configuración de variables de entorno para entorno Serverless.                      |
+| 23/04/2026 | v0.8.5  | UX y Comunicaciones. Integración de Nodemailer para envíos SMTP. Refuerzo de seguridad en subida de archivos (límites de 20MB y validación de extensiones).     |
+| 12/04/2026 | v0.8.5  | Seguridad y Layout. Implementado sistema Honeypot anti-spam. Corrección de arquitectura de Layout (Flexbox Sticky Footer). Creación de rutas legales dinámicas y condicionales.                                                                     |
+| 10/04/2026 | v0.8.0  | Trazabilidad Admin. Extensión del esquema Prisma para tracking de gestión de mensajes (id_admin, fecha_gestion).                                                 |
+| 07/04/2026 | v0.7.0  | Documentación y DX. Implementada exportación a PDF corporativo con `jsPDF`, configuración avanzada de entorno (`Prettier` + `Astro`) y resolución de conflictos de tipos en formularios.                                                                          |
+| 05/04/2026 | v0.6.0 | Gestión de archivos. Implementado endpoint de subida STL, almacenamiento físico en `/public/uploads` y vinculación con ID de usuario.                    |
+| 03/04/2026 | v0.5.0 | Middleware y roles. Implementada protección `protectRoute`, navbar dinámico y redirecciones automáticas según rol (`Admin` / `Cliente`).                          |
+| 01/04/2026 | v0.4.0 | Bento Grid. Interfaz adaptativa en `/test-auth`, corrección de botones y visualización JSON en tiempo real.                                                           |
 
 ```
 
@@ -71,7 +72,8 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
+// En producción la conexión ahora utiliza el adapter nativo de PostgreSQL para Vercel
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({});
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
@@ -340,7 +342,8 @@ Implementación Técnica
     const honey = formData.get("fax_number");
     if (honey) return new Response("Bot detectado", { status: 400 });
     ```
-    ---
+
+---
 
 # 10. 📐 Solución de Layout y Renderizado (Slots)
 
@@ -362,30 +365,77 @@ Fragmento de código:
 
 Para evitar que el footer flote en mitad de la pantalla en páginas con poco contenido (como las legales), se aplicó la siguiente estructura en Layout.astro:
 
-````html
+```html
 <body class="flex flex-col min-h-screen">
   <div class="flex-grow">
     <slot />
   </div>
   <footer />
 </body>
+```
 
---- # 11. ⚖️ Gestión de Rutas Legales Se ha implementado una lógica de filtrado de rutas en el
-Layout principal para ocultar componentes innecesarios en páginas de lectura legal (Aviso Legal,
-Privacidad, Cookies). # Lógica Condicional ```typescript const legalPaths = ["/privacidad",
-"/aviso-legal", "/cookies"]; const isLegalPage = legalPaths.includes(Astro.url.pathname); # Esto
-permite renderizar un footer simplificado o directamente eliminarlo para mejorar la UX en documentos
-oficiales. --- # 12. 📋 Troubleshooting de Base de Datos ## Error de Conexión en Desarrollo Si al
-realizar cambios en el esquema Prisma (npx prisma db push) los tipos de TypeScript no se actualizan
-en VS Code: Comando de rescate: ```bash npx prisma generate Y reiniciar el Language Server de
-TypeScript en el IDE (Cmd/Ctrl + Shift + P -> Restart TS Server). # 📎 Resumen Técnico ```text
-Frontend: Astro + TypeScript Auth: Better Auth ORM: Prisma Storage: /public/uploads PDF: jsPDF +
-jspdf-autotable SSR: output = "server" RBAC: protectRoute(request, role)
-````
+---
+
+11. ⚖️ Gestión de Rutas Legales
+
+Se ha implementado una lógica de filtrado de rutas en el Layout principal para ocultar componentes innecesarios en páginas de lectura legal (Aviso Legal, Privacidad, Cookies).
+
+Lógica Condicional
+
+```typescript
+const legalPaths = ["/privacidad", "/aviso-legal", "/cookies"];
+const isLegalPage = legalPaths.includes(Astro.url.pathname);
+```
+
+Esto permite renderizar un footer simplificado o directamente eliminarlo para mejorar la UX en documentos oficiales.
+
+---
+
+12. 📋 Troubleshooting de Base de Datos
+    Error de Conexión en Desarrollo
+
+Si al realizar cambios en el esquema Prisma (npx prisma db push) los tipos de TypeScript no se actualizan en VS Code:
+
+Comando de rescate:
+
+```bash
+npx prisma generate
+```
+
+Y reiniciar el Language Server de TypeScript en el IDE (Cmd/Ctrl + Shift + P -> Restart TS Server).
+
+---
+
+# 13. ☁️ Despliegue en Producción (Vercel)
+
+Se ha migrado la infraestructura de un entorno local (SQLite) a un entorno Serverless (PostgreSQL).
+
+## Consideraciones Técnicas:
+
+- **Base de Datos:** Migración a Vercel Postgres (Neon) para persistencia en la nube.
+- **Variables de Entorno:** Todas las credenciales (DB, Auth, SMTP) han sido movidas al dashboard de Vercel.
+- **Generación de PDF:** Mantenido en `client-side` (jsPDF) para evitar límites de memoria en funciones Serverless.
+- **Estrategia de Build:** `prisma generate` se ejecuta en el `postinstall` para asegurar que el cliente esté listo en el entorno de Vercel.
+
+---
+
+# 📎 Resumen Técnico
+
+```text
+Frontend: Astro + TypeScript
+Auth: Better Auth
+ORM: Prisma
+Storage: /public/uploads
+PDF: jsPDF + jspdf-autotable
+SSR: output = "server"
+RBAC: protectRoute(request, role)
+```
 
 # 🚀 Estado Actual del Proyecto (v0.8.5)
 
 ## 🏷️ Leyenda de Estados
+
+```text
 
 | Estado | Significado   |
 | ------ | ------------- |
@@ -393,30 +443,41 @@ jspdf-autotable SSR: output = "server" RBAC: protectRoute(request, role)
 | 🚧     | En desarrollo |
 | 📅     | Planificado   |
 
+```
+
 ---
 
 ## 📊 Estado por Módulo
 
-| Módulo               | Descripción                                                        | Estado |
-| -------------------- | ------------------------------------------------------------------ | ------ |
-| Arquitectura SSR     | Astro 5 con `output: "server"` y persistencia en SQLite            | ✅     |
-| Auth & RBAC          | Sistema de roles (`admin` / `user`) con Better Auth 1.5            | ✅     |
-| Seguridad Anti-Spam  | Protección de formularios mediante técnica Honeypot (sin Captchas) | ✅     |
-| Capa Legal RGPD      | Páginas de Privacidad, Aviso Legal y Cookies (técnicas)            | ✅     |
-| Layout Robusto       | Estructura Flexbox (Sticky Footer) y corrección de Slots           | ✅     |
-| Gestión de Archivos  | Subida de archivos `.stl` con renombrado único y vínculo a Prisma  | ✅     |
-| Exportación PDF      | Generación de informes profesionales en cliente con jsPDF          | ✅     |
-| Dashboard Cliente    | Panel de actividad, historial y envío de trabajos                  | ✅     |
-| Dashboard Admin      | Gestión global, trazabilidad de mensajes y control de estados      | ✅     |
-| DX & Tooling         | Prettier, Astro Plugin y tipado estricto con TypeScript            | ✅     |
-| Integración de Email | NodeMailer                                                         | ✅     |
+```text
+| Módulo               | Descripción                                               | Estado |
+| -------------------- | ----------------------------------------------------------|------- |
+| Arquitectura SSR     | Astro 5 con `output: "server"` y persistencia en SQLite   | ✅     |
+| Auth & RBAC          | Sistema de roles (`admin` / `user`) con Better Auth 1.5   | ✅     |
+| Seguridad Anti-Spam  | Protección de formularios mediante técnica Honeypot
+                       | (sin Captchas)                                            | ✅     |
+| Capa Legal RGPD      | Páginas de Privacidad, Aviso Legal y Cookies (técnicas)   | ✅     |
+| Layout Robusto       | Estructura Flexbox (Sticky Footer) y corrección de Slots  | ✅     |
+| Gestión de Archivos  | Subida de archivos `.stl` con renombrado único y vínculo
+                       | a Prisma                                                  | ✅     |
+| Exportación PDF      | Generación de informes profesionales en cliente con jsPDF | ✅     |
+| Dashboard Cliente    | Panel de actividad, historial y envío de trabajos         | ✅     |
+| Dashboard Admin      | Gestión global, trazabilidad de mensajes y control de
+                       | estados                                                   | ✅     |
+| DX & Tooling         | Prettier, Astro Plugin y tipado estricto con TypeScript   | ✅     |
+| Integración de Email | NodeMailer                                                | ✅     |
+| Landing Page         | Hero y tipografías                                        | ✅     |
+
+```
 
 ---
 
 # Próximos Pasos 🚧
 
+```text
     UX de Transferencia: Implementar indicadores de carga visuales para archivos grandes.
 
     Optimización de Mensajería: Investigar patrones de actualización parcial para el chat de trabajos sin recarga de página (evitando sobreingeniería).
+```
 
-    Refinamiento Visual: Toques finales a la Landing Page (Hero y tipografías).
+---
