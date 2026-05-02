@@ -1,22 +1,23 @@
-import "dotenv/config";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "../../generated/prisma/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 /**
- * @description Adaptador y Cliente de Prisma para SQLite.
- * Se utiliza el adaptador 'better-sqlite3' para mayor rendimiento en entornos Node.js.
+ * @description Singleton de Prisma para PostgreSQL usando el adaptador estándar 'pg'.
  */
 const connectionString = `${process.env.DATABASE_URL}`;
-const adapter = new PrismaBetterSqlite3({ url: connectionString });
 
-/**
- * @description Implementación del patrón Singleton para Prisma.
- * En desarrollo, Astro recarga los archivos frecuentemente.
- * Guardamos la instancia en 'global' para reutilizar la misma conexión y evitar errores 'Too many connections'.
- */
-const globalForPrisma = global as unknown as { prisma: PrismaClient | undefined };
+// Creamos la conexión estándar
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+// Pasamos el adaptador que TypeScript
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
-// Si no estamos en producción, exponemos la instancia al objeto global
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
