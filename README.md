@@ -2,7 +2,7 @@
 
 > Proyecto de Ciclo Formativo de Grado Superior (DAW) desarrollado con arquitectura moderna SSR, tipado estricto y control de acceso por roles.
 
-> Última actualización: `23/04/2026` · Versión actual: `v0.8.5`
+> Última actualización: `04/05/2026` · Versión actual: `v0.9`
 
 ---
 
@@ -48,6 +48,18 @@ DATOS Y PERSISTENCIA
 ├── Local Storage (/public/uploads con sanitización de nombres). Usada en Local
 └── Local Storage (Vercel Blob o File System según entorno)
 ```
+
+graph TD
+A[Usuario / Cliente] -->|HTTPS| B(Astro SSR - Middleware)
+B --> C{Autenticación}
+C -->|Admin| D[Dashboard Admin]
+C -->|Cliente| E[Dashboard Cliente]
+D & E --> F[Prisma ORM]
+F --> G[(PostgreSQL / SQLite)]
+B --> H[Servicio de Archivos]
+H --> I[Cloudinary / Local Storage]
+
+---
 
 # 📂 Estructura del Proyecto
 
@@ -118,29 +130,21 @@ Sistema basado en Better Auth con validación en servidor.
 
 # 🛡️ Seguridad y Protección de Datos
 
-Se han implementado medidas específicas para garantizar la integridad del servidor:
+Se han implementado medidas específicas para garantizar la integridad del sistema:
 
-    Protección en Subida de Archivos:
+- **Protección en Subida de Archivos:**
+  - **Límite de tamaño:** Máximo 20MB por archivo para evitar ataques de agotamiento de disco.
+  - **Límite de cantidad:** Máximo 10 archivos por operación.
+  - **Validación de tipo:** Filtro estricto de extensiones `.stl` mediante metadatos del archivo.
+  - **Sanitización:** Renombrado automático con `Date.now()` para evitar colisiones y ataques de sobrescritura.
 
-        Límite de tamaño: Máximo 20MB por archivo para evitar ataques de agotamiento de disco.
+- **Seguridad en Formularios:**
+  - **Honeypot Anti-Bot:** Campo invisible que invalida peticiones automáticas de SPAM.
+  - **Feedback de UI:** Animaciones de "Shake" en errores y bloqueos de botón de envío para evitar _double-submit_.
 
-        Límite de cantidad: Máximo 10 archivos por operación.
-
-        Validación de Tipo: Filtro estricto de extensiones .stl mediante metadatos del archivo.
-
-        Sanitización: Renombrado automático con Date.now() para evitar colisiones y ataques de sobrescritura.
-
-    Seguridad en Formularios:
-
-        Honeypot Anti-Bot: Campo invisible que invalida peticiones automáticas de SPAM.
-
-        Feedback de UI: Animaciones de "Shake" en errores y bloqueos de botón de envío para evitar double-submit.
-
-    Base de Datos:
-
-        Prevención de SQL Injection: Uso intrínseco de Prisma con consultas parametrizadas.
-
-        Optimización de Conexiones: Patrón Singleton en la instancia de Prisma para entornos de desarrollo con Hot Reload.
+- **Base de Datos:**
+  - **Prevención de SQL Injection:** Uso intrínseco de Prisma con consultas parametrizadas.
+  - **Optimización de conexiones:** Patrón Singleton en la instancia de Prisma para entornos de desarrollo con _Hot Reload_.
 
 # 📊 Base de Datos y Trazabilidad
 
@@ -176,6 +180,10 @@ El esquema de base de datos permite un seguimiento completo del flujo de trabajo
    - Configurar Vercel Postgres en el dashboard.
    - Añadir las variables de entorno en "Settings > Environment Variables".
    - Vercel ejecutará automáticamente `npm run build`.
+
+# ❗ Nota importante:
+
+El archivo .env necesario para el funcionamiento (con los secretos de autenticación y rutas) se entregará junto al proyecto en la raíz. No debe subirse a repositorios públicos.
 
 # ⚡ Comandos de Utilidad
 
@@ -225,21 +233,21 @@ Configuración CSS-first sin plugins adicionales en Astro:
 
     [x] Despliegue en Producción (Vercel): Configuración de entorno Serverless y variables de entorno.
 
-# En progreso
+# En progreso o futura versión
 
 [x] Diseño Visual de la Web: Refinamiento estético del Hero y secciones informativas para el usuario ocasional.
 
 [x] Optimización UX en Transferencias: Estudio e implementación de indicadores de progreso (barras de carga) para subida y descarga de archivos pesados (STL).
 
-[ ] Mejora de Reactividad: Investigación de alternativas ligeras para la actualización de mensajes sin recarga completa de página (evitando sobreingeniería).
-
 # 🔮 Roadmap Técnico (Estudio futuro)
 
-    [ ] API de Descarga Protegida: Capa de seguridad extra para el acceso a archivos en /uploads.
+[ ] Mejora de Reactividad: Investigación de alternativas ligeras para la actualización de mensajes sin recarga completa de página (evitando sobreingeniería).
 
-    [ ] Notificaciones de Estado: Avisos visuales rápidos sobre cambios en el proceso de la prótesis.
+[ ] API de Descarga Protegida: Capa de seguridad extra para el acceso a archivos en /uploads.
 
-    [ ] Escalabilidad de Almacenamiento: Migración potencial a servicios S3 o Cloudflare R2 para grandes volúmenes de datos.
+[ ] Notificaciones de Estado: Avisos visuales rápidos sobre cambios en el proceso de la prótesis.
+
+[ ] Escalabilidad de Almacenamiento: Migración potencial a servicios S3 o Cloudflare R2 para grandes volúmenes de datos.
 
 # 📎 Documentación Técnica
 
